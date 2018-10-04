@@ -17,8 +17,13 @@ export default StyleSheet.create({
 
   formLabel: {
     fontSize: 16,
+    color: '#666666',
+    fontWeight: 'bold'
+  },
+
+  toggleText: {
+    fontSize: 12,
     color: '#999999',
-    fontWeight: 'bold',
-    paddingBottom: 8
+    marginLeft: 10
   }
 })

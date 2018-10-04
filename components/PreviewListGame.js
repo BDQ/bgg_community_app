@@ -50,9 +50,7 @@ export default class PreviewListGame extends React.PureComponent {
         itemid: itemId
       }
     }
-    console.log(body)
-    let x = await fetchJSONAsUser(url, { method: 'POST', body })
-    console.log(x)
+    fetchJSONAsUser(url, { method: 'POST', body })
   }
 
   render() {
