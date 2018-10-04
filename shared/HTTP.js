@@ -1,7 +1,6 @@
 import Sentry from 'sentry-expo'
 import { AsyncStorage } from 'react-native'
 
-let auth = null
 let bgg_user_cookie, bgg_pwd_cookie
 
 export const fetchJSON = async (url, args = {}, headers = {}) => {
@@ -30,16 +29,13 @@ export const fetchJSON = async (url, args = {}, headers = {}) => {
       )
     }
   } catch (error) {
-    console.warn(error)
     Sentry.captureException(error)
   }
 }
 
 export const fetchJSONAsUser = async (url, args = {}) => {
-  if (!auth) {
-    auth = await AsyncStorage.getItem('@BGGApp:auth')
-    ;({ bgg_user_cookie, bgg_pwd_cookie } = JSON.parse(auth))
-  }
+  const auth = await AsyncStorage.getItem('@BGGApp:auth')
+  ;({ bgg_user_cookie, bgg_pwd_cookie } = JSON.parse(auth))
 
   return fetchJSON(url, args, {
     cookie: `${bgg_user_cookie}; ${bgg_pwd_cookie}`
