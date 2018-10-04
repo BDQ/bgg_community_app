@@ -78,10 +78,7 @@ export default class PreviewList extends React.PureComponent {
     let { filters } = this.state
     filters = { ...filters, name: str }
 
-    this.setState({
-      filters,
-      games: applyFilter(filters, this.props.games)
-    })
+    this.setFilterStateAndApply(filters)
   }
 
   clearFilter = () => {
@@ -91,6 +88,10 @@ export default class PreviewList extends React.PureComponent {
   setFilters = filterChanges => {
     const filters = { ...this.state.filters, ...filterChanges }
 
+    this.setFilterStateAndApply(filters)
+  }
+
+  setFilterStateAndApply = filters => {
     const games = applyFilter(filters, this.props.games)
     this.setState({ filters, games })
 

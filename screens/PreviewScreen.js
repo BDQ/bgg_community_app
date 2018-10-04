@@ -262,14 +262,11 @@ class PreviewListScreen extends React.Component {
 
       let games = [].concat(...Object.values(loadStatus).map(g => g.items))
 
-      // const games = [...this.state.games, ...items]
       // set the state
       this.setState({
         loadStatus,
         games
       })
-
-      this.props.navigation.setParams({ gameCount: games.length })
     })
 
     await Promise.all(promises)
