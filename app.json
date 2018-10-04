@@ -1,0 +1,31 @@
+{
+  "expo": {
+    "sdkVersion": "30.0.0",
+    "splash": {
+      "image": "./assets/splash.png"
+    },
+    "icon": "./assets/BGG-Logo.png",
+    "hooks": {
+      "postPublish": [
+        {
+          "file": "sentry-expo/upload-sourcemaps",
+          "config": {
+            "organization": "bdq-consulting",
+            "project": "bggapp",
+            "authToken": "your auth token here"
+          }
+        }
+      ]
+    },
+    "name": "bggca",
+    "slug": "bggca",
+    "version": "0.1.0",
+    "description": "v0.1",
+    "ios": {
+      "bundleIdentifier": "io.bdq.bggca"
+    },
+    "android": {
+      "package": "io.bdq.bggca"
+    }
+  }
+}
