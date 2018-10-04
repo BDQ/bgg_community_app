@@ -1,6 +1,16 @@
 import Sentry from 'sentry-expo'
-import React, { Component } from 'react'
-import { StyleSheet, View, Image, Text, ScrollView } from 'react-native'
+import React from 'react'
+import {
+  StyleSheet,
+  View,
+  Image,
+  Text,
+  ScrollView,
+  TouchableHighlight,
+  Modal,
+  SafeAreaView,
+  FlatList
+} from 'react-native'
 import { Icon, Button } from 'react-native-elements'
 import HTMLView from 'react-native-htmlview'
 import { fetchJSON } from '../shared/HTTP'
@@ -8,7 +18,9 @@ import { fetchJSON } from '../shared/HTTP'
 export default class GameScreen extends React.Component {
   state = {
     game: {},
-    stats: { item: { rankinfo: [] } }
+    images: [],
+    stats: { item: { rankinfo: [] } },
+    imageModalVisible: null
   }
 
   static navigationOptions = ({ navigation }) => ({
@@ -23,20 +35,33 @@ export default class GameScreen extends React.Component {
 
     this.getGameStats(game.objectid)
     this.getGameDetails(game.objectid)
+    this.getGameImages(game.objectid)
   }
 
   getGameDetails = async objectid => {
     const url = `https://api.geekdo.com/api/geekitems?objectid=${objectid}&showcount=10&nosession=1&ajax=1&objecttype=thing`
-
-    let game = await fetchJSON(url)
+    const game = await fetchJSON(url)
     this.setState({ game })
   }
 
   getGameStats = async objectid => {
     const url = `https://api.geekdo.com/api/dynamicinfo?objectid=${objectid}&showcount=10&nosession=1&ajax=1&objecttype=thing`
-
-    let stats = await fetchJSON(url)
+    const stats = await fetchJSON(url)
     this.setState({ stats })
+  }
+
+  getGameImages = async objectid => {
+    const url = `https://api.geekdo.com/api/images?objectid=${objectid}&ajax=1&galleries%5B%5D=game&galleries%5B%5D=creative&nosession=1&objecttype=thing&showcount=17&size=crop100&sort=hot`
+    const { images } = await fetchJSON(url)
+    this.setState({ images })
+  }
+
+  hideImageModal() {
+    this.setState({ imageModalVisible: null })
+  }
+
+  showImageModal(url) {
+    this.setState({ imageModalVisible: url })
   }
 
   _renderHeaderRank = () => {
@@ -221,11 +246,16 @@ export default class GameScreen extends React.Component {
   _renderDescription = game => {
     if (game !== undefined) {
       return (
-        <HTMLView
-          style={{ width: '100%' }}
-          addLineBreaks={false}
-          value={game.description}
-        />
+        <View>
+          <View style={styles.descriptionHeader}>
+            <Text style={styles.descriptionHeaderText}>Description</Text>
+          </View>
+          <HTMLView
+            style={{ width: '100%' }}
+            addLineBreaks={false}
+            value={game.description}
+          />
+        </View>
       )
     }
   }
@@ -259,6 +289,52 @@ export default class GameScreen extends React.Component {
             />
           </View>
           <View style={{ padding: 10, backgroundColor: '#ffffff' }}>
+            <FlatList
+              style={{ height: 104 }}
+              data={this.state.images}
+              horizontal={true}
+              keyExtractor={img => img.imageid}
+              renderItem={({ item }) => {
+                console.log(item)
+                return (
+                  <TouchableHighlight
+                    onPress={() => {
+                      this.showImageModal(item.imageurl_lg)
+                    }}
+                  >
+                    <Image
+                      style={styles.imageListThumbnail}
+                      source={{ uri: item.imageurl }}
+                    />
+                  </TouchableHighlight>
+                )
+              }}
+            />
+            <Modal
+              animationType="slide"
+              transparent={false}
+              visible={this.state.imageModalVisible !== null}
+            >
+              <SafeAreaView style={{ backgroundColor: '#000000' }}>
+                <View style={{ margin: 10 }}>
+                  <TouchableHighlight
+                    onPress={() => {
+                      this.hideImageModal()
+                    }}
+                  >
+                    <Image
+                      style={{
+                        width: '100%',
+                        height: '100%',
+                        resizeMode: Image.resizeMode.contain
+                      }}
+                      source={{ uri: this.state.imageModalVisible }}
+                    />
+                  </TouchableHighlight>
+                </View>
+              </SafeAreaView>
+            </Modal>
+
             {this._renderDescription(game)}
           </View>
         </View>
@@ -331,5 +407,22 @@ const styles = StyleSheet.create({
   },
   creditTitle: {
     fontFamily: 'lato-bold'
+  },
+  descriptionHeader: {
+    borderBottomColor: '#292e62',
+    borderBottomWidth: 1,
+    marginBottom: 10
+  },
+  descriptionHeaderText: {
+    fontFamily: 'lato-bold',
+    fontSize: 18,
+    color: '#292e62',
+    marginBottom: 10
+  },
+  imageListThumbnail: {
+    width: 100,
+    height: 100,
+    margin: 2,
+    resizeMode: Image.resizeMode.contain
   }
 })
