@@ -4,8 +4,8 @@ Sentry.config(
   'https://610b42b2d6174ec78fd80f388169d5df@sentry.io/247243'
 ).install()
 
-import React, { Component } from 'react'
-import { AsyncStorage, View, Text, FlatList } from 'react-native'
+import React from 'react'
+import { AsyncStorage, SafeAreaView } from 'react-native'
 import { createBottomTabNavigator } from 'react-navigation'
 import { Font, AppLoading } from 'expo'
 import FlashMessage from 'react-native-flash-message'
@@ -232,17 +232,17 @@ class App extends React.Component {
     } else {
       if (!isLoggedIn) {
         return (
-          <View style={{ flex: 1 }}>
+          <SafeAreaView style={{ flex: 1 }}>
             <ProfileScreen
               screenProps={{ bgg_credentials, loadAuth }}
               title="BGG Community App"
             />
             <FlashMessage position="top" />
-          </View>
+          </SafeAreaView>
         )
       } else {
         return (
-          <View style={{ flex: 1 }}>
+          <SafeAreaView style={{ flex: 1 }}>
             <AppNavigator
               screenProps={{
                 games,
@@ -252,7 +252,7 @@ class App extends React.Component {
               }}
             />
             <FlashMessage position="top" />
-          </View>
+          </SafeAreaView>
         )
       }
     }
