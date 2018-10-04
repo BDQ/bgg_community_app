@@ -58,6 +58,7 @@ class PreviewListScreen extends React.Component {
     }`
 
     const { items: userSelections } = await fetchJSONAsUser(url)
+    // console.log(userSelections)
     this.setState({ userSelections })
   }
 

@@ -9,7 +9,7 @@ import PreviewListGame from './PreviewListGame'
 
 import { priorities, halls } from '../shared/data'
 
-const applyFilter = (filters, items) => {
+const applyGameFilters = (filters, items) => {
   let filteredItems = items
 
   // name
@@ -53,64 +53,103 @@ const sortByName = (a, b) => {
   return 0
 }
 
-export default class PreviewList extends React.PureComponent {
-  constructor(props) {
-    super(props)
-    this.state = {
-      filters: {
-        name: '',
-        priorities: priorities.map(priority => priority.id),
-        halls: halls.map(hall => hall.id)
-      },
-      games: props.games,
-      companies: props.companies.sort(sortByName)
+const buildSections = (games, companies, userSelections, filters) => {
+  games = applyGameFilters(filters, games)
+
+  // build array of companies, followed by their games
+  let sections = companies.sort(sortByName).map(company => {
+    const companyGames = company.previewItemIds.map(itemId => {
+      let game = games.find(g => g.itemId === itemId)
+
+      if (game) {
+        game.userSelection = userSelections[itemId]
+        game.location = company.location
+      }
+
+      return game
+    })
+    return {
+      ...company,
+      data: companyGames.sort(sortByName).filter(g => g)
     }
+  })
+
+  sections = sections.filter(section => section.data.length > 0)
+
+  return { sections, gameCount: games.length }
+}
+
+export default class PreviewList extends React.PureComponent {
+  state = {
+    filtering: false,
+    filters: {
+      name: '',
+      priorities: priorities.map(priority => priority.id),
+      halls: halls.map(hall => hall.id)
+    },
+    sections: []
   }
 
   static getDerivedStateFromProps(props, state) {
-    return {
-      games: applyFilter(state.filters, props.games),
-      companies: props.companies.sort(sortByName)
+    const { games, companies, userSelections } = props
+    if (!games) {
+      return { sections: [] }
     }
+
+    const { sections } = buildSections(
+      games,
+      companies,
+      userSelections,
+      state.filters
+    )
+    return { sections }
   }
 
-  filter = str => {
+  handleFilterTextChange = str => {
+    this.setState({ filtering: true })
     let { filters } = this.state
     filters = { ...filters, name: str }
 
-    this.setFilterStateAndApply(filters)
-  }
-
-  clearFilter = () => {
-    this.setState({ games: applyFilter(this.state.filters, this.props.games) })
+    this.persistFilterAndApply(filters)
   }
 
   setFilters = filterChanges => {
     const filters = { ...this.state.filters, ...filterChanges }
-
-    this.setFilterStateAndApply(filters)
+    this.persistFilterAndApply(filters)
   }
 
-  setFilterStateAndApply = filters => {
-    const games = applyFilter(filters, this.props.games)
-    this.setState({ filters, games })
+  persistFilterAndApply = filters => {
+    const { games, companies, userSelections } = this.props
+    const { sections, gameCount } = buildSections(
+      games,
+      companies,
+      userSelections,
+      filters
+    )
 
-    this.props.navigation.setParams({ gameCount: games.length })
+    this.props.navigation.setParams({ gameCount })
+    this.setState({
+      filtering: false,
+      filters,
+      sections
+    })
   }
 
   _renderHeader = () => {
     const { navigate } = this.props.navigation
-    const { filters } = this.state
+    const { filters, filtering } = this.state
     const { name } = filters
 
     return (
       <View style={{ flexDirection: 'row' }}>
         <View style={{ width: '90%' }}>
           <SearchBar
-            onChangeText={this.filter}
+            onChangeText={this.handleFilterTextChange}
             value={name}
             onClearText={this.clearFilter}
             placeholder="Type here to filter..."
+            showLoadingIcon={filtering}
+            clearIcon
           />
         </View>
         <View
@@ -160,28 +199,8 @@ export default class PreviewList extends React.PureComponent {
   })
 
   render() {
-    const { loading, userSelections, onRefresh } = this.props
-    const { companies, games } = this.state
-
-    // build array of companies, followed by their games
-    let sections = companies.sort(sortByName).map(company => {
-      const companyGames = company.previewItemIds.map(itemId => {
-        let game = games.find(g => g.itemId === itemId)
-
-        if (game) {
-          game.userSelection = userSelections[itemId]
-          game.location = company.location
-        }
-
-        return game
-      })
-      return {
-        ...company,
-        data: companyGames.sort(sortByName).filter(g => g)
-      }
-    })
-
-    sections = sections.filter(section => section.data.length > 0)
+    const { loading, onRefresh } = this.props
+    const { sections } = this.state
 
     return (
       <SectionList

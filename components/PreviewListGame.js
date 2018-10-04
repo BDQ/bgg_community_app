@@ -7,18 +7,13 @@ import { priorities } from '../shared/data'
 import { fetchJSONAsUser } from '../shared/HTTP'
 
 export default class PreviewListGame extends React.PureComponent {
-  constructor(props) {
-    super(props)
-
-    const { priority } = props.userSelection || {}
-
-    this.state = {
-      priority
-    }
+  state = {
+    priority: (this.props.userSelection || {}).priority
   }
 
   _renderPriority = () => {
     const { priority } = this.state
+
     const { name, color } = priorities.find(p => p.id === priority) || {}
 
     return color ? (
