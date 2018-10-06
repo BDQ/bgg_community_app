@@ -65,8 +65,11 @@ export default class ImageList extends React.Component {
       return null
     }
 
-    const { width: viewportWidth } = Dimensions.get('window')
-    const componentWidth = viewportWidth - 10
+    const { width: viewportWidth, height: viewportHeight } = Dimensions.get(
+      'window'
+    )
+    const componentWidth = viewportWidth - 20
+    const componentHeight = viewportHeight - 50
 
     return (
       <View>
@@ -96,7 +99,7 @@ export default class ImageList extends React.Component {
           visible={this.state.imageModalIndex !== null}
         >
           <SafeAreaView style={{ backgroundColor: '#000000' }}>
-            <View style={{ margin: 10 }}>
+            <View style={{ padding: 10 }}>
               <TouchableHighlight
                 onPress={() => {
                   this.hideImageModal()
@@ -104,41 +107,40 @@ export default class ImageList extends React.Component {
               >
                 <Text style={{ color: 'white' }}>Close</Text>
               </TouchableHighlight>
-              <Carousel
-                // scrollEnabled={false}
-                initialNumToRender={this.state.imageModalIndex}
-                maxToRenderPerBatch={1}
-                firstItem={this.state.imageModalIndex}
-                data={this.state.images}
-                renderItem={({ item }) => {
-                  return (
-                    <ImageZoom
-                      cropWidth={componentWidth}
-                      cropHeight={Dimensions.get('window').height}
-                      imageWidth={componentWidth}
-                      imageHeight={Dimensions.get('window').height - 10}
-                    >
-                      <ImageProgress
-                        source={{ uri: item.imageurl_lg }}
-                        indicator={ProgressBar}
-                        indicatorProps={{
-                          color: '#ffffff'
-                        }}
-                        style={{
-                          width: '100%',
-                          height: '100%'
-                        }}
-                        imageStyle={{
-                          resizeMode: Image.resizeMode.contain
-                        }}
-                      />
-                    </ImageZoom>
-                  )
-                }}
-                sliderWidth={viewportWidth}
-                itemWidth={componentWidth}
-              />
             </View>
+            <Carousel
+              // scrollEnabled={false}
+              initialNumToRender={this.state.imageModalIndex}
+              maxToRenderPerBatch={1}
+              firstItem={this.state.imageModalIndex}
+              data={this.state.images}
+              renderItem={({ item }) => {
+                return (
+                  <ImageZoom
+                    cropWidth={componentWidth}
+                    cropHeight={componentHeight}
+                    imageWidth={componentWidth - 10}
+                    imageHeight={componentHeight - 10}
+                  >
+                    <ImageProgress
+                      source={{ uri: item.imageurl_lg }}
+                      indicator={ProgressBar}
+                      indicatorProps={{
+                        color: '#ffffff'
+                      }}
+                      style={{
+                        flex: 1
+                      }}
+                      imageStyle={{
+                        resizeMode: Image.resizeMode.contain
+                      }}
+                    />
+                  </ImageZoom>
+                )
+              }}
+              sliderWidth={viewportWidth}
+              itemWidth={componentWidth}
+            />
           </SafeAreaView>
         </Modal>
       </View>

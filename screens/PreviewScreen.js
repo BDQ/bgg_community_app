@@ -52,7 +52,6 @@ class PreviewListScreen extends React.Component {
     ])
 
     const { setParams } = this.props.navigation
-    setParams({ gameCount: this.state.games.length })
 
     this.setState({ loading: false })
     console.log('loading all end')
@@ -64,7 +63,7 @@ class PreviewListScreen extends React.Component {
     }`
 
     const { items: userSelections } = await fetchJSONAsUser(url)
-    // console.log(userSelections)
+
     this.setState({ userSelections })
   }
 

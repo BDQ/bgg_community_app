@@ -9,6 +9,7 @@ import {
 import { SearchBar } from 'react-native-elements'
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import sectionListGetItemLayout from 'react-native-section-list-get-item-layout'
+import ProgressBar from 'react-native-progress/Circle'
 
 import PreviewListCompany from './PreviewListCompany'
 import PreviewListGame from './PreviewListGame'
@@ -113,7 +114,7 @@ const buildSections = (games, companies, userSelections, filters) => {
 
 export default class PreviewList extends React.PureComponent {
   state = {
-    filtering: false,
+    filtersSet: false,
     filters: {
       name: '',
       priorities: priorities.map(priority => priority.id),
@@ -138,7 +139,7 @@ export default class PreviewList extends React.PureComponent {
   }
 
   handleFilterTextChange = str => {
-    this.setState({ filtering: true })
+    this.setState({ filtersSet: true })
     let { filters } = this.state
     filters = { ...filters, name: str }
 
@@ -161,7 +162,7 @@ export default class PreviewList extends React.PureComponent {
 
     this.props.navigation.setParams({ gameCount })
     this.setState({
-      filtering: false,
+      filtersSet: true,
       filters,
       sections
     })
@@ -169,7 +170,7 @@ export default class PreviewList extends React.PureComponent {
 
   _renderHeader = () => {
     const { navigate } = this.props.navigation
-    const { filters, filtering } = this.state
+    const { filters } = this.state
     const { name } = filters
 
     return (
@@ -180,7 +181,6 @@ export default class PreviewList extends React.PureComponent {
             value={name}
             onClearText={this.clearFilter}
             placeholder="Type here to filter..."
-            showLoadingIcon={filtering}
             clearIcon
           />
         </View>
@@ -217,6 +217,29 @@ export default class PreviewList extends React.PureComponent {
         navigation={this.props.navigation}
       />
     )
+  }
+
+  _renderEmpty = () => {
+    const { filtersSet } = this.state
+
+    if (filtersSet) {
+      return (
+        <React.Fragment>
+          <Text>No matches found.</Text>
+        </React.Fragment>
+      )
+    } else {
+      return (
+        <React.Fragment>
+          <ProgressBar
+            indeterminate={true}
+            color="#000000"
+            style={{ marginBottom: 10 }}
+          />
+          <Text>Loading Preview...</Text>
+        </React.Fragment>
+      )
+    }
   }
 
   getItemLayout = sectionListGetItemLayout({
@@ -265,7 +288,7 @@ export default class PreviewList extends React.PureComponent {
               justifyContent: 'center'
             }}
           >
-            <Text>Loading Preview...</Text>
+            {this._renderEmpty()}
           </View>
         )}
       />

@@ -71,7 +71,7 @@
     "react-native-tag-select": "^2.0.0",
     "react-native-vector-icons": "^4.2.0",
     "react-navigation": "^2.13.0",
-    "sentry-expo": "^1.9.0",
+    "sentry-expo": "^1.10.0",
     "throttle-debounce": "^1.0.1",
     "xml-parser": "^1.2.1"
   }
