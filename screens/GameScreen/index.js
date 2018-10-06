@@ -62,8 +62,13 @@ export default class GameScreen extends React.Component {
       return (
         <View style={styles.headerRatings}>
           <Icon name="crown" type="foundation" color="#e66c06" size={20} />
-          <View style={{ paddingTop: 3, paddingLeft: 6, flexDirection: 'row' }}>
-            <Text style={{ color: '#ffffff', fontFamily: 'lato-bold' }}>
+          <View style={{ marginTop: 6, paddingLeft: 6, flexDirection: 'row' }}>
+            <Text
+              style={{
+                color: '#ffffff',
+                fontFamily: 'lato-bold'
+              }}
+            >
               RANK:{' '}
             </Text>
             {rankInfo.map((rank, i) => (
@@ -97,17 +102,28 @@ export default class GameScreen extends React.Component {
     } = this.state || {}
     const {
       stats: {
-        item: { stats: stats = {} }
+        item: { stats: stats = { average: '0' } }
       }
     } = this.state
 
+    let ratingBGColor, ratingText
+
+    console.log(stats.average)
+    if (stats.average === '0') {
+      ratingBGColor = '#999999'
+      ratingText = '--'
+    } else {
+      ratingBGColor = '#5369a2'
+      ratingText = this._trimTo(stats.average, 1)
+    }
+
     return (
       <View style={{ flexDirection: 'row' }}>
-        <View style={styles.headerIcon}>
+        <View style={[styles.headerIcon, { backgroundColor: ratingBGColor }]}>
           <Text
             style={{ color: '#ffffff', fontSize: 24, fontFamily: 'lato-bold' }}
           >
-            {this._trimTo(stats.average, 1)}
+            {ratingText}
           </Text>
         </View>
 
@@ -322,7 +338,6 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
     borderRadius: 50,
-    backgroundColor: '#5369a2',
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 10
