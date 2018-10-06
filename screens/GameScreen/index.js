@@ -1,41 +1,42 @@
 import Sentry from 'sentry-expo'
 import React from 'react'
-import {
-  StyleSheet,
-  View,
-  Image,
-  Text,
-  ScrollView,
-  TouchableHighlight,
-  Modal,
-  SafeAreaView,
-  FlatList
-} from 'react-native'
+import { StyleSheet, Image, View, Text, ScrollView } from 'react-native'
 import { Icon, Button } from 'react-native-elements'
 import HTMLView from 'react-native-htmlview'
-import { fetchJSON } from '../shared/HTTP'
+
+import ImageList from './image_list'
+import { fetchJSON } from '../../shared/HTTP'
 
 export default class GameScreen extends React.Component {
   state = {
     game: {},
-    images: [],
+
     stats: { item: { rankinfo: [] } },
-    imageModalVisible: null
+    imageModalIndex: null
   }
 
   static navigationOptions = ({ navigation }) => ({
     title: navigation.state.params.game.name
   })
 
-  constructor(props) {
-    super(props)
+  static getDerivedStateFromProps(props, state) {
+    const game = props.navigation.state.params.game
 
-    let game = props.navigation.state.params.game
-    this.state.games = game
+    if (game && game !== state.game) {
+      return { game }
+    }
 
-    this.getGameStats(game.objectid)
-    this.getGameDetails(game.objectid)
-    this.getGameImages(game.objectid)
+    // Return null to indicate no change to state.
+    return null
+  }
+
+  componentDidMount() {
+    const { game } = this.state
+
+    if (game !== {}) {
+      this.getGameStats(game.objectid)
+      this.getGameDetails(game.objectid)
+    }
   }
 
   getGameDetails = async objectid => {
@@ -48,20 +49,6 @@ export default class GameScreen extends React.Component {
     const url = `https://api.geekdo.com/api/dynamicinfo?objectid=${objectid}&showcount=10&nosession=1&ajax=1&objecttype=thing`
     const stats = await fetchJSON(url)
     this.setState({ stats })
-  }
-
-  getGameImages = async objectid => {
-    const url = `https://api.geekdo.com/api/images?objectid=${objectid}&ajax=1&galleries%5B%5D=game&galleries%5B%5D=creative&nosession=1&objecttype=thing&showcount=17&size=crop100&sort=hot`
-    const { images } = await fetchJSON(url)
-    this.setState({ images })
-  }
-
-  hideImageModal() {
-    this.setState({ imageModalVisible: null })
-  }
-
-  showImageModal(url) {
-    this.setState({ imageModalVisible: url })
   }
 
   _renderHeaderRank = () => {
@@ -289,52 +276,7 @@ export default class GameScreen extends React.Component {
             />
           </View>
           <View style={{ padding: 10, backgroundColor: '#ffffff' }}>
-            <FlatList
-              style={{ height: 104 }}
-              data={this.state.images}
-              horizontal={true}
-              keyExtractor={img => img.imageid}
-              renderItem={({ item }) => {
-                console.log(item)
-                return (
-                  <TouchableHighlight
-                    onPress={() => {
-                      this.showImageModal(item.imageurl_lg)
-                    }}
-                  >
-                    <Image
-                      style={styles.imageListThumbnail}
-                      source={{ uri: item.imageurl }}
-                    />
-                  </TouchableHighlight>
-                )
-              }}
-            />
-            <Modal
-              animationType="slide"
-              transparent={false}
-              visible={this.state.imageModalVisible !== null}
-            >
-              <SafeAreaView style={{ backgroundColor: '#000000' }}>
-                <View style={{ margin: 10 }}>
-                  <TouchableHighlight
-                    onPress={() => {
-                      this.hideImageModal()
-                    }}
-                  >
-                    <Image
-                      style={{
-                        width: '100%',
-                        height: '100%',
-                        resizeMode: Image.resizeMode.contain
-                      }}
-                      source={{ uri: this.state.imageModalVisible }}
-                    />
-                  </TouchableHighlight>
-                </View>
-              </SafeAreaView>
-            </Modal>
-
+            <ImageList objectId={game ? game.objectid : null} />
             {this._renderDescription(game)}
           </View>
         </View>
@@ -418,11 +360,5 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: '#292e62',
     marginBottom: 10
-  },
-  imageListThumbnail: {
-    width: 100,
-    height: 100,
-    margin: 2,
-    resizeMode: Image.resizeMode.contain
   }
 })
