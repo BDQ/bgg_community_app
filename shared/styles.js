@@ -2,6 +2,7 @@ import { StyleSheet } from 'react-native'
 export default StyleSheet.create({
   emptyView: {
     flex: 1,
+    height: 300,
     alignItems: 'center',
     justifyContent: 'center',
     padding: 10

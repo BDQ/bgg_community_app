@@ -1,5 +1,11 @@
 import React from 'react'
-import { TouchableOpacity, View, SectionList, PixelRatio } from 'react-native'
+import {
+  TouchableOpacity,
+  View,
+  SectionList,
+  PixelRatio,
+  Text
+} from 'react-native'
 import { SearchBar } from 'react-native-elements'
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import sectionListGetItemLayout from 'react-native-section-list-get-item-layout'
@@ -8,6 +14,7 @@ import PreviewListCompany from './PreviewListCompany'
 import PreviewListGame from './PreviewListGame'
 
 import { priorities, halls } from '../shared/data'
+import styles from '../shared/styles'
 
 const applyGameFilters = (filters, items) => {
   let filteredItems = items
@@ -54,19 +61,39 @@ const sortByName = (a, b) => {
 }
 
 const buildSections = (games, companies, userSelections, filters) => {
-  games = applyGameFilters(filters, games)
+  if (games.length === 0 || companies.length === 0) {
+    //data's not loaded yet, so render empty
 
+    return { sections: [], gameCount: 0 }
+  }
+  const filteredGames = [...applyGameFilters(filters, games)]
+
+  // games.forEach(game => {
+  //   const company = companies.find(c => c.previewItemIds.includes(game.itemId))
+  //   // console.log(company, game.itemId)
+
+  //   if (!company) {
+  //     console.log('company not found')
+  //     console.log(game)
+  //   }
+  // })
+
+  const gameCount = filteredGames.length
   // build array of companies, followed by their games
   let sections = companies.sort(sortByName).map(company => {
     const companyGames = company.previewItemIds.map(itemId => {
-      let game = games.find(g => g.itemId === itemId)
+      const gameIndex = filteredGames.findIndex(g => g.itemId === itemId)
 
-      if (game) {
-        game.userSelection = userSelections[itemId]
-        game.location = company.location
+      if (gameIndex > -1) {
+        const [game] = filteredGames.splice(gameIndex, 1)
+
+        if (game) {
+          game.userSelection = userSelections[itemId]
+          game.location = company.location
+        }
+
+        return game
       }
-
-      return game
     })
     return {
       ...company,
@@ -74,9 +101,14 @@ const buildSections = (games, companies, userSelections, filters) => {
     }
   })
 
+  if (filteredGames.length > 0) {
+    console.log(
+      'Must be missing company data, as there some games left:',
+      filteredGames.length
+    )
+  }
   sections = sections.filter(section => section.data.length > 0)
-
-  return { sections, gameCount: games.length }
+  return { sections, gameCount }
 }
 
 export default class PreviewList extends React.PureComponent {
@@ -204,6 +236,9 @@ export default class PreviewList extends React.PureComponent {
 
     return (
       <SectionList
+        style={{
+          flex: 1
+        }}
         ListHeaderComponent={this._renderHeader}
         renderSectionHeader={({ section }) => {
           return (
@@ -222,6 +257,17 @@ export default class PreviewList extends React.PureComponent {
         stickySectionHeadersEnabled={false}
         getItemLayout={this.getItemLayout}
         initialNumToRender={15}
+        ListEmptyComponent={() => (
+          <View
+            style={{
+              height: 300,
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}
+          >
+            <Text>Loading Preview...</Text>
+          </View>
+        )}
       />
     )
   }

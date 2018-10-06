@@ -232,6 +232,7 @@ export default class GameScreen extends React.Component {
 
   _renderDescription = game => {
     if (game !== undefined) {
+      const description = game.description.replace(/\n/g, '')
       return (
         <View>
           <View style={styles.descriptionHeader}>
@@ -239,8 +240,10 @@ export default class GameScreen extends React.Component {
           </View>
           <HTMLView
             style={{ width: '100%' }}
+            stylesheet={htmlStyles}
+            paragraphBreak={null}
             addLineBreaks={false}
-            value={game.description}
+            value={description}
           />
         </View>
       )
@@ -284,6 +287,14 @@ export default class GameScreen extends React.Component {
     )
   }
 }
+const htmlStyles = StyleSheet.create({
+  p: {
+    marginTop: 0,
+    marginBottom: 8,
+    paddingTop: 0,
+    paddingBottom: 0
+  }
+})
 
 const styles = StyleSheet.create({
   itemContainer: {

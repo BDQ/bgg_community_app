@@ -1,6 +1,6 @@
 import React from 'react'
 import { createStackNavigator } from 'react-navigation'
-import { AsyncStorage } from 'react-native'
+import { AsyncStorage, View } from 'react-native'
 
 import GameScreen from './GameScreen'
 import GameAddTo from './GameAddTo'
@@ -16,13 +16,17 @@ class PreviewListScreen extends React.Component {
     companies: [],
     userSelections: [],
     previewId: 6,
-    loading: true
+    loading: false
   }
 
   static navigationOptions = ({ navigation }) => {
     return {
       title: `Essen Preview (${navigation.getParam('gameCount', '0')})`
     }
+  }
+
+  componentDidMount() {
+    this.loadAllData()
   }
 
   pageLimit = objectType => (objectType === 'thing' ? 10 : 50)
@@ -37,6 +41,7 @@ class PreviewListScreen extends React.Component {
         }`
 
   loadAllData = async () => {
+    console.log('loading all start')
     this.setState({ loading: true })
 
     await this.getUserItems()
@@ -50,6 +55,7 @@ class PreviewListScreen extends React.Component {
     setParams({ gameCount: this.state.games.length })
 
     this.setState({ loading: false })
+    console.log('loading all end')
   }
 
   getUserItems = async () => {
@@ -184,6 +190,14 @@ class PreviewListScreen extends React.Component {
       const response = await request
 
       const items = response.map(record => {
+        if (
+          record.geekitem.item.primaryname.name ===
+          'Nürnberger-Spielkarten-Verlag'
+        ) {
+          console.log('Found: Nürnberger-Spielkarten-Verlag')
+          console.log({ pageId })
+        }
+
         return {
           key: `${record.objectid}-${objectType}-${record.parentitemid}`,
           publisherId: record.objectid,
@@ -283,10 +297,8 @@ class PreviewListScreen extends React.Component {
       let pageCount = loadStatus[pageId].items.length
 
       if (pageCount === 0) {
-        console.log(`triming page ${pageId} as it has ${pageCount} items`)
         delete loadStatus[pageId]
       } else {
-        console.log(`Not triming page ${pageId} as it has ${pageCount} items`)
         break
       }
     }
@@ -302,10 +314,6 @@ class PreviewListScreen extends React.Component {
     )
   }
 
-  componentDidMount() {
-    this.loadAllData()
-  }
-
   render = () => {
     const { navigation } = this.props
     const { games, companies, userSelections, loading } = this.state
@@ -318,6 +326,10 @@ class PreviewListScreen extends React.Component {
         navigation={navigation}
         loading={loading}
         onRefresh={this.loadAllData}
+        style={{
+          backgroundColor: 'green',
+          flex: 1
+        }}
       />
     )
   }
