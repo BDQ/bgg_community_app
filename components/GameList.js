@@ -4,7 +4,6 @@ import { SearchBar, Button } from 'react-native-elements'
 import GameListItem from './GameListItem'
 
 const applyFilter = (str, items) => {
-  console.log({ str })
   let re = new RegExp(str, 'gi')
   let x = items.filter(item => item.name.match(re))
 
