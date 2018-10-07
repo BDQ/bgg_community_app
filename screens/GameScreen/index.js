@@ -108,7 +108,6 @@ export default class GameScreen extends React.Component {
 
     let ratingBGColor, ratingText
 
-    console.log(stats.average)
     if (stats.average === '0') {
       ratingBGColor = '#999999'
       ratingText = '--'

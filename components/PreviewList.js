@@ -126,16 +126,24 @@ export default class PreviewList extends React.PureComponent {
   static getDerivedStateFromProps(props, state) {
     const { games, companies, userSelections } = props
     if (!games) {
-      return { sections: [] }
+      return { sections: [], gameCount: 0 }
     }
 
-    const { sections } = buildSections(
+    const { sections, gameCount } = buildSections(
       games,
       companies,
       userSelections,
       state.filters
     )
-    return { sections }
+
+    return { sections, gameCount }
+  }
+
+  componentDidUpdate(_, prevState) {
+    const { gameCount } = this.state
+    if (prevState.gameCount != gameCount) {
+      this.props.navigation.setParams({ gameCount: gameCount })
+    }
   }
 
   handleFilterTextChange = str => {
