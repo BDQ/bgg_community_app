@@ -9,9 +9,7 @@ import {
 } from 'react-native-elements'
 import { showMessage } from 'react-native-flash-message'
 
-import { fetchJSON } from '../shared/HTTP'
-
-const baseURL = 'https://bgg.cc'
+import { fetchRaw, fetchJSON } from '../shared/HTTP'
 
 const styles = StyleSheet.create({
   text: {
@@ -104,72 +102,67 @@ class ProfileEditScreen extends React.PureComponent {
     }
   }
 
-  attemptBGGLogin = async (bgg_username, bgg_password) => {
+  attemptBGGLogin = async (bggUsername, bggPassword) => {
     const loadAuth = this.props.screenProps.loadAuth
 
-    let form = new FormData()
-    form.append('credentials[username]', bgg_username)
-    form.append('credentials[password]', bgg_password)
+    const headers = new Headers({
+      Accept: 'application/json',
+      'Content-Type': 'application/json;charset=UTF-8'
+    })
 
-    let init = {
+    const init = {
       method: 'POST',
-      body: form
+      body: JSON.stringify({
+        credentials: { username: bggUsername, password: bggPassword }
+      }),
+      credentials: 'include',
+      headers
     }
 
-    const url = `${baseURL}/login/api/v1`
-
     try {
-      let response = await fetch(url, init)
+      // can't fetchJSON here as we want the full http response
+      // so we can inspect the cookies... like a monster ;)
+      let response = await fetchRaw('/login/api/v1', init)
 
       this.setState({ loading: false })
 
       if (response.status == 200) {
-        let cookie = response.headers.get('set-cookie')
+        // const {message} = await response.json()
+        // const cookie = response.headers.get('set-cookie')
 
-        if (cookie !== null) {
-          let bgg_user_cookie = cookie.match(/(bggusername=[^;]*)/gm)[0]
-          let bgg_pwd_cookie = cookie.match(/(bggpassword=[^;]*)/gm)[0]
+        // manually build the cookie here, as the .setItem below is async
+        const { userid, firstname, lastname } = await this.getUserId()
 
-          // manually build the cookie here, as the .setItem below is async
-          const { userid, firstname, lastname } = await this.getUserId({
-            cookie: `${bgg_user_cookie}; ${bgg_pwd_cookie}`
+        if (userid > 0) {
+          showMessage({
+            message: `Successfully signed in as ${bggUsername}.`,
+            icon: 'auto',
+            type: 'success'
           })
 
-          if (userid > 0) {
-            showMessage({
-              message: `Successfully signed in as ${bgg_username}.`,
-              icon: 'auto',
-              type: 'success'
-            })
+          this.setState({
+            isLoggedIn: true
+          })
 
-            this.setState({
-              isLoggedIn: true
+          AsyncStorage.setItem(
+            '@BGGApp:auth',
+            JSON.stringify({
+              bggUsername,
+              userid,
+              firstname,
+              lastname
             })
+          )
 
-            AsyncStorage.setItem(
-              '@BGGApp:auth',
-              JSON.stringify({
-                bgg_username,
-                bgg_user_cookie,
-                bgg_pwd_cookie,
-                userid,
-                firstname,
-                lastname
-              })
-            )
-
-            //tells top level App we've logged in
-            loadAuth()
-          } else {
-            showMessage({
-              message: 'Unexpected error logging in, please try again.',
-              icon: 'auto',
-              type: 'danger'
-            })
-          }
+          //tells top level App we've logged in
+          loadAuth()
         } else {
-          console.error('COOKIE ERROR')
-          console.error(cookie)
+          showMessage({
+            message:
+              'Failed to get user data while logging in, please try again.',
+            icon: 'auto',
+            type: 'danger'
+          })
         }
       } else if (response.status == 401) {
         showMessage({
@@ -179,19 +172,23 @@ class ProfileEditScreen extends React.PureComponent {
         })
       } else {
         showMessage({
-          message: 'Unexpected error logging in, please try again.',
+          message: 'Unexpected http status while logging in, please try again.',
           icon: 'auto',
           type: 'danger'
         })
-        console.error(response)
+        console.warn(response)
       }
     } catch (error) {
-      console.error('LOGIN ERROR', error)
+      showMessage({
+        message: 'Unexpected error logging in, please try again.',
+        icon: 'auto',
+        type: 'danger'
+      })
+      console.warn('LOGIN ERROR', error)
     }
   }
 
-  getUserId = async headers =>
-    await fetchJSON(`${baseURL}/api/users/current`, {}, headers)
+  getUserId = async headers => await fetchJSON('/api/users/current', headers)
 
   renderMessage = () => {
     let msg = 'Configure your BoardGameGeek account to get started.'

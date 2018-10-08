@@ -7,7 +7,7 @@ import GameAddTo from './GameAddTo'
 import PreviewFilters from '../components/PreviewFilters'
 import PreviewList from '../components/PreviewList'
 
-import { fetchJSONAsUser } from '../shared/HTTP'
+import { fetchJSON } from '../shared/HTTP'
 
 class PreviewListScreen extends React.Component {
   state = {
@@ -58,11 +58,11 @@ class PreviewListScreen extends React.Component {
   }
 
   getUserItems = async () => {
-    const url = `https://bgg.cc/api/geekpreviewitems/userinfo?previewid=${
+    const path = `/api/geekpreviewitems/userinfo?previewid=${
       this.state.previewId
     }`
 
-    const { items: userSelections } = await fetchJSONAsUser(url)
+    const { items: userSelections } = await fetchJSON(path)
 
     this.setState({ userSelections })
   }
@@ -112,7 +112,7 @@ class PreviewListScreen extends React.Component {
 
     console.log(pageId, loadStatus[pageId])
     const fetches = {}
-    fetches[pageId] = fetchJSONAsUser(this.buildItemURL(pageId, objectType))
+    fetches[pageId] = fetchJSON(this.buildItemURL(pageId, objectType))
 
     loadStatus = await this.processItems(fetches, loadStatus, objectType)
 
@@ -150,7 +150,7 @@ class PreviewListScreen extends React.Component {
         console.log(`  - updating page: ${pageId} `)
 
         // start the fetch
-        fetches[pageId] = fetchJSONAsUser(this.buildItemURL(pageId, objectType))
+        fetches[pageId] = fetchJSON(this.buildItemURL(pageId, objectType))
 
         // we only block and process when we have 5 requests in parallel
         if (Object.keys(fetches).length === 5) {
@@ -307,10 +307,14 @@ class PreviewListScreen extends React.Component {
 
   persistLoadStatus = (loadStatus, objectType) => {
     // persist the preview data
-    AsyncStorage.setItem(
-      `@BGGApp:EventPreview${objectType}${this.state.previewId}`,
-      JSON.stringify(loadStatus)
-    )
+    try {
+      AsyncStorage.setItem(
+        `@BGGApp:EventPreview${objectType}${this.state.previewId}`,
+        JSON.stringify(loadStatus)
+      )
+    } catch (err) {
+      console.warn(err)
+    }
   }
 
   render = () => {

@@ -97,6 +97,7 @@ export default class ImageList extends React.Component {
           animationType="slide"
           transparent={false}
           visible={this.state.imageModalIndex !== null}
+          onRequestClose={this.hideImageModal}
         >
           <SafeAreaView style={{ backgroundColor: '#000000' }}>
             <View style={{ padding: 10 }}>

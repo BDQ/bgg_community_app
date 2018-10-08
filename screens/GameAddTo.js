@@ -3,7 +3,7 @@ import { View, Text, AsyncStorage, StyleSheet } from 'react-native'
 import { CheckBox, Button } from 'react-native-elements'
 import { showMessage } from 'react-native-flash-message'
 import { Dropdown } from 'react-native-material-dropdown'
-import { fetchJSON, fetchJSONAsUser } from '../shared/HTTP'
+import { fetchJSON } from '../shared/HTTP'
 
 const styles = StyleSheet.create({
   main: {
@@ -75,7 +75,7 @@ export default class GameAddTo extends React.Component {
     let auth = await AsyncStorage.getItem('@BGGApp:auth')
     const { userid } = JSON.parse(auth)
 
-    const url = `https://bgg.cc/api/collections?objectid=${objectid}&objecttype=thing&userid=${userid}`
+    const url = `/api/collections?objectid=${objectid}&objecttype=thing&userid=${userid}`
     const { items } = await fetchJSON(url)
 
     let collid = null,
@@ -129,13 +129,13 @@ export default class GameAddTo extends React.Component {
 
     let response, success
     if (collectionId) {
-      const url = `https://bgg.cc/api/collectionitems/${collectionId}`
-      response = await fetchJSONAsUser(url, { method: 'PUT', body })
+      const url = `/api/collectionitems/${collectionId}`
+      response = await fetchJSON(url, { method: 'PUT', body })
 
       success = response.message === 'Item updated'
     } else {
-      const url = 'https://bgg.cc/api/collectionitems'
-      response = await fetchJSONAsUser(url, { method: 'POST', body })
+      const url = '/api/collectionitems'
+      response = await fetchJSON(url, { method: 'POST', body })
       success = response.message === 'Item saved'
     }
 

@@ -4,7 +4,8 @@ import {
   View,
   SectionList,
   PixelRatio,
-  Text
+  Text,
+  RefreshControl
 } from 'react-native'
 import { SearchBar } from 'react-native-elements'
 import Ionicons from 'react-native-vector-icons/Ionicons'
@@ -15,7 +16,6 @@ import PreviewListCompany from './PreviewListCompany'
 import PreviewListGame from './PreviewListGame'
 
 import { priorities, halls } from '../shared/data'
-import styles from '../shared/styles'
 
 const applyGameFilters = (filters, items) => {
   let filteredItems = items
@@ -283,8 +283,9 @@ export default class PreviewList extends React.PureComponent {
         sections={sections}
         keyExtractor={item => item.key || item.objectid}
         renderItem={this._renderItem}
-        onRefresh={onRefresh}
-        refreshing={loading}
+        refreshControl={
+          <RefreshControl refreshing={loading} onRefresh={onRefresh} />
+        }
         stickySectionHeadersEnabled={false}
         getItemLayout={this.getItemLayout}
         initialNumToRender={15}

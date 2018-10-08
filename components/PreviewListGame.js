@@ -4,7 +4,7 @@ import { Avatar, Badge } from 'react-native-elements'
 import Swipeout from 'react-native-swipeout'
 
 import { priorities } from '../shared/data'
-import { fetchJSONAsUser } from '../shared/HTTP'
+import { fetchJSON } from '../shared/HTTP'
 
 export default class PreviewListGame extends React.PureComponent {
   state = {
@@ -18,6 +18,7 @@ export default class PreviewListGame extends React.PureComponent {
 
     return color ? (
       <Badge
+        style={styles.minorValue}
         value={name}
         textStyle={{ color: '#ffffff', fontSize: 10 }}
         containerStyle={{ backgroundColor: color }}
@@ -50,7 +51,7 @@ export default class PreviewListGame extends React.PureComponent {
         itemid: itemId
       }
     }
-    fetchJSONAsUser(url, { method: 'POST', body })
+    fetchJSON(url, { method: 'POST', body })
   }
 
   render() {
@@ -98,9 +99,7 @@ export default class PreviewListGame extends React.PureComponent {
                 </View>
                 {this._renderPrice()}
                 <View style={[styles.minor, styles.priority]}>
-                  <Text style={styles.minorValue}>
-                    {this._renderPriority()}
-                  </Text>
+                  {this._renderPriority()}
                 </View>
               </View>
             </View>
