@@ -136,10 +136,9 @@ export default class PreviewList extends React.PureComponent {
       state.filters
     )
 
-    console.log('evireprops', props.loading)
     if (missingCompanies > 0 && !props.loading) {
       console.log(`Missing ${missingCompanies} companies, forcing full load`)
-      // props.forceCompanyFullLoad()
+      props.forceCompanyFulLoad()
     }
 
     return { sections, gameCount }
@@ -174,7 +173,6 @@ export default class PreviewList extends React.PureComponent {
       filters
     )
 
-    console.log('persfiler', loading)
     if (missingCompanies > 0 && !loading) {
       console.log(`Missing ${missingCompanies} companies, forcing full load`)
       this.props.forceCompanyFullLoad()
