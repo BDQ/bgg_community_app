@@ -7,6 +7,10 @@ import styles from '../shared/styles'
 import { priorities, halls } from '../shared/data'
 
 export default class PreviewFilters extends React.Component {
+  state = {
+    filters: {}
+  }
+
   toggleTags = name => {
     const select = this[name]
 
@@ -21,10 +25,22 @@ export default class PreviewFilters extends React.Component {
       select.setState({ value: [] })
     }
   }
+
+  static getDerivedStateFromProps(props, state) {
+    const { filters } = props.navigation.state.params
+    if (filters !== state.filters) {
+      return { filters }
+    } else {
+      return null
+    }
+  }
+
   render = () => {
     const { pop } = this.props.navigation
-    const { filters, setFilters } = this.props.navigation.state.params
+    const { filters } = this.state
+    const { setFilters, defaultFilters } = this.props.navigation.state.params
 
+    console.log('render', filters)
     return (
       <View style={styles.mainView}>
         <TouchableOpacity
@@ -71,20 +87,42 @@ export default class PreviewFilters extends React.Component {
           theme="info"
         />
 
-        <Button
-          style={{ marginTop: 30 }}
-          title="Apply Filters"
-          onPress={() => {
-            setFilters({
-              priorities: this.priorityTags.itemsSelected.map(
-                priority => priority.id || priority
-              ),
-              halls: this.hallTags.itemsSelected.map(hall => hall.id || hall)
-            })
-
-            pop()
+        <View
+          style={{
+            marginTop: 30,
+            flex: 1,
+            alignSelf: 'stretch',
+            flexDirection: 'row',
+            justifyContent: 'center'
           }}
-        />
+        >
+          <Button
+            style={{ flex: 1 }}
+            backgroundColor="#03A9F4"
+            title="Apply Filters"
+            blue
+            onPress={() => {
+              setFilters({
+                priorities: this.priorityTags.itemsSelected.map(
+                  priority => priority.id || priority
+                ),
+                halls: this.hallTags.itemsSelected.map(hall => hall.id || hall)
+              })
+
+              pop()
+            }}
+          />
+          <Button
+            style={{ flex: 1 }}
+            title="Reset"
+            onPress={() => {
+              this.setState({ filters: defaultFilters })
+
+              this.priorityTags.setState({ value: [] })
+              this.hallTags.setState({ value: [] })
+            }}
+          />
+        </View>
       </View>
     )
   }

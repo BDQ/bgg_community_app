@@ -17,6 +17,14 @@ import PreviewListGame from './PreviewListGame'
 
 import { priorities, halls } from '../shared/data'
 
+const defaultFilters = {
+  name: '',
+  priorities: [],
+  halls: []
+  // priorities: priorities.map(priority => priority.id),
+  // halls: halls.map(hall => hall.id)
+}
+
 const applyGameFilters = (filters, items) => {
   let filteredItems = items
 
@@ -113,13 +121,7 @@ const buildSections = (games, companies, userSelections, filters) => {
 export default class PreviewList extends React.PureComponent {
   state = {
     filtersSet: false,
-    filters: {
-      name: '',
-      priorities: [],
-      halls: []
-      // priorities: priorities.map(priority => priority.id),
-      // halls: halls.map(hall => hall.id)
-    },
+    filters: defaultFilters,
     sections: []
   }
 
@@ -213,7 +215,11 @@ export default class PreviewList extends React.PureComponent {
           <TouchableOpacity
             style={{ backgroundColor: '#393e42' }}
             onPress={() =>
-              navigate('Filter', { filters, setFilters: this.setFilters })
+              navigate('Filter', {
+                filters,
+                setFilters: this.setFilters,
+                defaultFilters
+              })
             }
           >
             <Ionicons
