@@ -133,7 +133,12 @@ class PreviewListScreen extends React.Component {
     }
   }
 
-  fullLoad = async (loadStatus, objectType) => {
+  forceCompanyFullLoad = () => {
+    const { loadStatus } = this.state
+    this.fullLoad(loadStatus, 'company', true)
+  }
+
+  fullLoad = async (loadStatus, objectType, force = false) => {
     // https://bgg.cc/api/geekpreviewitems/userinfo?previewid=6
     // https://bgg.cc/api/geekpreviewitems/userinfo/sharekey?previewid=6
 
@@ -146,7 +151,7 @@ class PreviewListScreen extends React.Component {
 
       const anHourAgo = new Date().getTime() - 1000 * 60 * 60
 
-      if (!loadedAt || loadedAt < anHourAgo) {
+      if (!loadedAt || loadedAt < anHourAgo || force) {
         console.log(`  - updating page: ${pageId} `)
 
         // start the fetch
@@ -329,6 +334,7 @@ class PreviewListScreen extends React.Component {
         navigation={navigation}
         loading={loading}
         onRefresh={this.loadAllData}
+        forceCompanyFullLoad={this.forceCompanyFullLoad}
         style={{
           backgroundColor: 'green',
           flex: 1

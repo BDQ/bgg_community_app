@@ -102,14 +102,12 @@ const buildSections = (games, companies, userSelections, filters) => {
     }
   })
 
-  if (filteredGames.length > 0) {
-    console.log(
-      'Must be missing company data, as there some games left:',
-      filteredGames.length
-    )
-  }
+  // if we have any games less means we're missing a company
+  // and we should force a company reload (elsewhere)
+  const missingCompanies = filteredGames.length
+
   sections = sections.filter(section => section.data.length > 0)
-  return { sections, gameCount }
+  return { sections, gameCount, missingCompanies }
 }
 
 export default class PreviewList extends React.PureComponent {
@@ -117,8 +115,10 @@ export default class PreviewList extends React.PureComponent {
     filtersSet: false,
     filters: {
       name: '',
-      priorities: priorities.map(priority => priority.id),
-      halls: halls.map(hall => hall.id)
+      priorities: [],
+      halls: []
+      // priorities: priorities.map(priority => priority.id),
+      // halls: halls.map(hall => hall.id)
     },
     sections: []
   }
@@ -129,12 +129,18 @@ export default class PreviewList extends React.PureComponent {
       return { sections: [], gameCount: 0 }
     }
 
-    const { sections, gameCount } = buildSections(
+    const { sections, gameCount, missingCompanies } = buildSections(
       games,
       companies,
       userSelections,
       state.filters
     )
+
+    console.log('evireprops', props.loading)
+    if (missingCompanies > 0 && !props.loading) {
+      console.log(`Missing ${missingCompanies} companies, forcing full load`)
+      // props.forceCompanyFullLoad()
+    }
 
     return { sections, gameCount }
   }
@@ -160,13 +166,19 @@ export default class PreviewList extends React.PureComponent {
   }
 
   persistFilterAndApply = filters => {
-    const { games, companies, userSelections } = this.props
-    const { sections, gameCount } = buildSections(
+    const { games, companies, userSelections, loading } = this.props
+    const { sections, gameCount, missingCompanies } = buildSections(
       games,
       companies,
       userSelections,
       filters
     )
+
+    console.log('persfiler', loading)
+    if (missingCompanies > 0 && !loading) {
+      console.log(`Missing ${missingCompanies} companies, forcing full load`)
+      this.props.forceCompanyFullLoad()
+    }
 
     this.props.navigation.setParams({ gameCount })
     this.setState({

@@ -19,7 +19,7 @@
     },
     "name": "bggca",
     "slug": "bggca",
-    "version": "0.1.0",
+    "version": "0.1.2",
     "description": "v0.1",
     "ios": {
       "bundleIdentifier": "io.bdq.bggca"
