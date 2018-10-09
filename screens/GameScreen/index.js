@@ -58,7 +58,7 @@ export default class GameScreen extends React.Component {
       }
     } = this.state
 
-    if (rankInfo.length > 0) {
+    if (rankInfo && rankInfo.length > 0) {
       return (
         <View style={styles.headerRatings}>
           <Icon name="crown" type="foundation" color="#e66c06" size={20} />
@@ -108,7 +108,7 @@ export default class GameScreen extends React.Component {
 
     let ratingBGColor, ratingText
 
-    if (stats.average === '0') {
+    if (!stats.average || stats.average === '0') {
       ratingBGColor = '#999999'
       ratingText = '--'
     } else {
