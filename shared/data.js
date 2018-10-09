@@ -50,13 +50,5 @@ export const halls = [
   {
     id: 6,
     name: 'Hall 6'
-  },
-  {
-    id: 7,
-    name: 'Hall 7'
-  },
-  {
-    id: 8,
-    name: 'Hall 8'
   }
 ]

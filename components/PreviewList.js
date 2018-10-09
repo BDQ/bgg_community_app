@@ -57,11 +57,14 @@ const applyGameFilters = (filters, items) => {
   return filteredItems
 }
 
-const sortByName = (a, b) => {
-  if (a.name < b.name) {
+const sortByName = (a, b) => sortByAttr(a, b, 'name')
+const sortByLocation = (a, b) => sortByAttr(a, b, 'location')
+
+const sortByAttr = (a, b, attr) => {
+  if (a[attr] < b[attr]) {
     return -1
   }
-  if (a.name > b.name) {
+  if (a[attr] > b[attr]) {
     return 1
   }
 
@@ -69,7 +72,7 @@ const sortByName = (a, b) => {
   return 0
 }
 
-const buildSections = (games, companies, userSelections, filters) => {
+const buildSections = (games, companies, userSelections, filters, sortBy) => {
   if (games.length === 0 || companies.length === 0) {
     //data's not loaded yet, so render empty
 
@@ -110,6 +113,12 @@ const buildSections = (games, companies, userSelections, filters) => {
     }
   })
 
+  if (sortBy === 'locationPublisherGame') {
+    console.log('additnonaslr o locationPublisherGame')
+
+    sections = sections.sort(sortByLocation)
+  }
+
   // if we have any games less means we're missing a company
   // and we should force a company reload (elsewhere)
   const missingCompanies = filteredGames.length
@@ -122,6 +131,7 @@ export default class PreviewList extends React.PureComponent {
   state = {
     filtersSet: false,
     filters: defaultFilters,
+    sortBy: 'publisherGame',
     sections: []
   }
 
@@ -135,7 +145,8 @@ export default class PreviewList extends React.PureComponent {
       games,
       companies,
       userSelections,
-      state.filters
+      state.filters,
+      state.sortBy
     )
 
     if (missingCompanies > 0 && !props.loading) {
@@ -161,18 +172,19 @@ export default class PreviewList extends React.PureComponent {
     this.persistFilterAndApply(filters)
   }
 
-  setFilters = filterChanges => {
+  setFilters = (filterChanges, sortBy) => {
     const filters = { ...this.state.filters, ...filterChanges }
-    this.persistFilterAndApply(filters)
+    this.persistFilterAndApply(filters, sortBy)
   }
 
-  persistFilterAndApply = filters => {
+  persistFilterAndApply = (filters, sortBy) => {
     const { games, companies, userSelections, loading } = this.props
     const { sections, gameCount, missingCompanies } = buildSections(
       games,
       companies,
       userSelections,
-      filters
+      filters,
+      sortBy
     )
 
     if (missingCompanies > 0 && !loading) {
@@ -184,13 +196,14 @@ export default class PreviewList extends React.PureComponent {
     this.setState({
       filtersSet: true,
       filters,
+      sortBy,
       sections
     })
   }
 
   _renderHeader = () => {
     const { navigate } = this.props.navigation
-    const { filters } = this.state
+    const { filters, sortBy } = this.state
     const { name } = filters
 
     return (
@@ -217,6 +230,7 @@ export default class PreviewList extends React.PureComponent {
             onPress={() =>
               navigate('Filter', {
                 filters,
+                sortBy,
                 setFilters: this.setFilters,
                 defaultFilters
               })

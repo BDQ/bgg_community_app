@@ -16,6 +16,11 @@ export default StyleSheet.create({
     backgroundColor: '#ffffff'
   },
 
+  formHeader: {
+    fontSize: 18,
+    color: '#666666',
+    fontWeight: 'bold'
+  },
   formLabel: {
     fontSize: 16,
     color: '#666666',
