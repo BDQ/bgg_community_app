@@ -5,7 +5,7 @@ Sentry.config(
 ).install()
 
 import React from 'react'
-import { AsyncStorage, SafeAreaView } from 'react-native'
+import { AsyncStorage, View } from 'react-native'
 import { createBottomTabNavigator } from 'react-navigation'
 import { Font, AppLoading } from 'expo'
 import FlashMessage from 'react-native-flash-message'
@@ -232,17 +232,17 @@ class App extends React.Component {
     } else {
       if (!isLoggedIn) {
         return (
-          <SafeAreaView style={{ flex: 1 }}>
+          <View style={{ flex: 1 }}>
             <ProfileScreen
               screenProps={{ bgg_credentials, loadAuth }}
               title="BGG Community App"
             />
             <FlashMessage position="top" />
-          </SafeAreaView>
+          </View>
         )
       } else {
         return (
-          <SafeAreaView style={{ flex: 1 }}>
+          <View style={{ flex: 1 }}>
             <AppNavigator
               screenProps={{
                 games,
@@ -252,7 +252,7 @@ class App extends React.Component {
               }}
             />
             <FlashMessage position="top" />
-          </SafeAreaView>
+          </View>
         )
       }
     }
