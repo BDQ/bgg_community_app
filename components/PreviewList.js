@@ -80,33 +80,29 @@ const buildSections = (games, companies, userSelections, filters, sortBy) => {
   }
   const filteredGames = [...applyGameFilters(filters, games)]
 
-  // games.forEach(game => {
-  //   const company = companies.find(c => c.previewItemIds.includes(game.itemId))
-  //   // console.log(company, game.itemId)
-
-  //   if (!company) {
-  //     console.log('company not found')
-  //     console.log(game)
-  //   }
-  // })
-
   const gameCount = filteredGames.length
   // build array of companies, followed by their games
   let sections = companies.sort(sortByName).map(company => {
-    const companyGames = company.previewItemIds.map(itemId => {
-      const gameIndex = filteredGames.findIndex(g => g.itemId === itemId)
+    let companyGames = []
 
-      if (gameIndex > -1) {
-        const [game] = filteredGames.splice(gameIndex, 1)
+    // some records can have not previewItems
+    if (company.previewItemIds) {
+      companyGames = company.previewItemIds.map(itemId => {
+        const gameIndex = filteredGames.findIndex(g => g.itemId === itemId)
 
-        if (game) {
-          game.userSelection = userSelections[itemId]
-          game.location = company.location
+        if (gameIndex > -1) {
+          const [game] = filteredGames.splice(gameIndex, 1)
+
+          if (game) {
+            game.userSelection = userSelections[itemId]
+            game.location = company.location
+          }
+
+          return game
         }
+      })
+    }
 
-        return game
-      }
-    })
     return {
       ...company,
       data: companyGames.sort(sortByName).filter(g => g)
@@ -148,8 +144,8 @@ export default class PreviewList extends React.PureComponent {
     )
 
     if (missingCompanies > 0 && !props.loading) {
-      console.log(`Missing ${missingCompanies} companies, forcing full load`)
-      props.forceCompanyFulLoad()
+      // console.log(`Missing ${missingCompanies} companies, forcing full load`)
+      // props.forceCompanyFulLoad()
     }
 
     return { sections, gameCount }
