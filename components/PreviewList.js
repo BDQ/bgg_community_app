@@ -114,8 +114,6 @@ const buildSections = (games, companies, userSelections, filters, sortBy) => {
   })
 
   if (sortBy === 'locationPublisherGame') {
-    console.log('additnonaslr o locationPublisherGame')
-
     sections = sections.sort(sortByLocation)
   }
 
