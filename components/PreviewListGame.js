@@ -51,7 +51,11 @@ export default class PreviewListGame extends React.PureComponent {
         itemid: itemId
       }
     }
-    fetchJSON(url, { method: 'POST', body })
+    const { message } = await fetchJSON(url, { method: 'POST', body })
+
+    if (message === 'Info saved') {
+      this.props.setUserSelection(itemId, priority)
+    }
   }
 
   render() {

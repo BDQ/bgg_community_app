@@ -57,6 +57,19 @@ class PreviewListScreen extends React.Component {
     console.log('loading all end')
   }
 
+  // updates cached user priorities, so filtering will
+  // show the correct data (after swipe to prioritize)
+  //
+  setUserSelection = (itemId, priority) => {
+    let { userSelections } = this.state
+
+    if (userSelections) {
+      userSelections[itemId].priority = priority
+
+      this.setState({ userSelections })
+    }
+  }
+
   getUserItems = async () => {
     const path = `/api/geekpreviewitems/userinfo?previewid=${
       this.state.previewId
@@ -66,7 +79,6 @@ class PreviewListScreen extends React.Component {
 
     this.setState({ userSelections })
   }
-
   getPreviewItems = async objectType => {
     let loadStatus
     try {
@@ -335,6 +347,7 @@ class PreviewListScreen extends React.Component {
         loading={loading}
         onRefresh={this.loadAllData}
         forceCompanyFullLoad={this.forceCompanyFullLoad}
+        setUserSelection={this.setUserSelection}
         style={{
           backgroundColor: 'green',
           flex: 1

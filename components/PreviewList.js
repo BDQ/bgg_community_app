@@ -252,6 +252,7 @@ export default class PreviewList extends React.PureComponent {
       <PreviewListGame
         {...item}
         game={item}
+        setUserSelection={this.props.setUserSelection}
         navigation={this.props.navigation}
       />
     )
