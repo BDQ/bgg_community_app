@@ -20,8 +20,9 @@ export default class PreviewListGame extends React.PureComponent {
       <Badge
         style={styles.minorValue}
         value={name}
-        textStyle={{ color: '#ffffff', fontSize: 10 }}
+        textStyle={{ color: '#ffffff', fontSize: 9 }}
         containerStyle={{ backgroundColor: color }}
+        wrapperStyle={{ flex: 1 }}
       />
     ) : null
   }
