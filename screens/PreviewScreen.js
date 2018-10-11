@@ -44,12 +44,12 @@ class PreviewListScreen extends React.Component {
     console.log('loading all start')
     this.setState({ loading: true })
 
-    await this.getUserItems()
+    // load user selections and companies first, as they are need
+    // when we load companies so we can enrich using them
+    await Promise.all([this.getUserItems(), this.getPreviewItems('company')])
 
-    await Promise.all([
-      this.getPreviewItems('thing'),
-      this.getPreviewItems('company')
-    ])
+    // get the games!
+    await this.getPreviewItems('thing')
 
     const { setParams } = this.props.navigation
 
@@ -64,7 +64,11 @@ class PreviewListScreen extends React.Component {
     let { userSelections } = this.state
 
     if (userSelections) {
-      userSelections[itemId].priority = priority
+      if (userSelections[itemId]) {
+        userSelections[itemId].priority = priority
+      } else {
+        userSelections[itemId] = { priority }
+      }
 
       this.setState({ userSelections })
     }
@@ -79,6 +83,7 @@ class PreviewListScreen extends React.Component {
 
     this.setState({ userSelections })
   }
+
   getPreviewItems = async objectType => {
     let loadStatus
     try {
@@ -108,8 +113,6 @@ class PreviewListScreen extends React.Component {
 
       all = all.sort(this.sortByName)
 
-      console.log('setting state', objectType)
-
       if (objectType === 'thing') {
         this.setState({ games: all })
       } else {
@@ -122,14 +125,12 @@ class PreviewListScreen extends React.Component {
     // get the last page id
     const pageId = Object.keys(loadStatus).pop()
 
-    console.log(pageId, loadStatus[pageId])
     const fetches = {}
     fetches[pageId] = fetchJSON(this.buildItemURL(pageId, objectType))
 
     loadStatus = await this.processItems(fetches, loadStatus, objectType)
 
     let pageCount = loadStatus[pageId].items.length
-    console.log({ pageId, objectType, pageCount })
 
     // less than X items, so this is still the last page
     if (pageCount < this.pageLimit(objectType)) {
@@ -350,7 +351,7 @@ class PreviewListScreen extends React.Component {
 }
 
 export default createStackNavigator({
-  List: { screen: PreviewListScreen },
+  List: { screen: PreviewListScreen, headerBackTitle: 'Back' },
   Game: { screen: GameScreen },
   Filter: { screen: PreviewFilters },
   AddTo: { screen: GameAddTo }

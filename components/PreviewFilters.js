@@ -37,6 +37,41 @@ export default class PreviewFilters extends React.Component {
     }
   }
 
+  static navigationOptions = ({ navigation }) => {
+    return {
+      headerRight: (
+        <Button
+          onPress={navigation.state.params.applyFilters}
+          title="Apply"
+          buttonStyle={{ backgroundColor: '#03A9F4' }}
+        />
+      )
+    }
+  }
+
+  componentDidMount() {
+    this.props.navigation.setParams({
+      applyFilters: this.applyFilters
+    })
+  }
+
+  applyFilters = () => {
+    const { setFilters } = this.props.navigation.state.params
+    const { pop } = this.props.navigation
+
+    setFilters(
+      {
+        priorities: this.priorityTags.itemsSelected.map(
+          priority => priority.id || priority
+        ),
+        halls: this.hallTags.itemsSelected.map(hall => hall.id || hall)
+      },
+      this.state.sortBy
+    )
+
+    pop()
+  }
+
   render = () => {
     const { pop } = this.props.navigation
     const { filters, sortBy } = this.state
@@ -122,21 +157,7 @@ export default class PreviewFilters extends React.Component {
                 backgroundColor="#03A9F4"
                 title="Apply Filters"
                 blue
-                onPress={() => {
-                  setFilters(
-                    {
-                      priorities: this.priorityTags.itemsSelected.map(
-                        priority => priority.id || priority
-                      ),
-                      halls: this.hallTags.itemsSelected.map(
-                        hall => hall.id || hall
-                      )
-                    },
-                    this.state.sortBy
-                  )
-
-                  pop()
-                }}
+                onPress={this.applyFilters}
               />
               <Button
                 style={{ flex: 1 }}

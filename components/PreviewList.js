@@ -158,7 +158,7 @@ export default class PreviewList extends React.PureComponent {
       console.log(
         `Missing ${missingCompanies} companies, forcing full load in ComponentDidUpdate`
       )
-      this.props.forceCompanyFulLoad()
+      this.props.forceCompanyFullLoad()
     }
   }
 
