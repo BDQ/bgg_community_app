@@ -206,14 +206,6 @@ class PreviewListScreen extends React.Component {
       const response = await request
 
       const items = response.map(record => {
-        if (
-          record.geekitem.item.primaryname.name ===
-          'Nürnberger-Spielkarten-Verlag'
-        ) {
-          console.log('Found: Nürnberger-Spielkarten-Verlag')
-          console.log({ pageId })
-        }
-
         return {
           key: `${record.objectid}-${objectType}-${record.parentitemid}`,
           publisherId: record.objectid,

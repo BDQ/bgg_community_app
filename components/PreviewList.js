@@ -75,9 +75,9 @@ const sortByAttr = (a, b, attr) => {
 const buildSections = (games, companies, userSelections, filters, sortBy) => {
   if (games.length === 0 || companies.length === 0) {
     //data's not loaded yet, so render empty
-
-    return { sections: [], gameCount: 0 }
+    return { sections: [], gameCount: 0, missingCompanies: false }
   }
+
   const filteredGames = [...applyGameFilters(filters, games)]
 
   const gameCount = filteredGames.length
@@ -115,7 +115,7 @@ const buildSections = (games, companies, userSelections, filters, sortBy) => {
 
   // if we have any games less means we're missing a company
   // and we should force a company reload (elsewhere)
-  const missingCompanies = filteredGames.length
+  const missingCompanies = filteredGames.length > 0
 
   sections = sections.filter(section => section.data.length > 0)
   return { sections, gameCount, missingCompanies }
@@ -126,7 +126,8 @@ export default class PreviewList extends React.PureComponent {
     filtersSet: false,
     filters: defaultFilters,
     sortBy: 'publisherGame',
-    sections: []
+    sections: [],
+    missingCompanies: false
   }
 
   static getDerivedStateFromProps(props, state) {
@@ -143,18 +144,21 @@ export default class PreviewList extends React.PureComponent {
       state.sortBy
     )
 
-    if (missingCompanies > 0 && !props.loading) {
-      // console.log(`Missing ${missingCompanies} companies, forcing full load`)
-      // props.forceCompanyFulLoad()
-    }
-
-    return { sections, gameCount }
+    return { sections, gameCount, missingCompanies }
   }
 
   componentDidUpdate(_, prevState) {
-    const { gameCount } = this.state
+    const { gameCount, missingCompanies } = this.state
+
     if (prevState.gameCount != gameCount) {
       this.props.navigation.setParams({ gameCount: gameCount })
+    }
+
+    if (missingCompanies && prevState.missingCompanies != missingCompanies) {
+      console.log(
+        `Missing ${missingCompanies} companies, forcing full load in ComponentDidUpdate`
+      )
+      this.props.forceCompanyFulLoad()
     }
   }
 
@@ -173,6 +177,7 @@ export default class PreviewList extends React.PureComponent {
 
   persistFilterAndApply = (filters, sortBy) => {
     const { games, companies, userSelections, loading } = this.props
+
     const { sections, gameCount, missingCompanies } = buildSections(
       games,
       companies,
