@@ -163,11 +163,12 @@ export default class PreviewList extends React.PureComponent {
   }
 
   handleFilterTextChange = str => {
+    const { sortBy } = this.state
     this.setState({ filtersSet: true })
     let { filters } = this.state
     filters = { ...filters, name: str }
 
-    this.persistFilterAndApply(filters)
+    this.persistFilterAndApply(filters, sortBy)
   }
 
   setFilters = (filterChanges, sortBy) => {
