@@ -143,20 +143,11 @@ export default class PreviewFilters extends React.Component {
               theme="info"
             />
 
-            <View
-              style={{
-                marginTop: 30,
-                flex: 1,
-                alignSelf: 'stretch',
-                flexDirection: 'row',
-                justifyContent: 'center'
-              }}
-            >
+            <View style={styles.formButtons}>
               <Button
                 style={{ flex: 1 }}
                 backgroundColor="#03A9F4"
                 title="Apply Filters"
-                blue
                 onPress={this.applyFilters}
               />
               <Button

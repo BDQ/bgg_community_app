@@ -26,7 +26,13 @@ export default StyleSheet.create({
     color: '#666666',
     fontWeight: 'bold'
   },
-
+  formButtons: {
+    marginTop: 30,
+    flex: 1,
+    alignSelf: 'stretch',
+    flexDirection: 'row',
+    justifyContent: 'center'
+  },
   toggleText: {
     fontSize: 12,
     color: '#999999',

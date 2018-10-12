@@ -6,6 +6,7 @@ import GameScreen from './GameScreen'
 import GameAddTo from './GameAddTo'
 import PreviewFilters from '../components/PreviewFilters'
 import PreviewList from '../components/PreviewList'
+import PreviewEdit from '../components/PreviewEdit'
 
 import { fetchJSON } from '../shared/HTTP'
 
@@ -60,14 +61,14 @@ class PreviewListScreen extends React.Component {
   // updates cached user priorities, so filtering will
   // show the correct data (after swipe to prioritize)
   //
-  setUserSelection = (itemId, priority) => {
+  setUserSelection = (itemId, selection) => {
     let { userSelections } = this.state
 
     if (userSelections) {
       if (userSelections[itemId]) {
-        userSelections[itemId].priority = priority
+        Object.assign(userSelections[itemId], selection)
       } else {
-        userSelections[itemId] = { priority }
+        userSelections[itemId] = selection
       }
 
       this.setState({ userSelections })
@@ -354,5 +355,6 @@ export default createStackNavigator({
   List: { screen: PreviewListScreen, headerBackTitle: 'Back' },
   Game: { screen: GameScreen },
   Filter: { screen: PreviewFilters },
-  AddTo: { screen: GameAddTo }
+  AddTo: { screen: GameAddTo },
+  EditNotes: { screen: PreviewEdit }
 })
