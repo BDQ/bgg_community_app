@@ -52,3 +52,5 @@ export const halls = [
     name: 'Hall 6'
   }
 ]
+
+export const seen = [{ id: 1, name: 'Seen' }, { id: 2, name: 'Not Seen' }]

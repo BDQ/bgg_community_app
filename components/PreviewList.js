@@ -15,14 +15,13 @@ import ProgressBar from 'react-native-progress/Circle'
 import PreviewListCompany from './PreviewListCompany'
 import PreviewListGame from './PreviewListGame'
 
-import { priorities, halls } from '../shared/data'
+import { priorities, halls, seen } from '../shared/data'
 
 const defaultFilters = {
   name: '',
   priorities: [],
-  halls: []
-  // priorities: priorities.map(priority => priority.id),
-  // halls: halls.map(hall => hall.id)
+  halls: [],
+  seen: []
 }
 
 const applyGameFilters = (filters, items) => {
@@ -52,6 +51,21 @@ const applyGameFilters = (filters, items) => {
     filteredItems = filteredItems.filter(
       item => item.location && item.location.match(locationRE)
     )
+  }
+
+  // seen
+  // only applied when on is set
+  if (filters.seen.length === 1) {
+    const seen = filters.seen[0]
+
+    console.log('apply seen filters', seen)
+    let seenRE = new RegExp(`\"seen\":.?true`, 'g')
+
+    filteredItems = filteredItems.filter(item => {
+      const { notes } = item.userSelection || { notes: '' }
+      const markedAsSeen = notes.match(seenRE)
+      return seen === 1 ? markedAsSeen : !markedAsSeen
+    })
   }
 
   return filteredItems

@@ -19,12 +19,18 @@ export default StyleSheet.create({
   formHeader: {
     fontSize: 18,
     color: '#666666',
-    fontWeight: 'bold'
+    fontWeight: 'bold',
+    paddingBottom: 4
   },
   formLabel: {
     fontSize: 16,
     color: '#666666',
     fontWeight: 'bold'
+  },
+  formLabelRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingBottom: 8
   },
   formButtons: {
     marginTop: 30,

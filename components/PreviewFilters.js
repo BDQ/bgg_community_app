@@ -5,7 +5,7 @@ import { Button } from 'react-native-elements'
 import RadioForm from 'react-native-simple-radio-button'
 
 import styles from '../shared/styles'
-import { priorities, halls } from '../shared/data'
+import { priorities, halls, seen } from '../shared/data'
 
 export default class PreviewFilters extends React.Component {
   state = {
@@ -64,7 +64,8 @@ export default class PreviewFilters extends React.Component {
         priorities: this.priorityTags.itemsSelected.map(
           priority => priority.id || priority
         ),
-        halls: this.hallTags.itemsSelected.map(hall => hall.id || hall)
+        halls: this.hallTags.itemsSelected.map(hall => hall.id || hall),
+        seen: this.seenTags.itemsSelected.map(seen => seen.id || seen)
       },
       this.state.sortBy
     )
@@ -90,7 +91,7 @@ export default class PreviewFilters extends React.Component {
       <ScrollView>
         <View style={styles.mainView}>
           <Text style={styles.formHeader}>Sorting</Text>
-          <View style={{ padding: 10 }}>
+          <View style={{ padding: 5 }}>
             <RadioForm
               radio_props={sortingOptions}
               initial={sortIndex}
@@ -98,50 +99,66 @@ export default class PreviewFilters extends React.Component {
             />
           </View>
           <Text style={styles.formHeader}>Filters</Text>
-          <View style={{ padding: 10 }}>
+          <View style={{ padding: 5 }}>
             <TouchableOpacity
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                paddingBottom: 8
-              }}
+              style={styles.formLabelRow}
               onPress={() => this.toggleTags('priorityTags')}
             >
               <Text style={styles.formLabel}>Priority</Text>
               <Text style={styles.toggleText}>(Toggle All)</Text>
             </TouchableOpacity>
 
-            <TagSelect
-              labelAttr="name"
-              value={filters.priorities}
-              ref={tag => {
-                this.priorityTags = tag
-              }}
-              data={priorities}
-              theme="info"
-            />
+            <View style={{ marginLeft: 5 }}>
+              <TagSelect
+                labelAttr="name"
+                value={filters.priorities}
+                ref={tag => {
+                  this.priorityTags = tag
+                }}
+                data={priorities}
+                theme="info"
+              />
+            </View>
 
             <TouchableOpacity
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                paddingBottom: 8
-              }}
+              style={styles.formLabelRow}
               onPress={() => this.toggleTags('hallTags')}
             >
               <Text style={styles.formLabel}>Halls</Text>
               <Text style={styles.toggleText}>(Toggle All)</Text>
             </TouchableOpacity>
 
-            <TagSelect
-              labelAttr="name"
-              value={filters.halls}
-              ref={tag => {
-                this.hallTags = tag
-              }}
-              data={halls}
-              theme="info"
-            />
+            <View style={{ marginLeft: 5 }}>
+              <TagSelect
+                labelAttr="name"
+                value={filters.halls}
+                ref={tag => {
+                  this.hallTags = tag
+                }}
+                data={halls}
+                theme="info"
+              />
+            </View>
+
+            <TouchableOpacity
+              style={styles.formLabelRow}
+              onPress={() => this.toggleTags('seenTags')}
+            >
+              <Text style={styles.formLabel}>Viewed</Text>
+              <Text style={styles.toggleText}>(Toggle All)</Text>
+            </TouchableOpacity>
+
+            <View style={{ marginLeft: 5 }}>
+              <TagSelect
+                labelAttr="name"
+                value={filters.seen}
+                ref={tag => {
+                  this.seenTags = tag
+                }}
+                data={seen}
+                theme="info"
+              />
+            </View>
 
             <View style={styles.formButtons}>
               <Button
