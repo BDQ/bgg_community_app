@@ -5,7 +5,8 @@ import {
   SectionList,
   PixelRatio,
   Text,
-  RefreshControl
+  RefreshControl,
+  AsyncStorage
 } from 'react-native'
 import { SearchBar } from 'react-native-elements'
 import Ionicons from 'react-native-vector-icons/Ionicons'
@@ -192,6 +193,10 @@ export default class PreviewList extends React.PureComponent {
     return { sections, gameCount, missingCompanies }
   }
 
+  componentDidMount() {
+    this.loadFiltersFromStorage()
+  }
+
   componentDidUpdate(_, prevState) {
     const { gameCount, missingCompanies } = this.state
 
@@ -204,6 +209,18 @@ export default class PreviewList extends React.PureComponent {
         `Missing ${missingCompanies} companies, forcing full load in ComponentDidUpdate`
       )
       this.props.forceCompanyFullLoad()
+    }
+  }
+
+  loadFiltersFromStorage = async () => {
+    const filters = await AsyncStorage.getItem('@BGGApp:PreviewFilters')
+
+    if (filters) {
+      try {
+        this.setState({ filtersSet: true, filters: JSON.parse(filters) })
+      } catch (err) {
+        console.warn(err)
+      }
     }
   }
 
@@ -222,6 +239,8 @@ export default class PreviewList extends React.PureComponent {
   }
 
   persistFilterAndApply = (filters, sortBy) => {
+    AsyncStorage.setItem('@BGGApp:PreviewFilters', JSON.stringify(filters))
+
     const { games, companies, userSelections, loading } = this.props
 
     const { sections, gameCount, missingCompanies } = buildSections(
@@ -331,8 +350,9 @@ export default class PreviewList extends React.PureComponent {
     // args can include: (sectionIndex, rowIndex, rowData)
     getItemHeight: row => {
       return row.objecttype === 'thing'
-        ? row.userSelection.notes.match(hasNotesRE) ||
-          row.userSelection.notes !== ''
+        ? row.userSelection &&
+          (row.userSelection.notes.match(hasNotesRE) ||
+            row.userSelection.notes !== '')
           ? 161
           : 101
         : 55
