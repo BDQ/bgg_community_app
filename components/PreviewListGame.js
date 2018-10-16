@@ -1,11 +1,5 @@
 import React from 'react'
-import {
-  TouchableOpacity,
-  TouchableHighlight,
-  StyleSheet,
-  View,
-  Text
-} from 'react-native'
+import { TouchableOpacity, StyleSheet, View, Text } from 'react-native'
 import { Avatar, Badge } from 'react-native-elements'
 import Swipeout from 'react-native-swipeout'
 
@@ -143,6 +137,23 @@ export default class PreviewListGame extends React.PureComponent {
     </View>
   )
 
+  _renderNotes = () => {
+    const {
+      userSelection: {
+        notes: { text }
+      }
+    } = this.state
+
+    return text ? (
+      <View style={styles.notesContainer}>
+        <Text style={styles.minorLabel}>Notes</Text>
+        <Text numberOfLines={2} style={styles.minorValue}>
+          {text}
+        </Text>
+      </View>
+    ) : null
+  }
+
   render() {
     const { navigate } = this.props.navigation
     const {
@@ -192,32 +203,35 @@ export default class PreviewListGame extends React.PureComponent {
             style={styles.itemContainer}
             // onLayout={event => {
             //   var { x, y, width, height } = event.nativeEvent.layout
-            //   console.log({ x, y, width, height})
+            //   console.log({ x, y, width, height })
             // }}
           >
-            <Avatar
-              large
-              source={{ uri: this.props.thumbnail }}
-              activeOpacity={0.7}
-            />
-            <View style={styles.gameDetails}>
-              <Text numberOfLines={1} style={styles.gameName}>
-                {this.props.name}
-              </Text>
-              <Text style={{ fontFamily: 'lato-bold' }}>
-                {this.props.versionName}
-              </Text>
-              <View style={{ flexDirection: 'row' }}>
-                <View style={styles.minor}>
-                  <Text style={styles.minorLabel}>Availability</Text>
-                  <Text style={styles.minorValue}>{this.props.status}</Text>
-                </View>
-                {this._renderPrice()}
-                <View style={[styles.minor, styles.priority]}>
-                  {this._renderPriority()}
+            <View style={styles.mainContainer}>
+              <Avatar
+                large
+                source={{ uri: this.props.thumbnail }}
+                activeOpacity={0.7}
+              />
+              <View style={styles.gameDetails}>
+                <Text numberOfLines={1} style={styles.gameName}>
+                  {this.props.name}
+                </Text>
+                <Text style={{ fontFamily: 'lato-bold' }}>
+                  {this.props.versionName}
+                </Text>
+                <View style={{ flexDirection: 'row' }}>
+                  <View style={styles.minor}>
+                    <Text style={styles.minorLabel}>Availability</Text>
+                    <Text style={styles.minorValue}>{this.props.status}</Text>
+                  </View>
+                  {this._renderPrice()}
+                  <View style={[styles.minor, styles.priority]}>
+                    {this._renderPriority()}
+                  </View>
                 </View>
               </View>
             </View>
+            {this._renderNotes()}
           </View>
         </TouchableOpacity>
       </Swipeout>
@@ -227,12 +241,17 @@ export default class PreviewListGame extends React.PureComponent {
 
 const styles = StyleSheet.create({
   itemContainer: {
-    height: 100,
-    padding: 10,
     borderBottomWidth: 1,
     borderColor: '#132d3d',
-    flexDirection: 'row',
-    backgroundColor: '#ffffff'
+    backgroundColor: '#ffffff',
+    padding: 10
+  },
+  mainContainer: {
+    height: 80,
+    flexDirection: 'row'
+  },
+  notesContainer: {
+    height: 60
   },
   gameDetails: {
     paddingLeft: 10,

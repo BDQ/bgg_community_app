@@ -17,6 +17,8 @@ import PreviewListGame from './PreviewListGame'
 
 import { priorities, halls, seen } from '../shared/data'
 
+const hasNotesRE = new RegExp(`"text":.?".+"`, 'g')
+
 const defaultFilters = {
   name: '',
   priorities: [],
@@ -298,7 +300,14 @@ export default class PreviewList extends React.PureComponent {
   getItemLayout = sectionListGetItemLayout({
     // The height of the row with rowData at the given sectionIndex and rowIndex
     // args can include: (sectionIndex, rowIndex, rowData)
-    getItemHeight: rowData => (rowData.objecttype === 'thing' ? 100 : 55),
+    getItemHeight: row => {
+      return row.objecttype === 'thing'
+        ? row.userSelection.notes.match(hasNotesRE) ||
+          row.userSelection.notes !== ''
+          ? 161
+          : 101
+        : 55
+    },
 
     // These three properties are optional
     getSeparatorHeight: () => 1 / PixelRatio.get(), // The height of your separators
