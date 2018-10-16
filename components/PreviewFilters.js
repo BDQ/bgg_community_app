@@ -175,6 +175,7 @@ export default class PreviewFilters extends React.Component {
 
                   this.priorityTags.setState({ value: [] })
                   this.hallTags.setState({ value: [] })
+                  this.seenTags.setState({ value: [] })
                 }}
               />
             </View>

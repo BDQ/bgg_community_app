@@ -60,8 +60,7 @@ const applyGameFilters = (filters, items) => {
   if (filters.seen.length === 1) {
     const seen = filters.seen[0]
 
-    console.log('apply seen filters', seen)
-    let seenRE = new RegExp(`\"seen\":.?true`, 'g')
+    let seenRE = new RegExp(`"seen":.?true`, 'g')
 
     filteredItems = filteredItems.filter(item => {
       const { notes } = item.userSelection || { notes: '' }
