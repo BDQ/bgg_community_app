@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, ScrollView } from 'react-native'
 import { TagSelect } from 'react-native-tag-select'
 import { Button } from 'react-native-elements'
 import RadioForm from 'react-native-simple-radio-button'
+import { Dropdown } from 'react-native-material-dropdown'
 
 import styles from '../shared/styles'
 import { priorities, halls, seen } from '../shared/data'
@@ -65,7 +66,8 @@ export default class PreviewFilters extends React.Component {
           priority => priority.id || priority
         ),
         halls: this.hallTags.itemsSelected.map(hall => hall.id || hall),
-        seen: this.seenTags.itemsSelected.map(seen => seen.id || seen)
+        seen: this.seenTags.itemsSelected.map(seen => seen.id || seen),
+        filterTextOn: this.state.filters.filterTextOn
       },
       this.state.sortBy
     )
@@ -76,6 +78,7 @@ export default class PreviewFilters extends React.Component {
   render = () => {
     const { pop } = this.props.navigation
     const { filters, sortBy } = this.state
+    const { filterTextOn } = filters
     const { setFilters, defaultFilters } = this.props.navigation.state.params
 
     const sortingOptions = [
@@ -86,6 +89,12 @@ export default class PreviewFilters extends React.Component {
     const sortIndex = sortingOptions.findIndex(
       sortOpt => sortOpt.value === sortBy
     )
+
+    const filterTextOnOptions = [
+      { label: 'Game Name', value: 'game' },
+      { label: 'Company Name', value: 'company' },
+      { label: 'Notes', value: 'note' }
+    ]
 
     return (
       <ScrollView>
@@ -100,6 +109,20 @@ export default class PreviewFilters extends React.Component {
           </View>
           <Text style={styles.formHeader}>Filters</Text>
           <View style={{ padding: 5 }}>
+            <Text style={styles.formLabel}>Text Filter on:</Text>
+            <View style={{ marginLeft: 5, marginBottom: 5 }}>
+              <Dropdown
+                dropdownOffset={{ top: 8, left: 0 }}
+                itemCount={3}
+                data={filterTextOnOptions}
+                value={filterTextOn}
+                onChangeText={filterTextOn =>
+                  this.setState({
+                    filters: { ...this.state.filters, filterTextOn }
+                  })
+                }
+              />
+            </View>
             <TouchableOpacity
               style={styles.formLabelRow}
               onPress={() => this.toggleTags('priorityTags')}

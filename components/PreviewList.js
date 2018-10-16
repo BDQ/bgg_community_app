@@ -15,7 +15,7 @@ import ProgressBar from 'react-native-progress/Circle'
 import PreviewListCompany from './PreviewListCompany'
 import PreviewListGame from './PreviewListGame'
 
-import { priorities, halls, seen } from '../shared/data'
+import { priorities, halls } from '../shared/data'
 
 const hasNotesRE = new RegExp(`"text":.?".+"`, 'g')
 
@@ -23,16 +23,43 @@ const defaultFilters = {
   name: '',
   priorities: [],
   halls: [],
-  seen: []
+  seen: [],
+  filterTextOn: 'game'
+}
+
+const applyCompanyFilters = (filters, companies) => {
+  let filteredItems = companies
+  if (filters.name !== '') {
+    const filterTextRE = new RegExp(filters.name, 'gi')
+
+    if (filters.filterTextOn === 'company') {
+      // notes
+      filteredItems = filteredItems.filter(item =>
+        item.name.match(filterTextRE)
+      )
+    }
+  }
+
+  return filteredItems
 }
 
 const applyGameFilters = (filters, items) => {
   let filteredItems = items
 
-  // name
   if (filters.name !== '') {
-    let nameRE = new RegExp(filters.name, 'gi')
-    filteredItems = filteredItems.filter(item => item.name.match(nameRE))
+    const filterTextRE = new RegExp(filters.name, 'gi')
+
+    if (filters.filterTextOn === 'notes') {
+      // notes
+      filteredItems = filteredItems.filter(item =>
+        item.userSelections.text.match(filterTextRE)
+      )
+    } else if (filters.filterTextOn === 'game') {
+      // game name
+      filteredItems = filteredItems.filter(item =>
+        item.name.match(filterTextRE)
+      )
+    }
   }
 
   // priorities
@@ -93,11 +120,12 @@ const buildSections = (games, companies, userSelections, filters, sortBy) => {
     return { sections: [], gameCount: 0, missingCompanies: false }
   }
 
+  const filteredCompanies = applyCompanyFilters(filters, companies)
   const filteredGames = [...applyGameFilters(filters, games)]
 
   const gameCount = filteredGames.length
   // build array of companies, followed by their games
-  let sections = companies.sort(sortByName).map(company => {
+  let sections = filteredCompanies.sort(sortByName).map(company => {
     let companyGames = []
 
     // some records can have not previewItems
@@ -130,7 +158,9 @@ const buildSections = (games, companies, userSelections, filters, sortBy) => {
 
   // if we have any games less means we're missing a company
   // and we should force a company reload (elsewhere)
-  const missingCompanies = filteredGames.length > 0
+  // ONLY if we're not filtering on companies...
+  const missingCompanies =
+    filteredGames.length > 0 && filteredCompanies.length === companies.length
 
   sections = sections.filter(section => section.data.length > 0)
   return { sections, gameCount, missingCompanies }
