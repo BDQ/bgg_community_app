@@ -33,7 +33,7 @@ const applyCompanyFilters = (filters, companies) => {
   if (filters.name !== '') {
     const filterTextRE = new RegExp(filters.name, 'gi')
 
-    if (filters.filterTextOn === 'company') {
+    if (filters.filterTextOn === 'publisher') {
       // notes
       filteredItems = filteredItems.filter(item =>
         item.name.match(filterTextRE)
@@ -50,11 +50,12 @@ const applyGameFilters = (filters, items) => {
   if (filters.name !== '') {
     const filterTextRE = new RegExp(filters.name, 'gi')
 
-    if (filters.filterTextOn === 'notes') {
+    if (filters.filterTextOn === 'note') {
       // notes
-      filteredItems = filteredItems.filter(item =>
-        item.userSelections.text.match(filterTextRE)
-      )
+      filteredItems = filteredItems.filter(item => {
+        const { userSelection: { notes = '' } = {} } = item
+        return notes.match(filterTextRE)
+      })
     } else if (filters.filterTextOn === 'game') {
       // game name
       filteredItems = filteredItems.filter(item =>
@@ -268,7 +269,7 @@ export default class PreviewList extends React.PureComponent {
   _renderHeader = () => {
     const { navigate } = this.props.navigation
     const { filters, sortBy } = this.state
-    const { name } = filters
+    const { name, filterTextOn } = filters
 
     return (
       <View style={{ flexDirection: 'row' }}>
@@ -277,7 +278,7 @@ export default class PreviewList extends React.PureComponent {
             onChangeText={this.handleFilterTextChange}
             value={name}
             onClearText={this.clearFilter}
-            placeholder="Type here to filter..."
+            placeholder={`Filter on: ${filterTextOn}`}
             clearIcon
           />
         </View>

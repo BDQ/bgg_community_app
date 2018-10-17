@@ -92,7 +92,7 @@ export default class PreviewFilters extends React.Component {
 
     const filterTextOnOptions = [
       { label: 'Game Name', value: 'game' },
-      { label: 'Company Name', value: 'company' },
+      { label: 'Publisher Name', value: 'publisher' },
       { label: 'Notes', value: 'note' }
     ]
 
@@ -110,7 +110,7 @@ export default class PreviewFilters extends React.Component {
           <Text style={styles.formHeader}>Filters</Text>
           <View style={{ padding: 5 }}>
             <Text style={styles.formLabel}>Text Filter on:</Text>
-            <View style={{ marginLeft: 5, marginBottom: 5 }}>
+            <View style={{ marginLeft: 5, marginBottom: 15 }}>
               <Dropdown
                 dropdownOffset={{ top: 8, left: 0 }}
                 itemCount={3}
@@ -123,6 +123,7 @@ export default class PreviewFilters extends React.Component {
                 }
               />
             </View>
+
             <TouchableOpacity
               style={styles.formLabelRow}
               onPress={() => this.toggleTags('priorityTags')}
@@ -131,7 +132,7 @@ export default class PreviewFilters extends React.Component {
               <Text style={styles.toggleText}>(Toggle All)</Text>
             </TouchableOpacity>
 
-            <View style={{ marginLeft: 5 }}>
+            <View style={{ marginLeft: 5, marginBottom: 15 }}>
               <TagSelect
                 labelAttr="name"
                 value={filters.priorities}
@@ -151,7 +152,7 @@ export default class PreviewFilters extends React.Component {
               <Text style={styles.toggleText}>(Toggle All)</Text>
             </TouchableOpacity>
 
-            <View style={{ marginLeft: 5 }}>
+            <View style={{ marginLeft: 5, marginBottom: 15 }}>
               <TagSelect
                 labelAttr="name"
                 value={filters.halls}
@@ -171,7 +172,7 @@ export default class PreviewFilters extends React.Component {
               <Text style={styles.toggleText}>(Toggle All)</Text>
             </TouchableOpacity>
 
-            <View style={{ marginLeft: 5 }}>
+            <View style={{ marginLeft: 5, marginBottom: 15 }}>
               <TagSelect
                 labelAttr="name"
                 value={filters.seen}

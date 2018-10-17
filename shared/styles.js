@@ -20,7 +20,7 @@ export default StyleSheet.create({
     fontSize: 18,
     color: '#666666',
     fontWeight: 'bold',
-    paddingBottom: 4
+    paddingBottom: 10
   },
   formLabel: {
     fontSize: 16,
