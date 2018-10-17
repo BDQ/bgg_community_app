@@ -6,7 +6,7 @@ import RadioForm from 'react-native-simple-radio-button'
 import { Dropdown } from 'react-native-material-dropdown'
 
 import styles from '../shared/styles'
-import { priorities, halls, seen } from '../shared/data'
+import { priorities, halls, seen, availability } from '../shared/data'
 
 export default class PreviewFilters extends React.Component {
   state = {
@@ -67,6 +67,9 @@ export default class PreviewFilters extends React.Component {
         ),
         halls: this.hallTags.itemsSelected.map(hall => hall.id || hall),
         seen: this.seenTags.itemsSelected.map(seen => seen.id || seen),
+        availability: this.availabilityTags.itemsSelected.map(
+          avail => avail.id || avail
+        ),
         filterTextOn: this.state.filters.filterTextOn
       },
       this.state.sortBy
@@ -184,6 +187,26 @@ export default class PreviewFilters extends React.Component {
               />
             </View>
 
+            <TouchableOpacity
+              style={styles.formLabelRow}
+              onPress={() => this.toggleTags('availabilityTags')}
+            >
+              <Text style={styles.formLabel}>Availability</Text>
+              <Text style={styles.toggleText}>(Toggle All)</Text>
+            </TouchableOpacity>
+
+            <View style={{ marginLeft: 5 }}>
+              <TagSelect
+                labelAttr="name"
+                value={filters.availability}
+                ref={tag => {
+                  this.availabilityTags = tag
+                }}
+                data={availability}
+                theme="info"
+              />
+            </View>
+
             <View style={styles.formButtons}>
               <Button
                 style={{ flex: 1 }}
@@ -200,6 +223,7 @@ export default class PreviewFilters extends React.Component {
                   this.priorityTags.setState({ value: [] })
                   this.hallTags.setState({ value: [] })
                   this.seenTags.setState({ value: [] })
+                  this.availabilityTags.setState({ value: [] })
                 }}
               />
             </View>

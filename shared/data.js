@@ -54,3 +54,8 @@ export const halls = [
 ]
 
 export const seen = [{ id: 1, name: 'Seen' }, { id: 2, name: 'Not Seen' }]
+
+export const availability = [
+  { id: 'Demo', name: 'Demo' },
+  { id: 'For Sale', name: 'For Sale' }
+]

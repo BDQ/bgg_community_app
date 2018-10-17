@@ -16,7 +16,7 @@ import ProgressBar from 'react-native-progress/Circle'
 import PreviewListCompany from './PreviewListCompany'
 import PreviewListGame from './PreviewListGame'
 
-import { priorities, halls } from '../shared/data'
+import { priorities, halls, availability } from '../shared/data'
 
 const hasNotesRE = new RegExp(`"text":.?".+"`, 'g')
 
@@ -25,6 +25,7 @@ const defaultFilters = {
   priorities: [],
   halls: [],
   seen: [],
+  availability: [],
   filterTextOn: 'game'
 }
 
@@ -95,6 +96,18 @@ const applyGameFilters = (filters, items) => {
       const { notes } = item.userSelection || { notes: '' }
       const markedAsSeen = notes.match(seenRE)
       return seen === 1 ? markedAsSeen : !markedAsSeen
+    })
+  }
+
+  // availability
+  if (
+    filters.availability &&
+    filters.availability.length > 0 &&
+    filters.availability.length < availability.length
+  ) {
+    console.log('applying availability')
+    filteredItems = filteredItems.filter(item => {
+      return filters.availability.includes(item.status)
     })
   }
 
