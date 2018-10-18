@@ -105,7 +105,6 @@ const applyGameFilters = (filters, items) => {
     filters.availability.length > 0 &&
     filters.availability.length < availability.length
   ) {
-    console.log('applying availability')
     filteredItems = filteredItems.filter(item => {
       return filters.availability.includes(item.status)
     })
