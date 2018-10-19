@@ -12,7 +12,6 @@ import { fetchJSON } from '../shared/HTTP'
 
 class PreviewListScreen extends React.Component {
   state = {
-    loadStatus: {},
     games: [],
     companies: [],
     userSelections: [],
@@ -32,14 +31,19 @@ class PreviewListScreen extends React.Component {
 
   pageLimit = objectType => (objectType === 'thing' ? 10 : 50)
 
-  buildItemURL = (pageId, objectType) =>
-    objectType === 'thing'
-      ? `https://api.geekdo.com/api/geekpreviewitems?nosession=1&pageid=${pageId}&previewid=${
-          this.state.previewId
-        }`
-      : `https://api.geekdo.com/api/geekpreviewparentitems?nosession=1&pageid=${pageId}&previewid=${
-          this.state.previewId
-        }`
+  buildItemURL = (pageId, objectType) => {
+    if (objectType === 'thing') {
+      return `https://api.geekdo.com/api/geekpreviewitems?nosession=1&pageid=${pageId}&previewid=${
+        this.state.previewId
+      }`
+    } else if (objectType === 'company') {
+      return `https://api.geekdo.com/api/geekpreviewparentitems?nosession=1&pageid=${pageId}&previewid=${
+        this.state.previewId
+      }`
+    } else {
+      console.warn(`Got unexpected objectType: '${objectType}'`)
+    }
+  }
 
   loadAllData = async () => {
     console.log('loading all start')
@@ -85,7 +89,7 @@ class PreviewListScreen extends React.Component {
     this.setState({ userSelections })
   }
 
-  getPreviewItems = async objectType => {
+  getPreviewItems = async (objectType, force = false) => {
     let loadStatus
     try {
       loadStatus =
@@ -99,9 +103,17 @@ class PreviewListScreen extends React.Component {
       console.log(e)
     }
 
-    if (Object.keys(loadStatus).length === 0) {
+    // if (objectType === 'thing') {
+    //   Object.keys(loadStatus).forEach(key => {
+    //     console.log(key, loadStatus[key].items.length)
+    //   })
+
+    //   console.log(loadStatus['1'])
+    // }
+
+    if (force || Object.keys(loadStatus).length === 0) {
       console.log('full load', objectType)
-      await this.fullLoad(loadStatus, objectType)
+      await this.fullLoad(loadStatus, objectType, force)
     } else {
       console.log('partial load', objectType)
       await this.checkForNewPages(loadStatus, objectType)
@@ -148,14 +160,10 @@ class PreviewListScreen extends React.Component {
   }
 
   forceCompanyFullLoad = () => {
-    const { loadStatus } = this.state
-    this.fullLoad(loadStatus, 'company', true)
+    this.getPreviewItems('company', true)
   }
 
   fullLoad = async (loadStatus, objectType, force = false) => {
-    // https://bgg.cc/api/geekpreviewitems/userinfo?previewid=6
-    // https://bgg.cc/api/geekpreviewitems/userinfo/sharekey?previewid=6
-
     let pageId = 1
     let continueProcessing = true
     let fetches = {}
@@ -229,7 +237,6 @@ class PreviewListScreen extends React.Component {
 
       // set the state
       this.setState({
-        loadStatus,
         companies
       })
     })
@@ -289,7 +296,6 @@ class PreviewListScreen extends React.Component {
 
       // set the state
       this.setState({
-        loadStatus,
         games
       })
     })
