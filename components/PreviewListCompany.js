@@ -9,7 +9,7 @@ export default class PreviewListCompany extends React.PureComponent {
 
     if (location) {
       return (
-        <Text style={{ fontFamily: 'lato-bold' }}>Location: {location}</Text>
+        <Text style={styles.location}>Location: {location}</Text>
       )
     }
   }
@@ -17,7 +17,8 @@ export default class PreviewListCompany extends React.PureComponent {
     return (
       <View style={styles.itemContainer}>
         <Avatar
-          small
+          medium
+          rounded
           source={{ uri: this.props.thumbnail }}
           activeOpacity={0.7}
         />
@@ -35,20 +36,26 @@ export default class PreviewListCompany extends React.PureComponent {
 const styles = StyleSheet.create({
   itemContainer: {
     height: 56,
-    padding: 10,
+    padding: 2,
+    paddingLeft:10,
     borderBottomWidth: 1,
     borderColor: '#132d3d',
     flexDirection: 'row',
-    backgroundColor: '#ffffff'
+    backgroundColor: '#292e62'
   },
   gameDetails: {
     paddingLeft: 10,
     flex: 1,
-    flexDirection: 'column'
+    flexDirection: 'column',
   },
   gameName: {
     fontFamily: 'lato-bold',
-    fontSize: 20
+    fontSize: 20,
+    color: '#ffffff'
+  },
+  location: {
+    fontFamily: 'lato-bold',
+    color: '#eeeeee'
   },
   text: {
     color: '#132d3d'
