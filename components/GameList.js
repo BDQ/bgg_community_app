@@ -5,26 +5,29 @@ import GameListItem from './GameListItem'
 
 const applyFilter = (str, items) => {
   let re = new RegExp(str, 'gi')
-  let x = items.filter(item => item.name.match(re))
-
-  console.log(x.length)
-  return x
+  return items.filter(item => item.name.match(re))
 }
 
 export default class GameList extends React.PureComponent {
   state = {
     games: [],
+    loading: false,
     filterString: ''
   }
 
-  constructor(props) {
-    super(props)
-    this.state = { games: props.games }
-  }
+  static getDerivedStateFromProps(props, state) {
+    console.log(
+      props.games.map(g => g.objectId) !== state.games.map(g => g.objectId),
+      props.games.map(g => g.objectId),
+      state.games.map(g => g.objectId)
+    )
 
-  // static getDerivedStateFromProps(props, state) {
-  //   return { items: applyFilter(state.filterString, props.items) }
-  // }
+    if (props.games.map(g => g.objectId) !== state.games.map(g => g.objectId)) {
+      return { games: applyFilter(state.filterString, props.games) }
+    } else {
+      return null
+    }
+  }
 
   _renderItem = ({ item }) => {
     const { navigate } = this.props.navigation
@@ -55,6 +58,13 @@ export default class GameList extends React.PureComponent {
     this.setState({ items: this.props.games })
   }
 
+  handleRefresh = async () => {
+    this.setState({ loading: true })
+    let games = await this.props.onRefresh()
+
+    this.setState({ loading: false, games })
+  }
+
   _renderHeader = () => {
     const { loading } = this.props
     return (
@@ -68,16 +78,16 @@ export default class GameList extends React.PureComponent {
   }
 
   render() {
-    const { loading, fetchCollection } = this.props
+    // console.log('GameList render', this.state.games.length)
 
     return (
       <FlatList
         ListHeaderComponent={this._renderHeader}
         data={this.state.games}
-        keyExtractor={item => item.key || item.objectid}
+        keyExtractor={item => item.key || item.objectId || item.objectid}
         renderItem={this._renderItem}
-        onRefresh={() => fetchCollection('briandquinn', true)}
-        refreshing={false}
+        onRefresh={this.handleRefresh}
+        refreshing={this.state.loading}
         getItemLayout={(data, index) => {
           const itemHeight = 100
           return {
