@@ -8,9 +8,7 @@ export default class PreviewListCompany extends React.PureComponent {
     const { location } = this.props
 
     if (location) {
-      return (
-        <Text style={styles.location}>Location: {location}</Text>
-      )
+      return <Text style={styles.location}>Location: {location}</Text>
     }
   }
   render() {
@@ -35,9 +33,9 @@ export default class PreviewListCompany extends React.PureComponent {
 
 const styles = StyleSheet.create({
   itemContainer: {
-    height: 56,
-    padding: 2,
-    paddingLeft:10,
+    height: 58,
+    padding: 3,
+    paddingLeft: 10,
     borderBottomWidth: 1,
     borderColor: '#132d3d',
     flexDirection: 'row',
@@ -46,7 +44,7 @@ const styles = StyleSheet.create({
   gameDetails: {
     paddingLeft: 10,
     flex: 1,
-    flexDirection: 'column',
+    flexDirection: 'column'
   },
   gameName: {
     fontFamily: 'lato-bold',

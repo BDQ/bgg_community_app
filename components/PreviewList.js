@@ -373,7 +373,7 @@ export default class PreviewList extends React.PureComponent {
 
     // These three properties are optional
     getSeparatorHeight: () => 1 / PixelRatio.get(), // The height of your separators
-    getSectionHeaderHeight: () => 56, // The height of your section headers
+    getSectionHeaderHeight: () => 58, // The height of your section headers
     getSectionFooterHeight: () => 0 // The height of your section footers
   })
 
