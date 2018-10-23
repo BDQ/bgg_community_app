@@ -42,9 +42,12 @@ export const fetchCollection = async (username, force) => {
         let own = status.attributes.own == '1'
         let wishlist = status.attributes.wishlist == '1'
 
+        let subtitle = `Year: ${yearpublished}`
+
         return {
           objectId,
           name,
+          subtitle,
           yearpublished,
           image,
           thumbnail,
@@ -91,13 +94,12 @@ export const loadCollection = async updatedAt => {
       const value = await AsyncStorage.getItem('@BGGApp:collection')
       if (value !== null) {
         const { games, updatedAt } = JSON.parse(value)
-        this.setState({
-          collection: games,
-          updatedAt
-        })
+
+        return { games, updatedAt }
       }
     } catch (error) {
       Sentry.captureException(error)
+      return {}
     }
   }
 }

@@ -17,6 +17,8 @@ import PreviewScreen from './screens/PreviewScreen'
 import ProfileScreen from './screens/ProfileScreen'
 import VisualSearchScreen from './screens/VisualSearchScreen'
 
+import { loadCollection, fetchCollection } from './shared/collection'
+
 const AppNavigator = createBottomTabNavigator({
   Owned: {
     screen: OwnedScreen,
@@ -87,6 +89,7 @@ const AppNavigator = createBottomTabNavigator({
 
 class App extends React.Component {
   state = {
+    games: [],
     isReady: false,
     updatedAt: undefined,
     bgg_credentials: {}
@@ -108,7 +111,8 @@ class App extends React.Component {
   }
 
   _cacheResourcesAsync = async () => {
-    // await this.loadCollection(this.state.updateAt)
+    const persistedState = await loadCollection(this.state.updateAt)
+    this.setState(persistedState)
 
     let promises = [
       Font.loadAsync({
@@ -122,6 +126,7 @@ class App extends React.Component {
   }
 
   render() {
+    const { games } = this.state
     const bgg_credentials = this.state.bgg_credentials
     const isLoggedIn = Object.keys(bgg_credentials).length > 0
     const loadAuth = this.loadAuth
@@ -150,6 +155,7 @@ class App extends React.Component {
           <View style={{ flex: 1 }}>
             <AppNavigator
               screenProps={{
+                games,
                 bgg_credentials,
                 loadAuth
               }}

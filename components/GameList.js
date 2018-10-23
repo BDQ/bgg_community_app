@@ -40,7 +40,7 @@ export default class GameList extends React.PureComponent {
         <GameListItem
           name={item.name}
           thumbnail={item.thumbnail}
-          subtitle={`Year: ${item.yearpublished}`}
+          subtitle={item.subtitle}
         />
       </TouchableOpacity>
     )
@@ -59,9 +59,9 @@ export default class GameList extends React.PureComponent {
 
   handleRefresh = async () => {
     this.setState({ loading: true })
-    let games = await this.props.onRefresh()
+    await this.props.onRefresh()
 
-    this.setState({ loading: false, games })
+    this.setState({ loading: false })
   }
 
   _renderHeader = () => {
