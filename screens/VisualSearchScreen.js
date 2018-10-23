@@ -1,44 +1,37 @@
 import React from 'react'
 import { createStackNavigator } from 'react-navigation'
 import { View, Text, Image } from 'react-native'
+import ProgressBar from 'react-native-progress/Circle'
+import { Button } from 'react-native-elements'
+
 import Camera from '../components/Camera'
 
 import GameScreen from './GameScreen'
 import GameAddTo from './GameAddTo'
-import ImagePicker from 'expo'
 
 import { fetchJSON } from '../shared/HTTP'
 import GameListScreen from './GameListScreen'
-import styles from '../shared/styles'
 
 class VisualSearchScreen extends React.Component {
-  handleScan = async photo => {
-    const { navigate } = this.props.navigation
-    navigate('Processing', { photo })
-  }
-
-  render = () => {
-    return <Camera onScan={this.handleScan} />
-  }
-}
-
-class SnapProcessingScreen extends React.Component {
   state = {
-    photo: {}
+    showCamera: true,
+    photo: null,
+    searchComplete: false
   }
 
-  static getDerivedStateFromProps(props, state) {
-    const { photo } = props.navigation.state.params
+  // uncomment this, and set photo: true to state
+  // componentDidMount = () => {
+  //   // const base64 = '' //grab contents of base64cover.txt
+  //   // this.handleScan({ base64 })
+  // }
 
-    if (photo && photo !== state.photo) {
-      return { photo }
-    }
-
-    // Return null to indicate no change to state.
-    return null
+  handleCancel = () => {
+    this.setState({ showCamera: false })
   }
 
-  async componentDidMount() {
+  handleSnap = async photo => {
+    this.setState({ photo, showCamera: false, searchComplete: false })
+
     const body = {
       query: {
         ands: [
@@ -47,7 +40,7 @@ class SnapProcessingScreen extends React.Component {
               input: {
                 data: {
                   image: {
-                    base64: this.state.photo.base64
+                    base64: photo.base64
                   }
                 }
               }
@@ -67,7 +60,6 @@ class SnapProcessingScreen extends React.Component {
         Authorization: 'Key 2e66614a535d4e27aabd35862f23c6ed'
       }
     )
-    // console.log(result)
 
     const games = result.hits.map(result => {
       const { metadata } = result.input.data
@@ -78,30 +70,91 @@ class SnapProcessingScreen extends React.Component {
         objectId: metadata.id,
         name: metadata.name,
         thumbnail: metadata.thumbnail,
-        yearpublished: score
+        yearpublished: score,
+        searchScore: score
       }
     })
 
-    console.log(games)
-    const { navigate } = this.props.navigation
-    navigate('List', { games })
+    await this.setState({ searchComplete: true })
+
+    // navigate to the results list
+    this.props.navigation.push('List', { games })
+
+    if (games.length > 2) {
+      // if the top game has a good score, and is at least 1 full point above the next game
+      // we just jump directly to that game, as opposed to showing the list
+      const game = games[0]
+      if (
+        game.searchScore > 0.69 ||
+        (game.searchScore > 0.6 && games[1].searchScore < game.searchScore - 1)
+      ) {
+        this.props.navigation.push('Game', { game: games[0] })
+      }
+    }
+  }
+
+  snapAgain = () => {
+    this.setState({ showCamera: true })
+  }
+
+  _renderStatus = () => {
+    const { searchComplete } = this.state
+
+    if (searchComplete) {
+      return null
+    } else {
+      return (
+        <React.Fragment>
+          <ProgressBar indeterminate={true} color="#000000" style={{}} />
+          <Text style={{ marginTop: 15, marginBottom: 10 }}>
+            Searching the shelves...
+          </Text>
+        </React.Fragment>
+      )
+    }
   }
 
   render = () => {
-    const uri = `data:image/png;base64,${this.state.photo.base64}`
+    if (this.state.showCamera) {
+      return <Camera onScan={this.handleSnap} onCancel={this.handleCancel} />
+    } else {
+      const uri = `data:image/png;base64,${this.state.photo.base64}`
 
-    return (
-      <View style={styles.mainView}>
-        <Text>Processing Image...</Text>
-        <Image style={{ width: 66, height: 58 }} source={{ uri }} />
-      </View>
-    )
+      return (
+        <View
+          style={{
+            flex: 1,
+            justifyContent: 'center',
+            alignItems: 'center',
+            backgroundColor: '#ffffff',
+            paddingTop: 20
+          }}
+        >
+          {this._renderStatus()}
+          <Image
+            style={{
+              width: '90%',
+              height: 300,
+              marginBottom: 10,
+              resizeMode: Image.resizeMode.contain
+            }}
+            source={{ uri }}
+          />
+
+          <Button
+            raised
+            icon={{ name: 'camera' }}
+            title="Take Another"
+            onPress={this.snapAgain}
+          />
+        </View>
+      )
+    }
   }
 }
 
 export default createStackNavigator({
   Scan: { screen: VisualSearchScreen, headerBackTitle: 'Back' },
-  Processing: { screen: SnapProcessingScreen },
   List: { screen: GameListScreen },
   Game: { screen: GameScreen },
   AddTo: { screen: GameAddTo }

@@ -17,9 +17,8 @@ export default class GameList extends React.PureComponent {
 
   static getDerivedStateFromProps(props, state) {
     console.log(
-      props.games.map(g => g.objectId) !== state.games.map(g => g.objectId),
-      props.games.map(g => g.objectId),
-      state.games.map(g => g.objectId)
+      'games changed',
+      props.games.map(g => g.objectId) !== state.games.map(g => g.objectId)
     )
 
     if (props.games.map(g => g.objectId) !== state.games.map(g => g.objectId)) {
