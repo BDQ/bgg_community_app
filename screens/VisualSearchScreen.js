@@ -8,11 +8,12 @@ import { showMessage } from 'react-native-flash-message'
 import { CLARIFAI_API_KEY } from 'react-native-dotenv'
 import Camera from '../components/Camera'
 
+import GameListScreen from './GameListScreen'
 import GameScreen from './GameScreen'
 import GameAddTo from './GameAddTo'
 
 import { fetchJSON } from '../shared/HTTP'
-import GameListScreen from './GameListScreen'
+import { removeDuplicates } from '../shared/collection'
 
 class VisualSearchScreen extends React.Component {
   state = {
@@ -64,19 +65,23 @@ class VisualSearchScreen extends React.Component {
     )
 
     if (result) {
-      const games = result.hits.map(result => {
+      let games = result.hits.map(result => {
         const { metadata } = result.input.data
         const { score } = result
 
+        console.log(result)
         return {
-          key: metadata.id,
+          key: result.input.id,
           objectId: metadata.id,
           name: metadata.name,
+          subtitle: `Search score: ${score}`,
           thumbnail: metadata.thumbnail,
           yearpublished: score,
           searchScore: score
         }
       })
+
+      games = removeDuplicates(games, 'objectId')
 
       await this.setState({ searchComplete: true })
 
@@ -88,8 +93,8 @@ class VisualSearchScreen extends React.Component {
         // we just jump directly to that game, as opposed to showing the list
         const game = games[0]
         if (
-          game.searchScore > 0.69 ||
-          (game.searchScore > 0.6 &&
+          game.searchScore > 0.74 ||
+          (game.searchScore > 0.64 &&
             games[1].searchScore < game.searchScore - 1)
         ) {
           this.props.navigation.push('Game', { game: games[0] })

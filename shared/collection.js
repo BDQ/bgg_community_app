@@ -2,6 +2,12 @@ import Sentry from 'sentry-expo'
 import parse from 'xml-parser'
 import { AsyncStorage } from 'react-native'
 
+export const removeDuplicates = (myArr, prop) => {
+  return myArr.filter((obj, pos, arr) => {
+    return arr.map(mapObj => mapObj[prop]).indexOf(obj[prop]) === pos
+  })
+}
+
 export const fetchCollection = async (username, force) => {
   if (!username) {
     return false
@@ -55,12 +61,6 @@ export const fetchCollection = async (username, force) => {
           wishlist
         }
       })
-
-      let removeDuplicates = (myArr, prop) => {
-        return myArr.filter((obj, pos, arr) => {
-          return arr.map(mapObj => mapObj[prop]).indexOf(obj[prop]) === pos
-        })
-      }
 
       games = removeDuplicates(games, 'objectId')
 
