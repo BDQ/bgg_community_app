@@ -37,6 +37,8 @@ yarn install
 cp .env.sample .env
 ```
 
+**NOTE:** This file contains configuration for various API's that the app integrates with, if you would like to develop against one of these features with our development datasets, please contact @BDQ for a key.
+
 5. Start expo (inside bgg_community_app directory)
 
 ```bash

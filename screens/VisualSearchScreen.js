@@ -140,8 +140,7 @@ class VisualSearchScreen extends React.Component {
             flex: 1,
             justifyContent: 'center',
             alignItems: 'center',
-            backgroundColor: '#ffffff',
-            paddingTop: 20
+            backgroundColor: '#ffffff'
           }}
         >
           {this._renderStatus()}
@@ -149,7 +148,7 @@ class VisualSearchScreen extends React.Component {
             style={{
               width: '90%',
               height: 300,
-              marginBottom: 10,
+              marginBottom: 15,
               resizeMode: Image.resizeMode.contain
             }}
             source={{ uri }}
