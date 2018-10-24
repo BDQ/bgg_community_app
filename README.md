@@ -31,7 +31,13 @@ cd bgg_community_app
 yarn install
 ```
 
-4. Start expo
+4. Create a local .env file (inside bgg_community_app directory)
+
+```bash
+cp .env.sample .env
+```
+
+5. Start expo (inside bgg_community_app directory)
 
 ```bash
 yarn start

@@ -3,7 +3,9 @@ import { createStackNavigator } from 'react-navigation'
 import { View, Text, Image } from 'react-native'
 import ProgressBar from 'react-native-progress/Circle'
 import { Button } from 'react-native-elements'
+import { showMessage } from 'react-native-flash-message'
 
+import { CLARIFAI_API_KEY } from 'react-native-dotenv'
 import Camera from '../components/Camera'
 
 import GameScreen from './GameScreen'
@@ -57,39 +59,51 @@ class VisualSearchScreen extends React.Component {
         body
       },
       {
-        Authorization: 'Key 2e66614a535d4e27aabd35862f23c6ed'
+        Authorization: `Key ${CLARIFAI_API_KEY}`
       }
     )
 
-    const games = result.hits.map(result => {
-      const { metadata } = result.input.data
-      const { score } = result
+    if (result) {
+      const games = result.hits.map(result => {
+        const { metadata } = result.input.data
+        const { score } = result
 
-      return {
-        key: metadata.id,
-        objectId: metadata.id,
-        name: metadata.name,
-        thumbnail: metadata.thumbnail,
-        yearpublished: score,
-        searchScore: score
+        return {
+          key: metadata.id,
+          objectId: metadata.id,
+          name: metadata.name,
+          thumbnail: metadata.thumbnail,
+          yearpublished: score,
+          searchScore: score
+        }
+      })
+
+      await this.setState({ searchComplete: true })
+
+      // navigate to the results list
+      this.props.navigation.push('List', { games })
+
+      if (games.length > 2) {
+        // if the top game has a good score, and is at least 1 full point above the next game
+        // we just jump directly to that game, as opposed to showing the list
+        const game = games[0]
+        if (
+          game.searchScore > 0.69 ||
+          (game.searchScore > 0.6 &&
+            games[1].searchScore < game.searchScore - 1)
+        ) {
+          this.props.navigation.push('Game', { game: games[0] })
+        }
       }
-    })
-
-    await this.setState({ searchComplete: true })
-
-    // navigate to the results list
-    this.props.navigation.push('List', { games })
-
-    if (games.length > 2) {
-      // if the top game has a good score, and is at least 1 full point above the next game
-      // we just jump directly to that game, as opposed to showing the list
-      const game = games[0]
-      if (
-        game.searchScore > 0.69 ||
-        (game.searchScore > 0.6 && games[1].searchScore < game.searchScore - 1)
-      ) {
-        this.props.navigation.push('Game', { game: games[0] })
-      }
+    } else {
+      showMessage({
+        message:
+          'Something went wrong with the image search, please try again.',
+        icon: 'auto',
+        type: 'danger',
+        duration: 3500
+      })
+      this.setState({ searchComplete: true })
     }
   }
 

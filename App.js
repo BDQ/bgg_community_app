@@ -1,8 +1,6 @@
+import { SENTRY_CONFIG } from 'react-native-dotenv'
 import Sentry from 'sentry-expo'
-// Sentry.enableInExpoDevelopment = true;
-Sentry.config(
-  'https://610b42b2d6174ec78fd80f388169d5df@sentry.io/247243'
-).install()
+Sentry.config(SENTRY_CONFIG).install()
 
 import React from 'react'
 import { AsyncStorage, View } from 'react-native'
@@ -17,7 +15,7 @@ import PreviewScreen from './screens/PreviewScreen'
 import ProfileScreen from './screens/ProfileScreen'
 import VisualSearchScreen from './screens/VisualSearchScreen'
 
-import { loadCollection, fetchCollection } from './shared/collection'
+import { loadCollection } from './shared/collection'
 
 const AppNavigator = createBottomTabNavigator({
   Owned: {
