@@ -128,6 +128,7 @@ class PreviewListScreen extends React.Component {
 
       if (objectType === 'thing') {
         this.setState({ games: all })
+        console.log(all)
       } else {
         this.setState({ companies: all })
       }

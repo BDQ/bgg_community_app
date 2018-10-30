@@ -32,10 +32,11 @@ export default class GameScreen extends React.Component {
 
   componentDidMount() {
     const { game } = this.state
+    let objectId = game.objectId || game.objectid
 
     if (game !== {}) {
-      this.getGameStats(game.objectid)
-      this.getGameDetails(game.objectid)
+      this.getGameStats(objectId)
+      this.getGameDetails(objectId)
     }
   }
 

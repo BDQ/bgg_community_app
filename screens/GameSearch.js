@@ -1,11 +1,5 @@
-import React, { Component } from 'react'
-import {
-  View,
-  Text,
-  FlatList,
-  ActivityIndicator,
-  TouchableOpacity
-} from 'react-native'
+import React from 'react'
+import { View, Text, FlatList, TouchableOpacity } from 'react-native'
 import { SearchBar, Button } from 'react-native-elements'
 import GameListItem from './../components/GameListItem'
 import parse from 'xml-parser'
@@ -52,7 +46,6 @@ export default class GameSearch extends React.PureComponent {
         autoFocus={true}
         onChangeText={debounce(500, this.searchBGG)}
         onClearText={this.clearSearch}
-        clearIcon="circle-with-cross"
         showLoadingIcon={this.state.loading}
         placeholder="Type game name to search"
       />

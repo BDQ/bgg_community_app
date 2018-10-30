@@ -8,6 +8,7 @@
     "eslint-plugin-jest": "^21.22.1",
     "eslint-plugin-react": "^7.11.1",
     "jest-expo": "^30.0.0",
+    "react-native-dotenv": "^0.2.0",
     "react-native-scripts": "1.7.0",
     "react-test-renderer": "16.0.0-alpha.12"
   },
@@ -54,6 +55,7 @@
     "preset": "jest-expo"
   },
   "dependencies": {
+    "clarifai": "^2.9.0",
     "expo": "^30.0.1",
     "react": "16.3.1",
     "react-content-loader": "^3.0.1",

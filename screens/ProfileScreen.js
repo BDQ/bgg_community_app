@@ -190,7 +190,7 @@ class ProfileEditScreen extends React.PureComponent {
 
   getUserId = async headers => await fetchJSON('/api/users/current', headers)
 
-  renderMessage = () => {
+  _renderMessage = () => {
     let msg = 'Configure your BoardGameGeek account to get started.'
     if (this.state.message !== null) {
       msg = this.state.message
@@ -199,31 +199,42 @@ class ProfileEditScreen extends React.PureComponent {
     return <Text style={styles.text}>{msg}</Text>
   }
 
+  _renderLoggedOut = () => {
+    const { isLoggedIn } = this.state
+    if (!isLoggedIn) {
+      return (
+        <React.Fragment>
+          {this._renderMessage()}
+
+          <FormLabel>BGG Username</FormLabel>
+          <FormInput
+            focus={true}
+            autoCapitalize={'none'}
+            autoCorrect={false}
+            spellCheck={false}
+            onChangeText={this.usernameChange}
+            value={this.state.username}
+          />
+          <FieldValidation message={this.state.usernameError} />
+
+          <FormLabel>BGG Password</FormLabel>
+          <FormInput
+            onChangeText={this.passwordChange}
+            secureTextEntry={true}
+            value={this.state.password}
+          />
+          <FieldValidation message={this.state.passwordError} />
+        </React.Fragment>
+      )
+    } else {
+      return <Text style={styles.bottomText}>You are logged in!</Text>
+    }
+  }
+
   render = () => {
     return (
       <View style={{ flex: 1, backgroundColor: '#ffffff' }}>
-        {this.renderMessage()}
-
-        <FormLabel>BGG Username</FormLabel>
-        <FormInput
-          focus={true}
-          autoCapitalize={'none'}
-          autoCorrect={false}
-          spellCheck={false}
-          onChangeText={this.usernameChange}
-          value={this.state.username}
-        />
-        <FieldValidation message={this.state.usernameError} />
-
-        <FormLabel>BGG Password</FormLabel>
-        <FormInput
-          onChangeText={this.passwordChange}
-          secureTextEntry={true}
-          value={this.state.password}
-        />
-        <FieldValidation message={this.state.passwordError} />
-
-        <Text style={styles.bottomText} />
+        {this._renderLoggedOut()}
         <Button
           raised
           backgroundColor="#03A9F4"
