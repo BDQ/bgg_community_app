@@ -1,12 +1,34 @@
 # Overview
 
-The **Board Game Geek Community App** is an open source React Native application built by the BGG community.
+The **Board Game Geek Community App** is an open source React Native application built by members of the BGG community.
 
-## Current Version
+## Release Status
 
-The initial version is focused on providing mobile access to the BGG Event Previews (like GenCon / Spiel etc), but code is already in place for collection & wishlist management which will be turned on in later releases. The roadmap is completely open to whatever the community would like to add!
+The app is NOT yet available via either Google Play or the iOS App Store yet, while we continue to work on the first release candidate.
 
-## Getting Started
+## Installing testing versions:
+
+### iOS Users
+
+You can install the beta via Apple's TestFlight app using this link: https://testflight.apple.com/join/uLlg7ICq
+
+### Android Users
+
+You can install the beta by first installing the Expo app from the Play store:
+
+https://play.google.com/store/apps/details?id=host.exp.expon...
+
+Once installed, you can run the app inside Expo using this link:
+
+https://expo.io/@briandquinn/bggca
+
+**Note:** I'm an Apple user myself, the app works on Android but hasn't had as much testing as iOS. Also, performance inside Expo isn't the best, so be patient.
+
+## Development - Getting Started
+
+This project is intended to be an open and friendly place for people to contribute and help create something meaningful for the entire BGG community. We actively encourage contributions at any level, so if you're interested in helping please open an issue and a start a discussion with us.
+
+You don't need to be a pro, open source is a great way to learn new techology and skills, so if you can write a little Javascript or are willing to test the builds and provide meaningful bug reports - then please jump in!
 
 ### Setup local development environment
 
