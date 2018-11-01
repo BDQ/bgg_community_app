@@ -6144,13 +6144,6 @@ rc@^1.2.7:
     minimist "^1.2.0"
     strip-json-comments "~2.0.1"
 
-react-addons-shallow-compare@15.6.2:
-  version "15.6.2"
-  resolved "https://registry.yarnpkg.com/react-addons-shallow-compare/-/react-addons-shallow-compare-15.6.2.tgz#198a00b91fc37623db64a28fd17b596ba362702f"
-  dependencies:
-    fbjs "^0.8.4"
-    object-assign "^4.1.0"
-
 react-clone-referenced-element@^1.0.1:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/react-clone-referenced-element/-/react-clone-referenced-element-1.1.0.tgz#9cdda7f2aeb54fea791f3ab8c6ab96c7a77d0158"
@@ -6234,15 +6227,21 @@ react-native-htmlview@^0.13.0:
     entities "^1.1.1"
     htmlparser2-without-node-native "^3.9.2"
 
-react-native-image-pan-zoom@^2.1.10:
-  version "2.1.10"
-  resolved "https://registry.yarnpkg.com/react-native-image-pan-zoom/-/react-native-image-pan-zoom-2.1.10.tgz#0294d996982c693614a7227ade66a8bb249ee7fd"
+react-native-image-pan-zoom@^2.1.9:
+  version "2.1.11"
+  resolved "https://registry.yarnpkg.com/react-native-image-pan-zoom/-/react-native-image-pan-zoom-2.1.11.tgz#61bcb69219d95e76a9797d23e4a2e8e0bd654ae9"
 
 react-native-image-progress@^1.1.1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/react-native-image-progress/-/react-native-image-progress-1.1.1.tgz#95bbe0875c7ebd54286df69cb37b598b94c54eb0"
   dependencies:
     prop-types "^15.5.10"
+
+react-native-image-zoom-viewer@^2.2.23:
+  version "2.2.23"
+  resolved "https://registry.yarnpkg.com/react-native-image-zoom-viewer/-/react-native-image-zoom-viewer-2.2.23.tgz#364f65792edacd7354b48982843dbfc9db5d438e"
+  dependencies:
+    react-native-image-pan-zoom "^2.1.9"
 
 react-native-maps@0.21.0:
   version "0.21.0"
@@ -6345,13 +6344,6 @@ react-native-sentry@^0.39.0:
 react-native-simple-radio-button@^2.7.3:
   version "2.7.3"
   resolved "https://registry.yarnpkg.com/react-native-simple-radio-button/-/react-native-simple-radio-button-2.7.3.tgz#c7227c0f963d6bbcfa245255d18a5a8b98fde41f"
-
-react-native-snap-carousel@^3.7.5:
-  version "3.7.5"
-  resolved "https://registry.yarnpkg.com/react-native-snap-carousel/-/react-native-snap-carousel-3.7.5.tgz#7172456d40ab9161523055eb302f9b03b244240a"
-  dependencies:
-    prop-types "^15.6.1"
-    react-addons-shallow-compare "15.6.2"
 
 react-native-svg@6.2.2:
   version "6.2.2"

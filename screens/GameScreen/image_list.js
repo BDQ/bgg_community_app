@@ -7,14 +7,12 @@ import {
   TouchableHighlight,
   Modal,
   SafeAreaView,
-  FlatList,
-  Dimensions
+  FlatList
 } from 'react-native'
 
-import Carousel from 'react-native-snap-carousel'
 import ImageProgress from 'react-native-image-progress'
 import ProgressBar from 'react-native-progress/Circle'
-import ImageZoom from 'react-native-image-pan-zoom'
+import ImageViewer from 'react-native-image-zoom-viewer'
 
 import { fetchJSON } from '../../shared/HTTP'
 
@@ -47,7 +45,8 @@ export default class ImageList extends React.Component {
   getGameImages = async () => {
     const { objectId } = this.state
     const url = `https://api.geekdo.com/api/images?objectid=${objectId}&ajax=1&galleries%5B%5D=game&galleries%5B%5D=creative&nosession=1&objecttype=thing&showcount=17&size=crop100&sort=hot`
-    const { images } = await fetchJSON(url)
+    let { images } = await fetchJSON(url)
+    images = images.map(img => ({ id: img.imageid, url: img.imageurl_lg }))
 
     this.setState({ images })
   }
@@ -65,19 +64,13 @@ export default class ImageList extends React.Component {
       return null
     }
 
-    const { width: viewportWidth, height: viewportHeight } = Dimensions.get(
-      'window'
-    )
-    const componentWidth = viewportWidth - 20
-    const componentHeight = viewportHeight - 50
-
     return (
       <View>
         <FlatList
           style={{ height: 104 }}
           data={this.state.images}
           horizontal={true}
-          keyExtractor={img => img.imageid}
+          keyExtractor={img => img.id}
           renderItem={({ item, index }) => {
             return (
               <TouchableHighlight
@@ -87,7 +80,8 @@ export default class ImageList extends React.Component {
               >
                 <Image
                   style={styles.imageListThumbnail}
-                  source={{ uri: item.imageurl }}
+                  resizeMode={Image.resizeMode.cover}
+                  source={{ uri: item.url }}
                 />
               </TouchableHighlight>
             )
@@ -99,50 +93,39 @@ export default class ImageList extends React.Component {
           visible={this.state.imageModalIndex !== null}
           onRequestClose={this.hideImageModal}
         >
-          <SafeAreaView style={{ backgroundColor: '#000000' }}>
-            <View style={{ padding: 10 }}>
-              <TouchableHighlight
-                onPress={() => {
-                  this.hideImageModal()
-                }}
-              >
-                <Text style={{ color: 'white' }}>Close</Text>
-              </TouchableHighlight>
-            </View>
-            <Carousel
-              // scrollEnabled={false}
-              initialNumToRender={this.state.imageModalIndex}
-              maxToRenderPerBatch={1}
-              firstItem={this.state.imageModalIndex}
-              data={this.state.images}
-              renderItem={({ item }) => {
-                return (
-                  <ImageZoom
-                    cropWidth={componentWidth}
-                    cropHeight={componentHeight}
-                    imageWidth={componentWidth - 10}
-                    imageHeight={componentHeight - 10}
-                  >
-                    <ImageProgress
-                      source={{ uri: item.imageurl_lg }}
-                      indicator={ProgressBar}
-                      indicatorProps={{
-                        color: '#ffffff'
-                      }}
-                      style={{
-                        flex: 1
-                      }}
-                      imageStyle={{
-                        resizeMode: Image.resizeMode.contain
-                      }}
-                    />
-                  </ImageZoom>
-                )
-              }}
-              sliderWidth={viewportWidth}
-              itemWidth={componentWidth}
-            />
-          </SafeAreaView>
+          {/* <SafeAreaView style={{ backgroundColor: '#000000' }}> */}
+
+          <ImageViewer
+            renderImage={({ source, style }) => {
+              return (
+                <ImageProgress
+                  source={source}
+                  indicator={ProgressBar}
+                  indicatorProps={{
+                    color: '#ffffff'
+                  }}
+                  style={{ flex: 1 }}
+                  imageStyle={style}
+                />
+              )
+            }}
+            renderHeader={() => (
+              <View style={{ padding: 10 }}>
+                <TouchableHighlight
+                  onPress={() => {
+                    this.hideImageModal()
+                  }}
+                >
+                  <Text style={{ color: 'white' }}>Close</Text>
+                </TouchableHighlight>
+              </View>
+            )}
+            imageUrls={this.state.images}
+            onCancel={() => this.hideImageModal()}
+            index={this.state.imageModalIndex}
+            enableSwipeDown={true}
+          />
+          {/* </SafeAreaView> */}
         </Modal>
       </View>
     )
@@ -153,7 +136,6 @@ const styles = StyleSheet.create({
   imageListThumbnail: {
     width: 100,
     height: 100,
-    margin: 2,
-    resizeMode: Image.resizeMode.contain
+    margin: 2
   }
 })
