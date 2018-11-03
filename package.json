@@ -7,12 +7,11 @@
     "eslint": "^5.6.0",
     "eslint-plugin-jest": "^21.22.1",
     "eslint-plugin-react": "^7.11.1",
-    "jest-expo": "^30.0.0",
+    "jest-expo": "^31.0.0",
     "react-native-dotenv": "^0.2.0",
-    "react-native-scripts": "1.7.0",
     "react-test-renderer": "16.0.0-alpha.12"
   },
-  "main": "./node_modules/react-native-scripts/build/bin/crna-entry.js",
+  "main": "./App.js",
   "eslintConfig": {
     "parser": "babel-eslint",
     "plugins": [
@@ -56,10 +55,10 @@
   },
   "dependencies": {
     "clarifai": "^2.9.0",
-    "expo": "^30.0.1",
-    "react": "16.3.1",
+    "expo": "^31.0.0",
+    "react": "16.5.0",
     "react-content-loader": "^3.0.1",
-    "react-native": "https://github.com/expo/react-native/archive/sdk-30.0.0.tar.gz",
+    "react-native": "https://github.com/expo/react-native/archive/sdk-31.0.1.tar.gz",
     "react-native-elements": "^0.18.2",
     "react-native-flash-message": "^0.1.10",
     "react-native-htmlview": "^0.13.0",
@@ -72,8 +71,8 @@
     "react-native-swipeout": "^2.3.6",
     "react-native-tag-select": "^2.0.0",
     "react-native-vector-icons": "^4.2.0",
-    "react-navigation": "^2.13.0",
-    "sentry-expo": "^1.10.0",
+    "react-navigation": "^2.18.2",
+    "sentry-expo": "~1.9.0",
     "throttle-debounce": "^1.0.1",
     "xml-parser": "^1.2.1"
   }
