@@ -85,7 +85,7 @@ const AppNavigator = createBottomTabNavigator({
   }
 })
 
-class App extends React.Component {
+export default class App extends React.Component {
   state = {
     games: [],
     isReady: false,
@@ -165,7 +165,3 @@ class App extends React.Component {
     }
   }
 }
-
-// export default App
-
-// AppRegistry.registerComponent('MyAppName', () => App)

@@ -11,7 +11,7 @@
     "react-native-dotenv": "^0.2.0",
     "react-test-renderer": "16.0.0-alpha.12"
   },
-  "main": "./App.js",
+  "main": "node_modules/expo/AppEntry.js",
   "eslintConfig": {
     "parser": "babel-eslint",
     "plugins": [
