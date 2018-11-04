@@ -22,12 +22,8 @@ const AppNavigator = createBottomTabNavigator({
     screen: OwnedScreen,
     navigationOptions: {
       tabBarLabel: 'Owned',
-      tabBarIcon: ({ tintColor, focused }) => (
-        <Ionicons
-          name={focused ? 'ios-albums' : 'ios-albums-outline'}
-          size={26}
-          style={{ color: tintColor }}
-        />
+      tabBarIcon: ({ tintColor }) => (
+        <Ionicons name="ios-albums" size={26} style={{ color: tintColor }} />
       )
     }
   },
@@ -35,12 +31,8 @@ const AppNavigator = createBottomTabNavigator({
     screen: WishlistScreen,
     navigationOptions: {
       tabBarLabel: 'Wishlist',
-      tabBarIcon: ({ tintColor, focused }) => (
-        <Ionicons
-          name={focused ? 'ios-list-box' : 'ios-list-box-outline'}
-          size={26}
-          style={{ color: tintColor }}
-        />
+      tabBarIcon: ({ tintColor }) => (
+        <Ionicons name="ios-list-box" size={26} style={{ color: tintColor }} />
       )
     }
   },
@@ -48,9 +40,9 @@ const AppNavigator = createBottomTabNavigator({
     screen: VisualSearchScreen,
     navigationOptions: {
       tabBarLabel: 'Scan',
-      tabBarIcon: ({ tintColor, focused }) => (
+      tabBarIcon: ({ tintColor }) => (
         <Ionicons
-          name={focused ? 'ios-qr-scanner' : 'ios-qr-scanner-outline'}
+          name="ios-qr-scanner"
           size={26}
           style={{ color: tintColor }}
         />
@@ -61,12 +53,8 @@ const AppNavigator = createBottomTabNavigator({
     screen: PreviewScreen,
     navigationOptions: {
       tabBarLabel: 'Essen',
-      tabBarIcon: ({ tintColor, focused }) => (
-        <Ionicons
-          name={focused ? 'ios-eye' : 'ios-eye-outline'}
-          size={26}
-          style={{ color: tintColor }}
-        />
+      tabBarIcon: ({ tintColor }) => (
+        <Ionicons name="ios-eye" size={26} style={{ color: tintColor }} />
       )
     }
   },
@@ -74,12 +62,8 @@ const AppNavigator = createBottomTabNavigator({
     screen: ProfileScreen,
     navigationOptions: {
       tabBarLabel: 'Account',
-      tabBarIcon: ({ tintColor, focused }) => (
-        <Ionicons
-          name={focused ? 'ios-person' : 'ios-person-outline'}
-          size={26}
-          style={{ color: tintColor }}
-        />
+      tabBarIcon: ({ tintColor }) => (
+        <Ionicons name="ios-person" size={26} style={{ color: tintColor }} />
       )
     }
   }
