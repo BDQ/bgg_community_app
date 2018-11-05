@@ -154,7 +154,7 @@ class VisualSearchScreen extends React.Component {
               width: '90%',
               height: 300,
               marginBottom: 15,
-              resizeMode: Image.resizeMode.contain
+              resizeMode: 'contain'
             }}
             source={{ uri }}
           />

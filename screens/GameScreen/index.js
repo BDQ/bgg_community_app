@@ -332,7 +332,7 @@ const styles = StyleSheet.create({
   headerImage: {
     width: '90%',
     height: '95%',
-    resizeMode: Image.resizeMode.contain
+    resizeMode: 'contain'
   },
   headerIcon: {
     width: 50,
