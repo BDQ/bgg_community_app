@@ -64,7 +64,7 @@ export default class GameAddTo extends React.Component {
     const { game } = props.navigation.state.params
 
     this.state.game = game
-    this.getUserGameDetails(game.objectid)
+    this.getUserGameDetails(game.objectId || game.objectid)
   }
 
   componentDidMount() {

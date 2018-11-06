@@ -46,6 +46,7 @@ export default class GameScreen extends React.Component {
     const url = `https://api.geekdo.com/api/geekitems?objectid=${objectid}&showcount=10&nosession=1&ajax=1&objecttype=thing`
     const { item: details } = await fetchJSON(url)
 
+    console.log(details)
     this.setState({ details })
   }
 
@@ -111,11 +112,10 @@ export default class GameScreen extends React.Component {
     }
   }
 
-  _renderHeaderName = params => {
+  _renderHeaderName = () => {
     const {
-      game: { item: game = {} }
-    } = this.state || {}
-    const {
+      game,
+      details,
       stats: {
         item: { stats: stats = { average: '0' } }
       }
@@ -150,9 +150,13 @@ export default class GameScreen extends React.Component {
               color: '#ffffff'
             }}
           >
-            {params.game.name}
-
-            <Text style={{ color: '#dee0e2' }}> ({game.yearpublished})</Text>
+            {game.name}
+            {details ? (
+              <Text style={{ color: '#dee0e2' }}>
+                {' '}
+                ({details.yearpublished})
+              </Text>
+            ) : null}
           </Text>
           <Text
             style={{
