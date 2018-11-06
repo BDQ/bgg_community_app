@@ -103,7 +103,7 @@ class ProfileEditScreen extends React.PureComponent {
   }
 
   attemptBGGLogin = async (bggUsername, bggPassword) => {
-    const loadAuth = this.props.screenProps.loadAuth
+    const { loadAuth } = this.props.screenProps
 
     const headers = new Headers({
       Accept: 'application/json',

@@ -2639,9 +2639,9 @@ expo-sms@~1.1.0:
     expo-core "~1.2.0"
     expo-permissions-interface "~1.2.0"
 
-expo@^31.0.0:
-  version "31.0.2"
-  resolved "https://registry.yarnpkg.com/expo/-/expo-31.0.2.tgz#85d07fbcd9920ff2d5085dcf3f6ea11016a1268b"
+expo@^31.0.4:
+  version "31.0.4"
+  resolved "https://registry.yarnpkg.com/expo/-/expo-31.0.4.tgz#0e7178b32f27189e799cd76f502094e0bf2ad4de"
   dependencies:
     "@babel/runtime" "^7.1.2"
     "@expo/vector-icons" "^8.0.0"
@@ -2696,7 +2696,7 @@ expo@^31.0.0:
     prop-types "^15.6.0"
     qs "^6.5.0"
     react-native-branch "2.2.5"
-    react-native-gesture-handler "1.0.8"
+    react-native-gesture-handler "1.0.9"
     react-native-maps expo/react-native-maps#v0.22.0-exp.0
     react-native-reanimated "1.0.0-alpha.10"
     react-native-screens "1.0.0-alpha.15"
@@ -5382,9 +5382,9 @@ react-native-flash-message@^0.1.10:
   dependencies:
     prop-types "^15.6.2"
 
-react-native-gesture-handler@1.0.8:
-  version "1.0.8"
-  resolved "https://registry.yarnpkg.com/react-native-gesture-handler/-/react-native-gesture-handler-1.0.8.tgz#c2799741bf6443bb542892b0a36201a6d9ded209"
+react-native-gesture-handler@1.0.9:
+  version "1.0.9"
+  resolved "https://registry.yarnpkg.com/react-native-gesture-handler/-/react-native-gesture-handler-1.0.9.tgz#ddec4d19d51cb6fb54df6eca792ebd76aaef083f"
   dependencies:
     hoist-non-react-statics "^2.3.1"
     invariant "^2.2.2"
@@ -5413,7 +5413,7 @@ react-native-image-zoom-viewer@^2.2.23:
   dependencies:
     react-native-image-pan-zoom "^2.1.9"
 
-react-native-maps@expo/react-native-maps#v0.22.0-exp.0:
+"react-native-maps@github:expo/react-native-maps#v0.22.0-exp.0":
   version "0.22.0"
   resolved "https://codeload.github.com/expo/react-native-maps/tar.gz/cb9d9ec23d4d176bddd6d465a583462f9c1056a0"
   dependencies:

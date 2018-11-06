@@ -15,7 +15,7 @@ import PreviewScreen from './screens/PreviewScreen'
 import ProfileScreen from './screens/ProfileScreen'
 import VisualSearchScreen from './screens/VisualSearchScreen'
 
-import { loadCollection } from './shared/collection'
+import { loadCollection, fetchCollection } from './shared/collection'
 
 const AppNavigator = createBottomTabNavigator({
   Owned: {
@@ -94,7 +94,10 @@ export default class App extends React.Component {
 
   _cacheResourcesAsync = async () => {
     const persistedState = await loadCollection(this.state.updateAt)
-    this.setState(persistedState)
+
+    if (persistedState) {
+      this.setState(persistedState)
+    }
 
     let promises = [
       Font.loadAsync({
@@ -105,6 +108,12 @@ export default class App extends React.Component {
     ]
 
     await Promise.all(promises)
+
+    const {
+      bgg_credentials: { bggUsername }
+    } = this.state
+    const games = await fetchCollection(bggUsername)
+    this.setState({ games })
   }
 
   render() {

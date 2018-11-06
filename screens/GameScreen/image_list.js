@@ -78,10 +78,13 @@ export default class ImageList extends React.Component {
                   this.showImageModal(index)
                 }}
               >
-                <Image
-                  style={styles.imageListThumbnail}
-                  resizeMode={Image.resizeMode.cover}
+                <ImageProgress
                   source={{ uri: item.url }}
+                  indicator={ProgressBar}
+                  indicatorProps={{
+                    color: '#000000'
+                  }}
+                  style={styles.imageListThumbnail}
                 />
               </TouchableHighlight>
             )
@@ -134,6 +137,7 @@ export default class ImageList extends React.Component {
 
 const styles = StyleSheet.create({
   imageListThumbnail: {
+    resizeMode: 'cover',
     width: 100,
     height: 100,
     margin: 2

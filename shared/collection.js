@@ -8,13 +8,12 @@ export const removeDuplicates = (myArr, prop) => {
   })
 }
 
-export const fetchCollection = async (username, force) => {
+export const fetchCollection = async (username, force = false) => {
   if (!username) {
     return false
   }
 
   const updatedAt = null
-  console.log({ username })
 
   const aDayAgo = new Date().getTime() - 1000 * 60 * 60 * 24
   if (updatedAt > aDayAgo && !force) {

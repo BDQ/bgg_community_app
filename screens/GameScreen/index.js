@@ -1,8 +1,10 @@
 import Sentry from 'sentry-expo'
 import React from 'react'
-import { StyleSheet, Image, View, Text, ScrollView } from 'react-native'
+import { StyleSheet, View, Text, ScrollView } from 'react-native'
 import { Icon, Button } from 'react-native-elements'
 import HTMLView from 'react-native-htmlview'
+import ImageProgress from 'react-native-image-progress'
+import ProgressBar from 'react-native-progress/Circle'
 
 import ImageList from './image_list'
 import { fetchJSON } from '../../shared/HTTP'
@@ -10,7 +12,7 @@ import { fetchJSON } from '../../shared/HTTP'
 export default class GameScreen extends React.Component {
   state = {
     game: {},
-
+    details: null,
     stats: { item: { rankinfo: [] } },
     imageModalIndex: null
   }
@@ -31,10 +33,10 @@ export default class GameScreen extends React.Component {
   }
 
   componentDidMount() {
-    const { game } = this.state
-    let objectId = game.objectId || game.objectid
+    const { game, details } = this.state
+    const objectId = game.objectId || game.objectid
 
-    if (game !== {}) {
+    if (details === null) {
       this.getGameStats(objectId)
       this.getGameDetails(objectId)
     }
@@ -42,8 +44,9 @@ export default class GameScreen extends React.Component {
 
   getGameDetails = async objectid => {
     const url = `https://api.geekdo.com/api/geekitems?objectid=${objectid}&showcount=10&nosession=1&ajax=1&objecttype=thing`
-    const game = await fetchJSON(url)
-    this.setState({ game })
+    const { item: details } = await fetchJSON(url)
+
+    this.setState({ details })
   }
 
   getGameStats = async objectid => {
@@ -62,30 +65,41 @@ export default class GameScreen extends React.Component {
     if (rankInfo && rankInfo.length > 0) {
       return (
         <View style={styles.headerRatings}>
-          <Icon name="crown" type="foundation" color="#e66c06" size={20} />
-          <View style={{ marginTop: 6, paddingLeft: 6, flexDirection: 'row' }}>
-            <Text
-              style={{
-                color: '#ffffff',
+          <Icon
+            name="crown"
+            type="foundation"
+            color="#e66c06"
+            size={20}
+            containerStyle={{
+              marginRight: 4,
+              height: 20
+            }}
+          />
+          <Text
+            style={[
+              styles.headerRatingsText,
+              {
                 fontFamily: 'lato-bold'
-              }}
-            >
-              RANK:{' '}
-            </Text>
-            {rankInfo.map((rank, i) => (
-              <Text
-                key={i}
-                style={{
-                  color: '#ffffff',
+              }
+            ]}
+          >
+            RANK:{' '}
+          </Text>
+          {rankInfo.map((rank, i) => (
+            <Text
+              key={i}
+              style={[
+                styles.headerRatingsText,
+                {
                   fontFamily: 'lato',
                   paddingRight: 8
-                }}
-              >
-                {rank.veryshortprettyname.toUpperCase().trim()}:{' '}
-                {rank.rank.toUpperCase()}
-              </Text>
-            ))}
-          </View>
+                }
+              ]}
+            >
+              {rank.veryshortprettyname.toUpperCase().trim()}:{' '}
+              {rank.rank.toUpperCase()}
+            </Text>
+          ))}
         </View>
       )
     } else {
@@ -170,19 +184,19 @@ export default class GameScreen extends React.Component {
     }
   }
 
-  _renderGameStats = game => {
+  _renderGameStats = details => {
     const {
       stats: {
         item: { polls: polls }
       }
     } = this.state
 
-    if (polls !== undefined && game !== undefined) {
+    if (polls !== undefined && details !== null) {
       return (
         <View style={{ flex: 1, flexDirection: 'row', flexWrap: 'wrap' }}>
           <View style={[styles.statsBox, styles.statsBoxRight]}>
             <Text style={styles.statsTitle}>
-              {game.minplayers}-{game.maxplayers} Players
+              {details.minplayers}-{details.maxplayers} Players
             </Text>
             <Text style={styles.statsText}>
               Community: {this._playerCounts(polls.userplayers.recommended[0])}{' '}
@@ -191,14 +205,15 @@ export default class GameScreen extends React.Component {
           </View>
           <View style={styles.statsBox}>
             <Text style={styles.statsTitle}>
-              {this._playerCounts([game.minplaytime, game.maxplaytime])} Min
+              {this._playerCounts([details.minplaytime, details.maxplaytime])}{' '}
+              Min
             </Text>
             <Text style={styles.statsText}>Playing Time</Text>
           </View>
           <View
             style={[styles.statsBox, styles.statsBoxRight, styles.statsBoxTop]}
           >
-            <Text style={styles.statsTitle}>Age: {game.minage}+</Text>
+            <Text style={styles.statsTitle}>Age: {details.minage}+</Text>
             <Text style={styles.statsText}>Community: {polls.playerage}</Text>
           </View>
           <View style={[styles.statsBox, styles.statsBoxTop]}>
@@ -229,16 +244,24 @@ export default class GameScreen extends React.Component {
     }
   }
 
-  _renderCredits = game => {
-    if (game !== undefined) {
+  _renderCredits = details => {
+    if (details !== null) {
       return (
         <View>
-          {this._renderCreditLine('Alternative Names', game.alternatenames, 1)}
-          {this._renderCreditLine('Designer', game.links.boardgamedesigner, 2)}
-          {this._renderCreditLine('Artist', game.links.boardgameartist, 2)}
+          {this._renderCreditLine(
+            'Alternative Names',
+            details.alternatenames,
+            1
+          )}
+          {this._renderCreditLine(
+            'Designer',
+            details.links.boardgamedesigner,
+            2
+          )}
+          {this._renderCreditLine('Artist', details.links.boardgameartist, 2)}
           {this._renderCreditLine(
             'Publisher',
-            game.links.boardgamepublisher,
+            details.links.boardgamepublisher,
             2
           )}
         </View>
@@ -246,9 +269,9 @@ export default class GameScreen extends React.Component {
     }
   }
 
-  _renderDescription = game => {
-    if (game !== undefined) {
-      const description = game.description.replace(/\n/g, '')
+  _renderDescription = details => {
+    if (details !== null) {
+      const description = details.description.replace(/\n/g, '')
       return (
         <View>
           <View style={styles.descriptionHeader}>
@@ -269,15 +292,20 @@ export default class GameScreen extends React.Component {
   render = () => {
     const { navigate } = this.props.navigation
     const { params } = this.props.navigation.state
-    const { game: { item: game } = {} } = this.state
-    const images = game ? game.images : {}
+
+    const { game, details } = this.state
+    const images = details ? details.images : {}
 
     return (
       <ScrollView>
         <View style={styles.itemContainer}>
           <View style={styles.gameHeader}>
-            <Image
+            <ImageProgress
               source={{ uri: images.previewthumb }}
+              indicator={ProgressBar}
+              indicatorProps={{
+                color: '#ffffff'
+              }}
               style={styles.headerImage}
             />
           </View>
@@ -286,8 +314,8 @@ export default class GameScreen extends React.Component {
             {this._renderHeaderName(params)}
           </View>
           <View style={{ padding: 10, backgroundColor: '#E7ECF1' }}>
-            {this._renderGameStats(game)}
-            {this._renderCredits(game)}
+            {this._renderGameStats(details)}
+            {this._renderCredits(details)}
             <Button
               backgroundColor="#03A9F4"
               onPress={() => navigate('AddTo', { game })}
@@ -296,7 +324,7 @@ export default class GameScreen extends React.Component {
           </View>
           <View style={{ padding: 10, backgroundColor: '#ffffff' }}>
             <ImageList objectId={game ? game.objectid : null} />
-            {this._renderDescription(game)}
+            {this._renderDescription(details)}
           </View>
         </View>
       </ScrollView>
@@ -325,9 +353,14 @@ const styles = StyleSheet.create({
   },
   headerRatings: {
     backgroundColor: '#000000',
-    height: 30,
     paddingHorizontal: 10,
-    flexDirection: 'row'
+    flexDirection: 'row',
+    flexWrap: 'wrap'
+  },
+  headerRatingsText: {
+    paddingTop: 2,
+    color: '#ffffff',
+    height: 20
   },
   headerImage: {
     width: '90%',
