@@ -56,6 +56,7 @@
   "dependencies": {
     "clarifai": "^2.9.0",
     "expo": "^31.0.4",
+    "prop-types": "^15.6.2",
     "react": "16.5.0",
     "react-content-loader": "^3.0.1",
     "react-native": "https://github.com/expo/react-native/archive/sdk-31.0.1.tar.gz",

@@ -5413,7 +5413,7 @@ react-native-image-zoom-viewer@^2.2.23:
   dependencies:
     react-native-image-pan-zoom "^2.1.9"
 
-"react-native-maps@github:expo/react-native-maps#v0.22.0-exp.0":
+react-native-maps@expo/react-native-maps#v0.22.0-exp.0:
   version "0.22.0"
   resolved "https://codeload.github.com/expo/react-native-maps/tar.gz/cb9d9ec23d4d176bddd6d465a583462f9c1056a0"
   dependencies:

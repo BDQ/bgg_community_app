@@ -1,12 +1,12 @@
-import Sentry from 'sentry-expo'
 import React from 'react'
 import { StyleSheet, View, Text, ScrollView } from 'react-native'
-import { Icon, Button } from 'react-native-elements'
+import { Icon } from 'react-native-elements'
 import HTMLView from 'react-native-htmlview'
 import ImageProgress from 'react-native-image-progress'
 import ProgressBar from 'react-native-progress/Circle'
 
-import ImageList from './image_list'
+import ImageList from './ImageList'
+import AddToButton from './AddToButton'
 import { fetchJSON } from '../../shared/HTTP'
 
 export default class GameScreen extends React.Component {
@@ -22,7 +22,7 @@ export default class GameScreen extends React.Component {
   })
 
   static getDerivedStateFromProps(props, state) {
-    const game = props.navigation.state.params.game
+    const { game } = props.navigation.state.params
 
     if (game && game !== state.game) {
       return { game }
@@ -46,7 +46,6 @@ export default class GameScreen extends React.Component {
     const url = `https://api.geekdo.com/api/geekitems?objectid=${objectid}&showcount=10&nosession=1&ajax=1&objecttype=thing`
     const { item: details } = await fetchJSON(url)
 
-    console.log(details)
     this.setState({ details })
   }
 
@@ -294,8 +293,8 @@ export default class GameScreen extends React.Component {
   }
 
   render = () => {
-    const { navigate } = this.props.navigation
-    const { params } = this.props.navigation.state
+    const { navigation } = this.props
+    const { params } = navigation.state
 
     const { game, details } = this.state
     const images = details ? details.images : {}
@@ -320,11 +319,7 @@ export default class GameScreen extends React.Component {
           <View style={{ padding: 10, backgroundColor: '#E7ECF1' }}>
             {this._renderGameStats(details)}
             {this._renderCredits(details)}
-            <Button
-              backgroundColor="#03A9F4"
-              onPress={() => navigate('AddTo', { game })}
-              title="Add To ..."
-            />
+            <AddToButton navigation={navigation} game={game} />
           </View>
           <View style={{ padding: 10, backgroundColor: '#ffffff' }}>
             <ImageList objectId={game ? game.objectid : null} />

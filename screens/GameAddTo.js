@@ -1,8 +1,10 @@
 import React from 'react'
-import { View, Text, AsyncStorage, StyleSheet } from 'react-native'
+import { View, Text, StyleSheet } from 'react-native'
 import { CheckBox, Button } from 'react-native-elements'
 import { showMessage } from 'react-native-flash-message'
 import { Dropdown } from 'react-native-material-dropdown'
+import PropTypes from 'prop-types'
+
 import { fetchJSON } from '../shared/HTTP'
 
 const styles = StyleSheet.create({
@@ -39,10 +41,27 @@ const styles = StyleSheet.create({
 
 export default class GameAddTo extends React.Component {
   state = {
-    game: {},
     collectionStatus: {},
     wishlistPriority: 3
   }
+
+  collectionStates = [
+    ['Owned', 'own'],
+    ['Prevously Owned', 'prevowned'],
+    ['For Trade', 'fortrade'],
+    ['Want to Play', 'wanttoplay'],
+    ['Want to Buy', 'wanttobuy'],
+    ['Pre-ordered', 'preordered'],
+    ['Wishlist', 'wishlist']
+  ]
+
+  wishlistValues = [
+    { label: 'Must have', value: 1 },
+    { label: 'Love to have', value: 2 },
+    { label: 'Like to have', value: 3 },
+    { label: 'Thinking about it', value: 4 },
+    { label: "Don't buy this", value: 5 }
+  ]
 
   static navigationOptions = ({ navigation }) => {
     return {
@@ -58,43 +77,19 @@ export default class GameAddTo extends React.Component {
     }
   }
 
-  constructor(props) {
-    super(props)
+  static getDerivedStateFromProps(props, state) {
+    const { collectionStatus, wishlistPriority } = props.navigation.state.params
 
-    const { game } = props.navigation.state.params
+    if (collectionStatus !== state.collectionStatus) {
+      return { collectionStatus, wishlistPriority }
+    }
 
-    this.state.game = game
-    this.getUserGameDetails(game.objectId || game.objectid)
+    // Return null to indicate no change to state.
+    return null
   }
 
   componentDidMount() {
     this.props.navigation.setParams({ handleSave: this.save })
-  }
-
-  getUserGameDetails = async objectid => {
-    let auth = await AsyncStorage.getItem('@BGGApp:auth')
-    const { userid } = JSON.parse(auth)
-
-    const url = `/api/collections?objectid=${objectid}&objecttype=thing&userid=${userid}`
-    const { items } = await fetchJSON(url)
-
-    let collid = null,
-      status = null,
-      wishlistpriority
-
-    if (items.length > 0) {
-      ;[{ collid, status, wishlistpriority }] = items
-    }
-
-    // fallback
-    status = status ? status : {}
-
-    this.setState({
-      collectionId: collid,
-      collectionStatus: status,
-      wishlistPriority: wishlistpriority,
-      objectid
-    })
   }
 
   toggle = attr => {
@@ -107,19 +102,15 @@ export default class GameAddTo extends React.Component {
 
   save = async () => {
     const { navigation } = this.props
-    const {
-      collectionId,
-      collectionStatus,
-      objectid,
-      wishlistPriority
-    } = this.state
+    const { collectionId, objectId } = navigation.state.params
+    const { collectionStatus, wishlistPriority } = this.state
 
     const body = {
       item: {
         collid: collectionId || 0,
         status: collectionStatus,
-        objectid: objectid.toString(),
-        objectname: this.state.game.name,
+        objectid: objectId.toString(),
+        objectname: this.props.navigation.state.params.name,
         objecttype: 'thing',
         acquisitiondate: null,
         invdate: null,
@@ -139,7 +130,6 @@ export default class GameAddTo extends React.Component {
       success = response.message === 'Item saved'
     }
 
-    // replace null with an alert dialog
     if (success) {
       navigation.goBack(null)
     } else {
@@ -152,14 +142,6 @@ export default class GameAddTo extends React.Component {
   }
 
   _renderWishlistDropdown = wishedFor => {
-    const wishlist = [
-      { label: 'Must have', value: 1 },
-      { label: 'Love to have', value: 2 },
-      { label: 'Like to have', value: 3 },
-      { label: 'Thinking about it', value: 4 },
-      { label: "Don't buy this", value: 5 }
-    ]
-
     const { wishlistPriority } = this.state
 
     return wishedFor ? (
@@ -167,7 +149,7 @@ export default class GameAddTo extends React.Component {
         <Dropdown
           dropdownOffset={{ top: 8, left: 0 }}
           itemCount={6}
-          data={wishlist}
+          data={this.wishlistValues}
           value={wishlistPriority}
           onChangeText={wishlistPriority => this.setState({ wishlistPriority })}
         />
@@ -176,19 +158,11 @@ export default class GameAddTo extends React.Component {
   }
 
   render = () => {
-    const collectionStates = [
-      ['Owned', 'own'],
-      ['Prevously Owned', 'prevowned'],
-      ['For Trade', 'fortrade'],
-      ['Want to Play', 'wanttoplay'],
-      ['Want to Buy', 'wanttobuy'],
-      ['Pre-ordered', 'preordered'],
-      ['Wishlist', 'wishlist']
-    ]
-
     const { collectionStatus } = this.state
 
-    let statusCheckBoxes = collectionStates.map((status, i) => (
+    const name = this.props.navigation.state.params.name
+
+    let statusCheckBoxes = this.collectionStates.map((status, i) => (
       <CheckBox
         containerStyle={styles.checkboxContainer}
         title={status[0]}
@@ -202,7 +176,7 @@ export default class GameAddTo extends React.Component {
 
     return (
       <View style={styles.main}>
-        <Text style={styles.gameName}>{this.state.game.name}</Text>
+        <Text style={styles.gameName}>{name}</Text>
 
         {statusCheckBoxes}
 
@@ -210,4 +184,21 @@ export default class GameAddTo extends React.Component {
       </View>
     )
   }
+}
+
+GameAddTo.propTypes = {
+  name: PropTypes.string.isRequired,
+  navigation: PropTypes.shape({
+    state: PropTypes.shape({
+      params: PropTypes.shape({
+        name: PropTypes.string.isRequired,
+        objectId: PropTypes.string.isRequired,
+        collectionId: PropTypes.string.isRequired,
+        collectionStatus: PropTypes.any.isRequired,
+        wishlistPriority: PropTypes.number.isRequired
+      })
+    }),
+    navigate: PropTypes.func.isRequired,
+    setParams: PropTypes.func.isRequired
+  }).isRequired
 }
