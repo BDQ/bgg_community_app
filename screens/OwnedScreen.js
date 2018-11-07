@@ -1,4 +1,5 @@
-import React from 'react'
+import React from 'reactn'
+import PropTypes from 'prop-types'
 import { createStackNavigator } from 'react-navigation'
 import { Icon } from 'react-native-elements'
 import GameScreen from './GameScreen'
@@ -8,7 +9,7 @@ import GameList from './../components/GameList'
 
 import { fetchCollection } from '../shared/collection'
 
-class OwnedListScreen extends React.Component {
+class OwnedListScreen extends React.PureComponent {
   state = {
     games: []
   }
@@ -27,21 +28,23 @@ class OwnedListScreen extends React.Component {
     }
   }
 
-  static getDerivedStateFromProps(props, state) {
-    const { games } = props.screenProps
+  componentDidMount = () => {
+    const { collection } = this.global
     const allIds = items => items.map(item => item.objectId)
 
-    if (allIds(games) === allIds(state.games)) {
-      return null
-    } else {
-      return { games: games.filter(game => game.own) }
+    if (allIds(collection) !== allIds(this.state.games)) {
+      this.filterAndPersistCollection(collection)
     }
   }
 
-  handleRefresh = async () => {
-    let games = await fetchCollection('briandquinn', true)
+  filterAndPersistCollection = collection =>
+    this.setState({ games: collection.filter(game => game.own) })
 
-    this.setState({ games: games.filter(game => game.own) })
+  handleRefresh = async () => {
+    const { username } = this.global.bggCredentials
+    const collection = await fetchCollection(username, true)
+
+    this.filterAndPersistCollection(collection)
   }
 
   render() {
@@ -58,11 +61,15 @@ class OwnedListScreen extends React.Component {
   }
 }
 
-const OwnedScreen = createStackNavigator({
+OwnedListScreen.propTypes = {
+  navigation: PropTypes.shape({
+    navigate: PropTypes.func.isRequired
+  }).isRequired
+}
+
+export default createStackNavigator({
   List: { screen: OwnedListScreen },
   Game: { screen: GameScreen },
   Search: { screen: GameSearch },
   AddTo: { screen: GameAddTo }
 })
-
-module.exports = OwnedScreen

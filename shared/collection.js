@@ -33,7 +33,7 @@ export const fetchCollection = async (username, force = false) => {
 
       let doc = await parseXML(xml)
 
-      let games = doc.root.children.map(item => {
+      let collection = doc.root.children.map(item => {
         let objectId = item.attributes.objectid
         let name = item.children.find(e => e.name == 'name').content
         let yearpublished = (
@@ -61,20 +61,20 @@ export const fetchCollection = async (username, force = false) => {
         }
       })
 
-      games = removeDuplicates(games, 'objectId')
+      collection = removeDuplicates(collection, 'objectId')
 
       try {
         const updatedAt = new Date().getTime()
 
         AsyncStorage.setItem(
           '@BGGApp:collection',
-          JSON.stringify({ games, updatedAt })
+          JSON.stringify({ collection, updatedAt })
         )
       } catch (error) {
         Sentry.captureException(error)
       }
 
-      return games
+      return collection
     } else {
       Sentry.captureMessage(
         'Non 200/202 Response from BGG when loading collection.',

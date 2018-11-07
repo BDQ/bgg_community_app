@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'reactn'
 import { createStackNavigator } from 'react-navigation'
 import { View, Text, StyleSheet, AsyncStorage } from 'react-native'
 import {
@@ -37,24 +37,18 @@ class FieldValidation extends React.PureComponent {
 }
 
 class ProfileEditScreen extends React.PureComponent {
+  state = {
+    username: '',
+    username_error: '',
+    password: '',
+    password_error: '',
+    loading: false,
+    message: null
+  }
+
   static navigationOptions = () => {
     return {
       title: 'BGG Account'
-    }
-  }
-
-  constructor(props) {
-    super(props)
-    const isLoggedIn = Object.keys(props.screenProps.bgg_credentials).length > 0
-
-    this.state = {
-      username: props.screenProps.bgg_credentials.bgg_username,
-      username_error: '',
-      password: '',
-      password_error: '',
-      loading: false,
-      message: null,
-      isLoggedIn: isLoggedIn
     }
   }
 
@@ -80,7 +74,7 @@ class ProfileEditScreen extends React.PureComponent {
     AsyncStorage.clear()
 
     //tells top level App we've logged in
-    this.props.screenProps.loadAuth()
+    this.global.setBggCredentials({})
   }
 
   logIn = () => {
@@ -102,8 +96,8 @@ class ProfileEditScreen extends React.PureComponent {
     }
   }
 
-  attemptBGGLogin = async (bggUsername, bggPassword) => {
-    const { loadAuth } = this.props.screenProps
+  attemptBGGLogin = async (username, password) => {
+    // const { loadAuth } = this.props.screenProps
 
     const headers = new Headers({
       Accept: 'application/json',
@@ -113,7 +107,7 @@ class ProfileEditScreen extends React.PureComponent {
     const init = {
       method: 'POST',
       body: JSON.stringify({
-        credentials: { username: bggUsername, password: bggPassword }
+        credentials: { username, password }
       }),
       credentials: 'include',
       headers
@@ -135,27 +129,21 @@ class ProfileEditScreen extends React.PureComponent {
 
         if (userid > 0) {
           showMessage({
-            message: `Successfully signed in as ${bggUsername}.`,
+            message: `Successfully signed in as ${username}.`,
             icon: 'auto',
             type: 'success'
           })
 
-          this.setState({
-            isLoggedIn: true
-          })
+          const bggCredentials = {
+            username,
+            userid,
+            firstname,
+            lastname
+          }
 
-          AsyncStorage.setItem(
-            '@BGGApp:auth',
-            JSON.stringify({
-              bggUsername,
-              userid,
-              firstname,
-              lastname
-            })
-          )
+          AsyncStorage.setItem('@BGGApp:auth', JSON.stringify(bggCredentials))
 
-          //tells top level App we've logged in
-          loadAuth()
+          this.global.setBggCredentials(bggCredentials)
         } else {
           showMessage({
             message:
@@ -200,8 +188,7 @@ class ProfileEditScreen extends React.PureComponent {
   }
 
   _renderLoggedOut = () => {
-    const { isLoggedIn } = this.state
-    if (!isLoggedIn) {
+    if (!this.global.loggedIn) {
       return (
         <React.Fragment>
           {this._renderMessage()}
@@ -232,21 +219,22 @@ class ProfileEditScreen extends React.PureComponent {
   }
 
   render = () => {
+    console.log(this.global.loggedIn)
     return (
       <View style={{ flex: 1, backgroundColor: '#ffffff' }}>
         {this._renderLoggedOut()}
         <Button
           raised
           backgroundColor="#03A9F4"
-          onPress={this.state.isLoggedIn ? this.logOut : this.logIn}
+          onPress={this.global.loggedIn ? this.logOut : this.logIn}
           loading={this.state.loading}
-          title={this.state.isLoggedIn ? 'Log Out' : 'Log In'}
+          title={this.global.loggedIn ? 'Log Out' : 'Log In'}
         />
       </View>
     )
   }
 }
 
-export default (ProfileScreen = createStackNavigator({
+export default createStackNavigator({
   Edit: { screen: ProfileEditScreen }
-}))
+})

@@ -1,34 +1,39 @@
-import React from 'react'
+import React from 'reactn'
+import PropTypes from 'prop-types'
 import { createStackNavigator } from 'react-navigation'
+
 import GameScreen from './GameScreen'
 import GameSearch from './GameSearch'
 import GameAddTo from './GameAddTo'
 import GameList from './../components/GameList'
 import { fetchCollection } from '../shared/collection'
 
-class WishlistListScreen extends React.Component {
+class WishlistListScreen extends React.PureComponent {
   state = {
     games: []
   }
+
   static navigationOptions = {
     title: 'Wishlist'
   }
 
-  static getDerivedStateFromProps(props, state) {
-    const { games } = props.screenProps
+  componentDidMount = () => {
+    const { collection } = this.global
     const allIds = items => items.map(item => item.objectId)
 
-    if (allIds(games) === allIds(state.games)) {
-      return null
-    } else {
-      return { games: games.filter(game => game.wishlist) }
+    if (allIds(collection) !== allIds(this.state.games)) {
+      this.filterAndPersistCollection(collection)
     }
   }
 
-  handleRefresh = async () => {
-    let games = await fetchCollection('briandquinn', true)
+  filterAndPersistCollection = collection =>
+    this.setState({ games: collection.filter(game => game.wishlist) })
 
-    this.setState({ games: games.filter(game => game.wishlist) })
+  handleRefresh = async () => {
+    const { username } = this.global.bggCredentials
+    let collection = await fetchCollection(username, true)
+
+    this.filterAndPersistCollection(collection)
   }
 
   render = () => {
@@ -45,11 +50,15 @@ class WishlistListScreen extends React.Component {
   }
 }
 
-const WishlistScreen = createStackNavigator({
+WishlistListScreen.propTypes = {
+  navigation: PropTypes.shape({
+    navigate: PropTypes.func.isRequired
+  }).isRequired
+}
+
+export default createStackNavigator({
   List: { screen: WishlistListScreen },
   Game: { screen: GameScreen },
   Search: { screen: GameSearch },
   AddTo: { screen: GameAddTo }
 })
-
-module.exports = WishlistScreen

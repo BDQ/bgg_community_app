@@ -2,7 +2,7 @@ import { SENTRY_CONFIG } from 'react-native-dotenv'
 import Sentry from 'sentry-expo'
 Sentry.config(SENTRY_CONFIG).install()
 
-import React from 'react'
+import React, { setGlobal, addReducer } from 'reactn'
 import { AsyncStorage, View } from 'react-native'
 import { createBottomTabNavigator } from 'react-navigation'
 import { Font, AppLoading } from 'expo'
@@ -17,11 +17,25 @@ import VisualSearchScreen from './screens/VisualSearchScreen'
 
 import { loadCollection, fetchCollection } from './shared/collection'
 
+// initial state
+setGlobal({
+  collection: [],
+  loggedIn: false,
+  bggCredentials: {}
+})
+
+// reducers
+addReducer('setBggCredentials', (state, bggCredentials) => {
+  const loggedIn = Object.keys(bggCredentials).length > 0
+
+  return { loggedIn, bggCredentials }
+})
+
 const AppNavigator = createBottomTabNavigator({
   Owned: {
     screen: OwnedScreen,
     navigationOptions: {
-      tabBarLabel: 'Owned',
+      tabBarLabel: 'Collection',
       tabBarIcon: ({ tintColor }) => (
         <Ionicons name="ios-albums" size={26} style={{ color: tintColor }} />
       )
@@ -69,12 +83,10 @@ const AppNavigator = createBottomTabNavigator({
   }
 })
 
-export default class App extends React.Component {
+export default class App extends React.PureComponent {
   state = {
-    games: [],
     isReady: false,
-    updatedAt: undefined,
-    bgg_credentials: {}
+    updatedAt: undefined
   }
 
   loadAuth = async () => {
@@ -85,8 +97,7 @@ export default class App extends React.Component {
       if (value !== null) {
         auth = JSON.parse(value)
       }
-
-      this.setState({ bgg_credentials: auth })
+      this.global.setBggCredentials(auth)
     } catch (error) {
       Sentry.captureException(error)
     }
@@ -94,6 +105,7 @@ export default class App extends React.Component {
 
   _cacheResourcesAsync = async () => {
     const persistedState = await loadCollection(this.state.updateAt)
+    // console.log(Object.keys(persistedState))
 
     if (persistedState) {
       this.setState(persistedState)
@@ -109,18 +121,17 @@ export default class App extends React.Component {
 
     await Promise.all(promises)
 
-    const {
-      bgg_credentials: { bggUsername }
-    } = this.state
-    const games = await fetchCollection(bggUsername)
-    this.setState({ games })
+    const collection = await fetchCollection(
+      this.global.bggCredentials.username
+    )
+
+    this.setGlobal({ collection })
+    // this.setState({ games })
   }
 
   render() {
-    const { games } = this.state
-    const bgg_credentials = this.state.bgg_credentials
-    const isLoggedIn = Object.keys(bgg_credentials).length > 0
-    const loadAuth = this.loadAuth
+    const { bggCredentials } = this.global
+    const isLoggedIn = Object.keys(bggCredentials).length > 0
 
     if (!this.state.isReady) {
       return (
@@ -134,23 +145,14 @@ export default class App extends React.Component {
       if (!isLoggedIn) {
         return (
           <View style={{ flex: 1 }}>
-            <ProfileScreen
-              screenProps={{ bgg_credentials, loadAuth }}
-              title="BGG Community App"
-            />
+            <ProfileScreen title="BGG Community App" />
             <FlashMessage position="top" />
           </View>
         )
       } else {
         return (
           <View style={{ flex: 1 }}>
-            <AppNavigator
-              screenProps={{
-                games,
-                bgg_credentials,
-                loadAuth
-              }}
-            />
+            <AppNavigator />
             <FlashMessage position="top" />
           </View>
         )
