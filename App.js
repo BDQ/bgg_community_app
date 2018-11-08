@@ -16,7 +16,6 @@ import ProfileScreen from './screens/ProfileScreen'
 import VisualSearchScreen from './screens/VisualSearchScreen'
 
 import { setupStore } from './shared/store'
-import { loadCollection, fetchCollection } from './shared/collection'
 
 //bootstraps ReactN global store
 setupStore()
@@ -79,21 +78,20 @@ export default class App extends React.PureComponent {
   }
 
   _cacheResourcesAsync = async () => {
-    let promises = [
-      Font.loadAsync({
-        lato: require('./assets/Lato-Regular.ttf'),
-        'lato-bold': require('./assets/Lato-Bold.ttf')
-      })
-    ]
+    // load fonts, so they are ready for rendering
+    await Font.loadAsync({
+      lato: require('./assets/Lato-Regular.ttf'),
+      'lato-bold': require('./assets/Lato-Bold.ttf')
+    })
 
-    await Promise.all(promises)
-
-    // const collection = await fetchCollection(
-    //   this.global.bggCredentials.username
-    // )
-
-    // this.setGlobal({ collection })
-    // this.setState({ games })
+    // check if we need to update the users collection
+    const { collectionUpdatedAt } = this.global
+    const aWeekAgo = new Date().getTime() - 1000 * 60 * 60 * 24 * 7
+    if (collectionUpdatedAt > aWeekAgo) {
+      console.log('Collection fetched less a week ago, so skipping fetch.')
+    } else {
+      await this.global.fetchCollection()
+    }
   }
 
   render() {

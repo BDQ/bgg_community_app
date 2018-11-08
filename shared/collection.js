@@ -8,16 +8,8 @@ export const removeDuplicates = (myArr, prop) => {
   })
 }
 
-export const fetchCollection = async (username, force = false) => {
+export const fetchCollection = async username => {
   if (!username) {
-    return false
-  }
-
-  const updatedAt = null
-
-  const aDayAgo = new Date().getTime() - 1000 * 60 * 60 * 24
-  if (updatedAt > aDayAgo && !force) {
-    console.log('Collection fetched less than 24 hours ago, so skipping fetch.')
     return false
   }
 
