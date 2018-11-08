@@ -70,9 +70,8 @@ class ProfileEditScreen extends React.PureComponent {
       message: null
     })
 
-    //tells top level App we've logged in
-    this.global.setCredentials({})
-    this.global.updateCollection([])
+    //tells global store we've logged in
+    this.global.logOut()
   }
 
   logIn = () => {

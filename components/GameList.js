@@ -1,6 +1,8 @@
 import React from 'react'
-import { View, Text, FlatList, TouchableOpacity } from 'react-native'
-import { SearchBar, Button } from 'react-native-elements'
+import PropTypes from 'prop-types'
+import { FlatList, TouchableOpacity } from 'react-native'
+import { SearchBar } from 'react-native-elements'
+
 import GameListItem from './GameListItem'
 
 const applyFilter = (str, items) => {
@@ -52,21 +54,13 @@ export default class GameList extends React.PureComponent {
     this.setState({ items: this.props.games })
   }
 
-  handleRefresh = async () => {
-    this.setState({ loading: true })
-    await this.props.onRefresh()
-
-    this.setState({ loading: false })
-  }
-
   _renderHeader = () => {
-    const { loading } = this.props
     return (
       <SearchBar
         onChangeText={this.filter}
         onClearText={this.clearFilter}
         placeholder="Type here to filter..."
-        showLoadingIcon={loading}
+        // showLoadingIcon={true}
       />
     )
   }
@@ -81,7 +75,7 @@ export default class GameList extends React.PureComponent {
         keyExtractor={item => item.key || item.objectId || item.objectid}
         renderItem={this._renderItem}
         onRefresh={this.handleRefresh}
-        refreshing={this.state.loading}
+        refreshing={this.props.refreshing}
         getItemLayout={(data, index) => {
           const itemHeight = 100
           return {
@@ -95,4 +89,12 @@ export default class GameList extends React.PureComponent {
       />
     )
   }
+}
+
+GameList.propTypes = {
+  navigation: PropTypes.shape({
+    navigate: PropTypes.func.isRequired
+  }).isRequired,
+  games: PropTypes.array.isRequired,
+  refreshing: PropTypes.bool
 }

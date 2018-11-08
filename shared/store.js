@@ -4,83 +4,69 @@ import Sentry from 'sentry-expo'
 
 import { fetchCollection } from '../shared/collection'
 
-export const ASYNC_KEY = '@BGGApp'
-const authKey = `${ASYNC_KEY}:auth`
-const collectionKey = `${ASYNC_KEY}:collection`
+export const ASYNC_KEY = '@BGGApp:v5'
 
-// loads all data from Async Storage
-const fetchFromAsync = async () => {
-  const items = await AsyncStorage.multiGet([authKey, collectionKey])
-
-  let data = {}
-
-  items.forEach(([key, value]) => {
-    switch (key) {
-      case authKey:
-        data.bggCredentials = JSON.parse(value)
-        data.loggedIn = Object.keys(data.bggCredentials).length > 0
-        break
-      case collectionKey:
-        data = { ...data, ...JSON.parse(value) }
-    }
-  })
-
-  return data
-}
-
-const persistCollection = async collection => {
-  const collectionUpdatedAt = new Date().getTime()
-
+const getPersisted = async () => {
   try {
-    AsyncStorage.setItem(
-      collectionKey,
-      JSON.stringify({ collection, collectionUpdatedAt })
-    )
+    const raw = await AsyncStorage.getItem(ASYNC_KEY)
+
+    return JSON.parse(raw) || {}
   } catch (error) {
     Sentry.captureException(error)
   }
+  return {}
+}
+const persistGlobal = async state => {
+  try {
+    const raw = JSON.stringify(state)
 
-  return { collection, collectionUpdatedAt }
+    AsyncStorage.setItem(ASYNC_KEY, raw)
+  } catch (error) {
+    Sentry.captureException(error)
+    return false
+  }
+
+  return true
 }
 
 export const setupStore = async () => {
   // initial state, expect nothing will come from async
-  const intialState = {
+  const initialState = {
     collection: [],
-    collectionUpdatedAt: 0,
+    collectionFetchedAt: 0,
     loggedIn: false,
     bggCredentials: {}
   }
 
   // now we load the data from Async store
-  let persistedData = await fetchFromAsync()
+  let persistedData = await getPersisted()
+  console.log(persistedData)
 
   // update global store with stuff from async and initial
-  setGlobal({ ...intialState, ...persistedData })
+  setGlobal({ ...initialState, ...persistedData })
 
   // reducers
   addReducer('setCredentials', (state, bggCredentials) => {
     const loggedIn = Object.keys(bggCredentials).length > 0
 
-    try {
-      AsyncStorage.setItem(authKey, JSON.stringify(bggCredentials))
-    } catch (error) {
-      Sentry.captureException(error)
-    }
+    persistGlobal({ ...state, loggedIn, bggCredentials })
 
     return { loggedIn, bggCredentials }
   })
 
   addReducer('fetchCollection', async state => {
     const { username } = state.bggCredentials
-    const collection = await fetchCollection(username, true)
+    const collection = await fetchCollection(username)
 
-    return persistCollection(collection)
+    const collectionFetchedAt = new Date().getTime()
+
+    persistGlobal({ ...state, collection, collectionFetchedAt })
+
+    return { collection, collectionFetchedAt }
   })
 
-  addReducer('updateCollection', (state, collection) => {
-    return persistCollection(collection)
+  addReducer('logOut', () => {
+    persistGlobal(initialState)
+    return initialState
   })
-
-  addReducer('logOut', () => {})
 }

@@ -8,6 +8,10 @@ import GameAddTo from './GameAddTo'
 import GameList from './../components/GameList'
 
 class OwnedListScreen extends React.PureComponent {
+  state = {
+    refreshing: false
+  }
+
   static navigationOptions = ({ navigation }) => {
     return {
       title: 'Owned',
@@ -22,14 +26,32 @@ class OwnedListScreen extends React.PureComponent {
     }
   }
 
+  componentDidMount = async () => {
+    // check if we need to update the users collection
+    const { collectionFetchedAt, loggedIn } = this.global
+
+    const aWeekAgo = new Date().getTime() - 1000 * 60 * 60 * 24 * 7
+    if (loggedIn && collectionFetchedAt < aWeekAgo) {
+      this.setState({ refreshing: true })
+      await this.global.fetchCollection()
+      this.setState({ refreshing: false })
+    } else {
+      console.log(
+        'Not logged in, or collection fetched less a week ago, so skipping fetch.'
+      )
+    }
+  }
+
   render() {
     const { navigate } = this.props.navigation
     const games = this.global.collection.filter(game => game.own)
 
+    console.log('state', this.state.refreshing)
     return (
       <GameList
         navigation={{ navigate }}
         games={games}
+        refreshing={this.state.refreshing}
         onRefresh={this.global.fetchCollection}
       />
     )

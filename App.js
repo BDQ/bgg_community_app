@@ -3,7 +3,7 @@ import Sentry from 'sentry-expo'
 Sentry.config(SENTRY_CONFIG).install()
 
 import React from 'reactn'
-import { AsyncStorage, View } from 'react-native'
+import { View } from 'react-native'
 import { createBottomTabNavigator } from 'react-navigation'
 import { Font, AppLoading } from 'expo'
 import FlashMessage from 'react-native-flash-message'
@@ -83,20 +83,10 @@ export default class App extends React.PureComponent {
       lato: require('./assets/Lato-Regular.ttf'),
       'lato-bold': require('./assets/Lato-Bold.ttf')
     })
-
-    // check if we need to update the users collection
-    const { collectionUpdatedAt } = this.global
-    const aWeekAgo = new Date().getTime() - 1000 * 60 * 60 * 24 * 7
-    if (collectionUpdatedAt > aWeekAgo) {
-      console.log('Collection fetched less a week ago, so skipping fetch.')
-    } else {
-      await this.global.fetchCollection()
-    }
   }
 
   render() {
-    const { bggCredentials } = this.global
-    const isLoggedIn = Object.keys(bggCredentials).length > 0
+    const { loggedIn } = this.global
 
     if (!this.state.isReady) {
       return (
@@ -107,7 +97,7 @@ export default class App extends React.PureComponent {
         />
       )
     } else {
-      if (!isLoggedIn) {
+      if (!loggedIn) {
         return (
           <View style={{ flex: 1 }}>
             <ProfileScreen title="BGG Community App" />
