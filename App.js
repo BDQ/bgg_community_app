@@ -2,7 +2,7 @@ import { SENTRY_CONFIG } from 'react-native-dotenv'
 import Sentry from 'sentry-expo'
 Sentry.config(SENTRY_CONFIG).install()
 
-import React, { setGlobal, addReducer } from 'reactn'
+import React from 'reactn'
 import { AsyncStorage, View } from 'react-native'
 import { createBottomTabNavigator } from 'react-navigation'
 import { Font, AppLoading } from 'expo'
@@ -15,21 +15,11 @@ import PreviewScreen from './screens/PreviewScreen'
 import ProfileScreen from './screens/ProfileScreen'
 import VisualSearchScreen from './screens/VisualSearchScreen'
 
+import { setupStore } from './shared/store'
 import { loadCollection, fetchCollection } from './shared/collection'
 
-// initial state
-setGlobal({
-  collection: [],
-  loggedIn: false,
-  bggCredentials: {}
-})
-
-// reducers
-addReducer('setBggCredentials', (state, bggCredentials) => {
-  const loggedIn = Object.keys(bggCredentials).length > 0
-
-  return { loggedIn, bggCredentials }
-})
+//bootstraps ReactN global store
+setupStore()
 
 const AppNavigator = createBottomTabNavigator({
   Owned: {
@@ -85,47 +75,24 @@ const AppNavigator = createBottomTabNavigator({
 
 export default class App extends React.PureComponent {
   state = {
-    isReady: false,
-    updatedAt: undefined
-  }
-
-  loadAuth = async () => {
-    try {
-      const value = await AsyncStorage.getItem('@BGGApp:auth')
-      let auth = {}
-
-      if (value !== null) {
-        auth = JSON.parse(value)
-      }
-      this.global.setBggCredentials(auth)
-    } catch (error) {
-      Sentry.captureException(error)
-    }
+    isReady: false
   }
 
   _cacheResourcesAsync = async () => {
-    const persistedState = await loadCollection(this.state.updateAt)
-    // console.log(Object.keys(persistedState))
-
-    if (persistedState) {
-      this.setState(persistedState)
-    }
-
     let promises = [
       Font.loadAsync({
         lato: require('./assets/Lato-Regular.ttf'),
         'lato-bold': require('./assets/Lato-Bold.ttf')
-      }),
-      this.loadAuth()
+      })
     ]
 
     await Promise.all(promises)
 
-    const collection = await fetchCollection(
-      this.global.bggCredentials.username
-    )
+    // const collection = await fetchCollection(
+    //   this.global.bggCredentials.username
+    // )
 
-    this.setGlobal({ collection })
+    // this.setGlobal({ collection })
     // this.setState({ games })
   }
 

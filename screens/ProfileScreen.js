@@ -70,11 +70,9 @@ class ProfileEditScreen extends React.PureComponent {
       message: null
     })
 
-    // todo enumerate our keys and use multiRemove instead - clear is bad - I know - priorities...
-    AsyncStorage.clear()
-
     //tells top level App we've logged in
-    this.global.setBggCredentials({})
+    this.global.setCredentials({})
+    this.global.updateCollection([])
   }
 
   logIn = () => {
@@ -143,7 +141,7 @@ class ProfileEditScreen extends React.PureComponent {
 
           AsyncStorage.setItem('@BGGApp:auth', JSON.stringify(bggCredentials))
 
-          this.global.setBggCredentials(bggCredentials)
+          this.global.setCredentials(bggCredentials)
         } else {
           showMessage({
             message:
@@ -219,7 +217,6 @@ class ProfileEditScreen extends React.PureComponent {
   }
 
   render = () => {
-    console.log(this.global.loggedIn)
     return (
       <View style={{ flex: 1, backgroundColor: '#ffffff' }}>
         {this._renderLoggedOut()}

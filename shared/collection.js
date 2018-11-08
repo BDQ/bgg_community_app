@@ -63,17 +63,6 @@ export const fetchCollection = async (username, force = false) => {
 
       collection = removeDuplicates(collection, 'objectId')
 
-      try {
-        const updatedAt = new Date().getTime()
-
-        AsyncStorage.setItem(
-          '@BGGApp:collection',
-          JSON.stringify({ collection, updatedAt })
-        )
-      } catch (error) {
-        Sentry.captureException(error)
-      }
-
       return collection
     } else {
       Sentry.captureMessage(
