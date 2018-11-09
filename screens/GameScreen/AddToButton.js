@@ -51,12 +51,7 @@ export default class AddToButton extends React.Component {
       navigation: { navigate }
     } = this.props
 
-    const {
-      objectId,
-      collectionId,
-      collectionStatus,
-      wishlistPriority
-    } = this.state
+    const { collectionId, collectionStatus, wishlistPriority } = this.state
 
     const inCollection = Object.keys(collectionStatus).length > 0
 
@@ -88,8 +83,7 @@ export default class AddToButton extends React.Component {
         }}
         onPress={() =>
           navigate('AddTo', {
-            name: game.name,
-            objectId,
+            game,
             collectionId,
             collectionStatus,
             wishlistPriority

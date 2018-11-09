@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'reactn'
 import { View, Text, StyleSheet } from 'react-native'
 import { CheckBox, Button } from 'react-native-elements'
 import { showMessage } from 'react-native-flash-message'
@@ -102,15 +102,15 @@ export default class GameAddTo extends React.Component {
 
   save = async () => {
     const { navigation } = this.props
-    const { collectionId, objectId } = navigation.state.params
+    const { game, collectionId } = navigation.state.params
     const { collectionStatus, wishlistPriority } = this.state
 
     const body = {
       item: {
         collid: collectionId || 0,
         status: collectionStatus,
-        objectid: objectId.toString(),
-        objectname: this.props.navigation.state.params.name,
+        objectid: game.objectId.toString(),
+        objectname: game.name,
         objecttype: 'thing',
         acquisitiondate: null,
         invdate: null,
@@ -131,6 +131,18 @@ export default class GameAddTo extends React.Component {
     }
 
     if (success) {
+      //update global / store
+      if (Object.values(collectionStatus).some(state => state)) {
+        game.status = {}
+
+        Object.keys(collectionStatus).map(key => {
+          game.status[key] = collectionStatus[key] ? '1' : '0'
+        })
+        this.global.addOrUpdateGameInCollection(game)
+      } else {
+        this.global.removeGameFromCollection(game)
+      }
+
       navigation.goBack(null)
     } else {
       showMessage({
@@ -159,8 +171,7 @@ export default class GameAddTo extends React.Component {
 
   render = () => {
     const { collectionStatus } = this.state
-
-    const name = this.props.navigation.state.params.name
+    const { name } = this.props.navigation.state.params.game
 
     let statusCheckBoxes = this.collectionStates.map((status, i) => (
       <CheckBox
@@ -187,12 +198,10 @@ export default class GameAddTo extends React.Component {
 }
 
 GameAddTo.propTypes = {
-  name: PropTypes.string.isRequired,
   navigation: PropTypes.shape({
     state: PropTypes.shape({
       params: PropTypes.shape({
-        name: PropTypes.string.isRequired,
-        objectId: PropTypes.string.isRequired,
+        game: PropTypes.object.isRequired,
         collectionId: PropTypes.string.isRequired,
         collectionStatus: PropTypes.any.isRequired,
         wishlistPriority: PropTypes.number.isRequired

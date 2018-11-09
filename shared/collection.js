@@ -2,6 +2,8 @@ import Sentry from 'sentry-expo'
 import parse from 'xml-parser'
 import { AsyncStorage } from 'react-native'
 
+const timeout = ms => new Promise(res => setTimeout(res, ms))
+
 export const removeDuplicates = (myArr, prop) => {
   return myArr.filter((obj, pos, arr) => {
     return arr.map(mapObj => mapObj[prop]).indexOf(obj[prop]) === pos
@@ -16,28 +18,30 @@ export const fetchCollection = async username => {
   const url = `https://www.boardgamegeek.com/xmlapi2/collection?username=${username}`
 
   try {
-    let response = await fetch(url)
+    const response = await fetch(url)
 
     if (response.status == 202) {
-      setTimeout(fetchCollection, 5000)
+      // collection is being prepared, come back late to try again
+      console.log('gonna sleep on it')
+      await timeout(2000)
+      return fetchCollection(username)
     } else if (response.status == 200) {
-      let xml = await response.text()
+      // yay! we have a collection response
+      const xml = await response.text()
 
-      let doc = await parseXML(xml)
+      const doc = await parseXML(xml)
 
       let collection = doc.root.children.map(item => {
-        let objectId = item.attributes.objectid
-        let name = item.children.find(e => e.name == 'name').content
-        let yearpublished = (
+        const objectId = item.attributes.objectid
+        const name = item.children.find(e => e.name == 'name').content
+        const yearpublished = (
           item.children.find(e => e.name == 'yearpublished') || {}
         ).content
-        let image = (item.children.find(e => e.name == 'image') || {}).content
-        let thumbnail = (item.children.find(e => e.name == 'thumbnail') || {})
+        const image = (item.children.find(e => e.name == 'image') || {}).content
+        const thumbnail = (item.children.find(e => e.name == 'thumbnail') || {})
           .content
 
-        let status = item.children.find(e => e.name == 'status') || {}
-        let own = status.attributes.own == '1'
-        let wishlist = status.attributes.wishlist == '1'
+        let statusElement = item.children.find(e => e.name == 'status') || {}
 
         let subtitle = `Year: ${yearpublished}`
 
@@ -48,11 +52,11 @@ export const fetchCollection = async username => {
           yearpublished,
           image,
           thumbnail,
-          own,
-          wishlist
+          status: statusElement.attributes
         }
       })
 
+      // not really duplicates, just multiple copies, need to figure out how that should be handled? HELP???
       collection = removeDuplicates(collection, 'objectId')
 
       return collection

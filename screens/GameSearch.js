@@ -1,13 +1,15 @@
 import React from 'react'
 import { View, Text, FlatList, TouchableOpacity } from 'react-native'
-import { SearchBar, Button } from 'react-native-elements'
-import GameListItem from './../components/GameListItem'
-import parse from 'xml-parser'
-import { fetchJSON } from '../shared/HTTP'
+import { SearchBar } from 'react-native-elements'
+import PropTypes from 'prop-types'
 import { debounce } from 'throttle-debounce'
+import parse from 'xml-parser'
+
+import { fetchJSON } from '../shared/HTTP'
+import GameListItem from './../components/GameListItem'
 
 export default class GameSearch extends React.PureComponent {
-  static navigationOptions = ({ navigation }) => {
+  static navigationOptions = () => {
     return {
       title: 'Add to collection'
     }
@@ -87,7 +89,7 @@ export default class GameSearch extends React.PureComponent {
   )
 
   enrich = async games => {
-    let ids = games.map(g => g.objectid)
+    let ids = games.map(g => g.objectId)
     const url = `https://www.boardgamegeek.com/xmlapi2/thing?id=${ids.join(
       ','
     )}&type=boardgame,boardgameexpansion`
@@ -100,7 +102,7 @@ export default class GameSearch extends React.PureComponent {
         let doc = parse(xml)
 
         let moreDataOnGames = doc.root.children.map(item => {
-          let objectid = item.attributes.id
+          let objectId = item.attributes.id
           let image = (item.children.find(e => e.name == 'image') || {}).content
           let thumbnail = (item.children.find(e => e.name == 'thumbnail') || {})
             .content
@@ -108,13 +110,13 @@ export default class GameSearch extends React.PureComponent {
             item.children.find(e => e.name == 'description') || {}
           ).content
 
-          return { objectid, image, thumbnail, description }
+          return { objectId, image, thumbnail, description }
         })
 
         games = games.map(game => {
           return Object.assign(
             game,
-            moreDataOnGames.find(g => g.objectid == game.objectid)
+            moreDataOnGames.find(g => g.objectId == game.objectId)
           )
         })
 
@@ -131,10 +133,22 @@ export default class GameSearch extends React.PureComponent {
 
       const url = `https://bgg.cc/search/boardgame?q=${str}&showcount=20`
 
-      let games = await fetchJSON(url)
+      const response = await fetchJSON(url)
 
-      this.setState({ games: games.items, loading: false })
-      this.enrich(games.items)
+      const games = response.items.map(game => ({
+        objectId: game.objectid,
+        name: game.name,
+        yearpublished: game.yearpublished
+      }))
+
+      this.setState({ games, loading: false })
+      this.enrich(games)
     }
   }
+}
+
+GameSearch.propTypes = {
+  navigation: PropTypes.shape({
+    navigate: PropTypes.func.isRequired
+  }).isRequired
 }

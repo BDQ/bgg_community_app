@@ -4,7 +4,9 @@ import Sentry from 'sentry-expo'
 
 import { fetchCollection } from '../shared/collection'
 
-export const ASYNC_KEY = '@BGGApp:v5'
+// increment the v5 when we need to blow up the old key
+// todo: figure out a nice way to kill the old key.
+export const ASYNC_KEY = '@BGGApp:v6'
 
 const getPersisted = async () => {
   try {
@@ -16,6 +18,7 @@ const getPersisted = async () => {
   }
   return {}
 }
+
 const persistGlobal = async state => {
   try {
     const raw = JSON.stringify(state)
@@ -40,7 +43,6 @@ export const setupStore = async () => {
 
   // now we load the data from Async store
   let persistedData = await getPersisted()
-  console.log(persistedData)
 
   // update global store with stuff from async and initial
   setGlobal({ ...initialState, ...persistedData })
@@ -63,6 +65,41 @@ export const setupStore = async () => {
     persistGlobal({ ...state, collection, collectionFetchedAt })
 
     return { collection, collectionFetchedAt }
+  })
+
+  addReducer('addOrUpdateGameInCollection', async (state, game) => {
+    const { collection } = state
+
+    let idx = collection.findIndex(
+      collectionGame =>
+        collectionGame.objectId.toString() === game.objectId.toString()
+    )
+
+    if (idx > -1) {
+      // already exists
+      collection[idx] = game
+    } else {
+      // new game to collection
+
+      collection.push(game)
+    }
+
+    return { collection }
+  })
+
+  addReducer('removeGameFromCollection', async (state, game) => {
+    const { collection } = state
+    let idx = collection.findIndex(
+      collectionGame =>
+        collectionGame.objectId.toString() === game.objectId.toString()
+    )
+
+    if (idx > -1) {
+      // already exists
+      collection.splice(idx, 1)
+    }
+
+    return { collection }
   })
 
   addReducer('logOut', () => {

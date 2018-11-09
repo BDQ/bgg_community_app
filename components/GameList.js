@@ -74,7 +74,7 @@ export default class GameList extends React.PureComponent {
         data={this.state.games}
         keyExtractor={item => item.key || item.objectId || item.objectid}
         renderItem={this._renderItem}
-        onRefresh={this.handleRefresh}
+        onRefresh={this.props.onRefresh}
         refreshing={this.props.refreshing}
         getItemLayout={(data, index) => {
           const itemHeight = 100
@@ -96,5 +96,6 @@ GameList.propTypes = {
     navigate: PropTypes.func.isRequired
   }).isRequired,
   games: PropTypes.array.isRequired,
-  refreshing: PropTypes.bool
+  refreshing: PropTypes.bool,
+  onRefresh: PropTypes.func.isRequired
 }

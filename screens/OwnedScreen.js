@@ -2,6 +2,7 @@ import React from 'reactn'
 import PropTypes from 'prop-types'
 import { createStackNavigator } from 'react-navigation'
 import { Icon } from 'react-native-elements'
+
 import GameScreen from './GameScreen'
 import GameSearch from './GameSearch'
 import GameAddTo from './GameAddTo'
@@ -32,9 +33,7 @@ class OwnedListScreen extends React.PureComponent {
 
     const aWeekAgo = new Date().getTime() - 1000 * 60 * 60 * 24 * 7
     if (loggedIn && collectionFetchedAt < aWeekAgo) {
-      this.setState({ refreshing: true })
-      await this.global.fetchCollection()
-      this.setState({ refreshing: false })
+      this.handleRefresh()
     } else {
       console.log(
         'Not logged in, or collection fetched less a week ago, so skipping fetch.'
@@ -42,17 +41,22 @@ class OwnedListScreen extends React.PureComponent {
     }
   }
 
+  handleRefresh = async () => {
+    this.setState({ refreshing: true })
+    this.global.fetchCollection()
+    this.setState({ refreshing: false })
+  }
+
   render() {
     const { navigate } = this.props.navigation
-    const games = this.global.collection.filter(game => game.own)
+    const games = this.global.collection.filter(game => game.status.own === '1')
 
-    console.log('state', this.state.refreshing)
     return (
       <GameList
         navigation={{ navigate }}
         games={games}
         refreshing={this.state.refreshing}
-        onRefresh={this.global.fetchCollection}
+        onRefresh={this.handleRefresh}
       />
     )
   }
