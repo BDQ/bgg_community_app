@@ -1,6 +1,6 @@
 import React from 'reactn'
 import { createStackNavigator } from 'react-navigation'
-import { View, Text, StyleSheet, AsyncStorage } from 'react-native'
+import { View, Text, StyleSheet } from 'react-native'
 import {
   FormLabel,
   FormInput,
@@ -36,7 +36,7 @@ class FieldValidation extends React.PureComponent {
   }
 }
 
-class ProfileEditScreen extends React.PureComponent {
+export class ProfileEditScreen extends React.PureComponent {
   state = {
     username: '',
     username_error: '',
@@ -53,6 +53,7 @@ class ProfileEditScreen extends React.PureComponent {
   }
 
   usernameChange = username => {
+    console.log('changing user', username)
     this.setState({ username: username })
   }
 
@@ -94,8 +95,6 @@ class ProfileEditScreen extends React.PureComponent {
   }
 
   attemptBGGLogin = async (username, password) => {
-    // const { loadAuth } = this.props.screenProps
-
     const headers = new Headers({
       Accept: 'application/json',
       'Content-Type': 'application/json;charset=UTF-8'
@@ -118,12 +117,11 @@ class ProfileEditScreen extends React.PureComponent {
       this.setState({ loading: false })
 
       if (response.status == 200) {
-        // const {message} = await response.json()
-        // const cookie = response.headers.get('set-cookie')
-
+        console.log(response.headers)
         // manually build the cookie here, as the .setItem below is async
         const { userid, firstname, lastname } = await this.getUserId()
 
+        console.log({ userid })
         if (userid > 0) {
           showMessage({
             message: `Successfully signed in as ${username}.`,
@@ -138,7 +136,8 @@ class ProfileEditScreen extends React.PureComponent {
             lastname
           }
 
-          AsyncStorage.setItem('@BGGApp:auth', JSON.stringify(bggCredentials))
+          console.log(bggCredentials)
+          console.log(this.global.setCredentials)
 
           this.global.setCredentials(bggCredentials)
         } else {
@@ -192,6 +191,7 @@ class ProfileEditScreen extends React.PureComponent {
 
           <FormLabel>BGG Username</FormLabel>
           <FormInput
+            id="usernameInput"
             focus={true}
             autoCapitalize={'none'}
             autoCorrect={false}
@@ -203,6 +203,7 @@ class ProfileEditScreen extends React.PureComponent {
 
           <FormLabel>BGG Password</FormLabel>
           <FormInput
+            id="passwordInput"
             onChangeText={this.passwordChange}
             secureTextEntry={true}
             value={this.state.password}

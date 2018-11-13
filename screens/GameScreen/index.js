@@ -142,6 +142,7 @@ export default class GameScreen extends React.Component {
 
         <View style={{ flex: 1, flexDirection: 'row', flexWrap: 'wrap' }}>
           <Text
+            id="headerText"
             style={{
               width: '100%',
               fontSize: 18,
