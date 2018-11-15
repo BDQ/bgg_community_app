@@ -51,7 +51,8 @@
     "start": "expo start",
     "debug": "open \"rndebugger://set-debugger-loc?host=localhost&port=19001\"",
     "test": "npx jest --coverage",
-    "watch": "npx jest --watch"
+    "watch": "npx jest --watch",
+    "buildTestEnv": "npx ./buildEnv.js > .env.test"
   },
   "jest": {
     "preset": "jest-expo",
