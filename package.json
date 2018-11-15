@@ -52,7 +52,7 @@
     "debug": "open \"rndebugger://set-debugger-loc?host=localhost&port=19001\"",
     "test": "npx jest --coverage",
     "watch": "npx jest --watch",
-    "buildTestEnv": "npx ./buildEnv.js > .env.test"
+    "buildTestEnv": "npx ./buildEnv.js > .env"
   },
   "jest": {
     "preset": "jest-expo",
