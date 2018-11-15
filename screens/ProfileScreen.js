@@ -1,6 +1,6 @@
 import React from 'reactn'
 import { createStackNavigator } from 'react-navigation'
-import { View, Text, StyleSheet, AsyncStorage } from 'react-native'
+import { View, Text, StyleSheet } from 'react-native'
 import {
   FormLabel,
   FormInput,
@@ -9,7 +9,7 @@ import {
 } from 'react-native-elements'
 import { showMessage } from 'react-native-flash-message'
 
-import { fetchRaw, fetchJSON } from '../shared/HTTP'
+import { logIn, getUserId } from '../shared/auth'
 
 const styles = StyleSheet.create({
   text: {
@@ -36,12 +36,10 @@ class FieldValidation extends React.PureComponent {
   }
 }
 
-class ProfileEditScreen extends React.PureComponent {
+export class ProfileEditScreen extends React.PureComponent {
   state = {
     username: '',
-    username_error: '',
     password: '',
-    password_error: '',
     loading: false,
     message: null
   }
@@ -60,7 +58,11 @@ class ProfileEditScreen extends React.PureComponent {
     this.setState({ password: password })
   }
 
-  logOut = () => {
+  showFlash = (message, type = 'danger') => {
+    showMessage({ message, type, icon: 'auto' })
+  }
+
+  handleLogOut = () => {
     this.setState({
       usernameError: '',
       password: '',
@@ -74,7 +76,7 @@ class ProfileEditScreen extends React.PureComponent {
     this.global.logOut()
   }
 
-  logIn = () => {
+  handleLogIn = () => {
     let valid = true
 
     if (this.state.username == '') {
@@ -94,42 +96,16 @@ class ProfileEditScreen extends React.PureComponent {
   }
 
   attemptBGGLogin = async (username, password) => {
-    // const { loadAuth } = this.props.screenProps
-
-    const headers = new Headers({
-      Accept: 'application/json',
-      'Content-Type': 'application/json;charset=UTF-8'
-    })
-
-    const init = {
-      method: 'POST',
-      body: JSON.stringify({
-        credentials: { username, password }
-      }),
-      credentials: 'include',
-      headers
-    }
-
     try {
-      // can't fetchJSON here as we want the full http response
-      // so we can inspect the cookies... like a monster ;)
-      let response = await fetchRaw('/login/api/v1', init)
+      const { success } = await logIn(username, password)
 
-      this.setState({ loading: false })
+      if (success) {
+        const { userid, firstname, lastname } = await getUserId()
 
-      if (response.status == 200) {
-        // const {message} = await response.json()
-        // const cookie = response.headers.get('set-cookie')
-
-        // manually build the cookie here, as the .setItem below is async
-        const { userid, firstname, lastname } = await this.getUserId()
+        this.setState({ loading: false })
 
         if (userid > 0) {
-          showMessage({
-            message: `Successfully signed in as ${username}.`,
-            icon: 'auto',
-            type: 'success'
-          })
+          this.showFlash(`Successfully signed in as ${username}.`, 'success')
 
           const bggCredentials = {
             username,
@@ -138,42 +114,25 @@ class ProfileEditScreen extends React.PureComponent {
             lastname
           }
 
-          AsyncStorage.setItem('@BGGApp:auth', JSON.stringify(bggCredentials))
-
           this.global.setCredentials(bggCredentials)
         } else {
-          showMessage({
-            message:
-              'Failed to get user data while logging in, please try again.',
-            icon: 'auto',
-            type: 'danger'
-          })
+          this.showFlash(
+            'Failed to get user data while logging in, please try again.'
+          )
         }
-      } else if (response.status == 401) {
-        showMessage({
-          message: 'Username or password was incorrect, please try again.',
-          icon: 'auto',
-          type: 'warning'
-        })
       } else {
-        showMessage({
-          message: 'Unexpected http status while logging in, please try again.',
-          icon: 'auto',
-          type: 'danger'
-        })
-        console.warn(response)
+        this.showFlash(
+          'Username or password was incorrect, please try again.',
+          'warning'
+        )
       }
     } catch (error) {
-      showMessage({
-        message: 'Unexpected error logging in, please try again.',
-        icon: 'auto',
-        type: 'danger'
-      })
+      this.showFlash('Unexpected error logging in, please try again.')
       console.warn('LOGIN ERROR', error)
     }
-  }
 
-  getUserId = async headers => await fetchJSON('/api/users/current', headers)
+    this.setState({ loading: false })
+  }
 
   _renderMessage = () => {
     let msg = 'Configure your BoardGameGeek account to get started.'
@@ -192,6 +151,7 @@ class ProfileEditScreen extends React.PureComponent {
 
           <FormLabel>BGG Username</FormLabel>
           <FormInput
+            id="usernameInput"
             focus={true}
             autoCapitalize={'none'}
             autoCorrect={false}
@@ -203,6 +163,7 @@ class ProfileEditScreen extends React.PureComponent {
 
           <FormLabel>BGG Password</FormLabel>
           <FormInput
+            id="passwordInput"
             onChangeText={this.passwordChange}
             secureTextEntry={true}
             value={this.state.password}
@@ -222,7 +183,7 @@ class ProfileEditScreen extends React.PureComponent {
         <Button
           raised
           backgroundColor="#03A9F4"
-          onPress={this.global.loggedIn ? this.logOut : this.logIn}
+          onPress={this.global.loggedIn ? this.handleLogOut : this.handleLogIn}
           loading={this.state.loading}
           title={this.global.loggedIn ? 'Log Out' : 'Log In'}
         />

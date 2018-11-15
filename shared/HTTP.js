@@ -31,6 +31,7 @@ export const fetchJSON = async (path, args = {}, headers = {}) => {
       })
     }
   } catch (error) {
+    console.log(`Error fetching: ${path}`)
     Sentry.captureException(error)
   }
 }
