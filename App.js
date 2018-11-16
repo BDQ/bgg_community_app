@@ -8,7 +8,7 @@ import { createBottomTabNavigator } from 'react-navigation'
 import { Font, AppLoading } from 'expo'
 import FlashMessage from 'react-native-flash-message'
 
-import { Owned, Wishlist, Scan, Profile } from './tabs'
+import { Owned, Wishlist, Scan, Profile, Subscriptions } from './tabs'
 import ProfileScreen from './screens/ProfileScreen'
 
 import { setupStore } from './shared/store'
@@ -40,12 +40,14 @@ export default class App extends React.PureComponent {
         Owned,
         Wishlist,
         Scan,
+        Subscriptions,
         Profile
       })
     } else {
       AppNavigator = createBottomTabNavigator({
         Owned,
         Wishlist,
+        Subscriptions,
         Profile
       })
     }

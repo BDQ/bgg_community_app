@@ -1,12 +1,10 @@
 import React from 'react'
 import {
   StyleSheet,
-  Image,
   View,
   Text,
   TouchableHighlight,
   Modal,
-  SafeAreaView,
   FlatList
 } from 'react-native'
 

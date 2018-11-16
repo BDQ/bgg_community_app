@@ -6,6 +6,7 @@ import WishlistScreen from './screens/WishlistScreen'
 import PreviewScreen from './screens/PreviewScreen'
 import ProfileScreen from './screens/ProfileScreen'
 import VisualSearchScreen from './screens/VisualSearchScreen'
+import SubscriptionsWebScreen from './screens/SubcriptionsScreen/Web'
 
 export const Owned = {
   screen: OwnedScreen,
@@ -53,6 +54,16 @@ export const Profile = {
     tabBarLabel: 'Account',
     tabBarIcon: ({ tintColor }) => (
       <Ionicons name="ios-person" size={26} style={{ color: tintColor }} />
+    )
+  }
+}
+
+export const Subscriptions = {
+  screen: SubscriptionsWebScreen,
+  navigationOptions: {
+    tabBarLabel: 'Subs',
+    tabBarIcon: ({ tintColor }) => (
+      <Ionicons name="ios-microphone" size={26} style={{ color: tintColor }} />
     )
   }
 }
