@@ -5,6 +5,8 @@
       "image": "./assets/splash.png"
     },
     "icon": "./assets/BGG-Logo.png",
+    "privacy": "public",
+    "githubUrl": "https://github.com/BDQ/bgg_community_app",
     "hooks": {
       "postPublish": [
         {
@@ -17,15 +19,16 @@
         }
       ]
     },
-    "name": "bggca",
+    "name": "BGG",
     "slug": "bggca",
-    "version": "0.1.3",
-    "description": "v0.1",
+    "version": "0.2.0",
+    "description": "Board Game Geek community app",
     "ios": {
       "bundleIdentifier": "io.bdq.bggca"
     },
     "android": {
-      "package": "io.bdq.bggca"
+      "package": "io.bdq.bggca",
+      "permissions": ["CAMERA"]
     }
   }
 }
