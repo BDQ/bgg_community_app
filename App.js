@@ -56,10 +56,7 @@ export default class App extends React.PureComponent {
   }
 
   render() {
-    const {
-      loggedIn,
-      bggCredentials: { username }
-    } = this.global
+    const { loggedIn } = this.global
 
     if (!this.state.isReady) {
       return (
@@ -80,7 +77,7 @@ export default class App extends React.PureComponent {
       } else {
         return (
           <View style={{ flex: 1 }}>
-            {this._renderTabs(username)}
+            {this._renderTabs()}
             <FlashMessage position="top" />
           </View>
         )
