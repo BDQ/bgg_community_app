@@ -131,7 +131,7 @@ export class ProfileEditScreen extends React.PureComponent {
       console.warn('LOGIN ERROR', error)
     }
 
-    this.setState({ loading: false })
+    // this.setState({ loading: false })
   }
 
   _renderMessage = () => {

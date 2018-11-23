@@ -1,8 +1,10 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import { Text, View } from 'react-native'
 import { ImagePicker, Permissions, ImageManipulator } from 'expo'
-import styles from '../shared/styles'
 import ProgressBar from 'react-native-progress/Circle'
+import styles from '../shared/styles'
+
 export default class Camera extends React.Component {
   state = {
     hasCameraPermission: null
@@ -16,6 +18,7 @@ export default class Camera extends React.Component {
     this.setState({ hasCameraPermission: status === 'granted' })
 
     const photo = await ImagePicker.launchCameraAsync({ quality: 0.1 })
+
     if (photo.cancelled) {
       this.props.onCancel()
     } else {
@@ -51,7 +54,13 @@ export default class Camera extends React.Component {
     if (hasCameraPermission === null) {
       return <View />
     } else if (hasCameraPermission === false) {
-      return <Text>No access to camera</Text>
+      return (
+        <View style={styles.emptyView}>
+          <Text style={{ textAlign: 'center' }}>
+            No access to camera, check your settings to allow camera access.
+          </Text>
+        </View>
+      )
     } else {
       return (
         <View style={styles.emptyView}>
@@ -60,4 +69,9 @@ export default class Camera extends React.Component {
       )
     }
   }
+}
+
+Camera.propTypes = {
+  onScan: PropTypes.func.isRequired,
+  onCancel: PropTypes.func.isRequired
 }
