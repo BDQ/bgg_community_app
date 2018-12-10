@@ -1,5 +1,4 @@
-import React from 'react'
-import { AsyncStorage } from 'react-native'
+import React from 'reactn'
 import { Button } from 'react-native-elements'
 import PropTypes from 'prop-types'
 
@@ -20,8 +19,7 @@ export default class AddToButton extends React.Component {
   }
 
   getUserGameDetails = async objectId => {
-    let auth = await AsyncStorage.getItem('@BGGApp:auth')
-    const { userid } = JSON.parse(auth)
+    const { userid } = this.global.bggCredentials
 
     const url = `/api/collections?objectid=${objectId}&objecttype=thing&userid=${userid}`
     const { items } = await fetchJSON(url)
