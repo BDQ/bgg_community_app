@@ -41,7 +41,7 @@ export const Scan = {
 export const Preview = {
   screen: PreviewScreen,
   navigationOptions: {
-    tabBarLabel: 'Essen',
+    tabBarLabel: 'Preview',
     tabBarIcon: ({ tintColor }) => (
       <Ionicons name="ios-eye" size={26} style={{ color: tintColor }} />
     )

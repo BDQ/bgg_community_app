@@ -15,13 +15,13 @@ class PreviewListScreen extends React.Component {
     games: [],
     companies: [],
     userSelections: [],
-    previewId: 6,
+    previewId: 14,
     loading: false
   }
 
   static navigationOptions = ({ navigation }) => {
     return {
-      title: `Essen Preview (${navigation.getParam('gameCount', '0')})`
+      title: `Preview (${navigation.getParam('gameCount', '0')})`
     }
   }
 
