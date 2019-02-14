@@ -1,5 +1,5 @@
 import React from 'reactn'
-import { createStackNavigator } from 'react-navigation'
+import { createAppContainer, createStackNavigator } from 'react-navigation'
 import { View, Text, StyleSheet } from 'react-native'
 import {
   FormLabel,
@@ -192,6 +192,8 @@ export class ProfileEditScreen extends React.PureComponent {
   }
 }
 
-export default createStackNavigator({
-  Edit: { screen: ProfileEditScreen }
-})
+export default createAppContainer(
+  createStackNavigator({
+    Edit: { screen: ProfileEditScreen }
+  })
+)

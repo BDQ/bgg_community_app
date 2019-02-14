@@ -4,7 +4,7 @@ Sentry.config(SENTRY_CONFIG).install()
 
 import React from 'reactn'
 import { View } from 'react-native'
-import { createBottomTabNavigator } from 'react-navigation'
+import { createAppContainer, createBottomTabNavigator } from 'react-navigation'
 import { Font, AppLoading } from 'expo'
 import FlashMessage from 'react-native-flash-message'
 
@@ -49,12 +49,13 @@ export default class App extends React.PureComponent {
         Owned,
         Wishlist,
         Preview,
-        Subscriptions,
         Profile
       })
     }
 
-    return <AppNavigator />
+    const App = createAppContainer(AppNavigator)
+
+    return <App />
   }
 
   render() {
