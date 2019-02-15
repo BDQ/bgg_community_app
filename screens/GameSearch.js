@@ -83,7 +83,7 @@ export default class GameSearch extends React.PureComponent {
       ListHeaderComponent={this._renderHeader}
       ListFooterComponent={this._renderFooter}
       data={this.state.games}
-      keyExtractor={item => item.objectid}
+      keyExtractor={item => item.objectId}
       renderItem={this._renderItem}
     />
   )

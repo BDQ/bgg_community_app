@@ -15,7 +15,7 @@ export default class AddToButton extends React.Component {
   componentDidMount = () => {
     const { game } = this.props
 
-    this.getUserGameDetails(game.objectId || game.objectid)
+    this.getUserGameDetails(game.objectId)
   }
 
   getUserGameDetails = async objectId => {

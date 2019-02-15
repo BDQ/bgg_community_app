@@ -34,7 +34,7 @@ export default class GameScreen extends React.Component {
 
   componentDidMount() {
     const { game, details } = this.state
-    const objectId = game.objectId || game.objectid
+    const objectId = game.objectId
 
     if (details === null) {
       this.getGameStats(objectId)
@@ -42,15 +42,15 @@ export default class GameScreen extends React.Component {
     }
   }
 
-  getGameDetails = async objectid => {
-    const url = `https://api.geekdo.com/api/geekitems?objectid=${objectid}&showcount=10&nosession=1&ajax=1&objecttype=thing`
+  getGameDetails = async objectId => {
+    const url = `https://api.geekdo.com/api/geekitems?objectid=${objectId}&showcount=10&nosession=1&ajax=1&objecttype=thing`
     const { item: details } = await fetchJSON(url)
 
     this.setState({ details })
   }
 
-  getGameStats = async objectid => {
-    const url = `https://api.geekdo.com/api/dynamicinfo?objectid=${objectid}&showcount=10&nosession=1&ajax=1&objecttype=thing`
+  getGameStats = async objectId => {
+    const url = `https://api.geekdo.com/api/dynamicinfo?objectid=${objectId}&showcount=10&nosession=1&ajax=1&objecttype=thing`
     const stats = await fetchJSON(url)
     this.setState({ stats })
   }
@@ -323,7 +323,7 @@ export default class GameScreen extends React.Component {
             <AddToButton navigation={navigation} game={game} />
           </View>
           <View style={{ padding: 10, backgroundColor: '#ffffff' }}>
-            <ImageList objectId={game ? game.objectid : null} />
+            <ImageList objectId={game ? game.objectId : null} />
             {this._renderDescription(details)}
           </View>
         </View>

@@ -397,7 +397,7 @@ export default class PreviewList extends React.PureComponent {
           )
         }}
         sections={sections}
-        keyExtractor={item => item.key || item.objectid}
+        keyExtractor={item => item.key || item.objectId}
         renderItem={this._renderItem}
         refreshControl={
           <RefreshControl refreshing={loading} onRefresh={onRefresh} />

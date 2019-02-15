@@ -72,7 +72,7 @@ export default class GameList extends React.PureComponent {
       <FlatList
         ListHeaderComponent={this._renderHeader}
         data={this.state.games}
-        keyExtractor={item => item.key || item.objectId || item.objectid}
+        keyExtractor={item => item.key || item.objectId}
         renderItem={this._renderItem}
         onRefresh={this.props.onRefresh}
         refreshing={this.props.refreshing}

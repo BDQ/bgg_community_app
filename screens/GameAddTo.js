@@ -202,9 +202,9 @@ GameAddTo.propTypes = {
     state: PropTypes.shape({
       params: PropTypes.shape({
         game: PropTypes.object.isRequired,
-        collectionId: PropTypes.string.isRequired,
-        collectionStatus: PropTypes.any.isRequired,
-        wishlistPriority: PropTypes.number.isRequired
+        collectionId: PropTypes.string,
+        collectionStatus: PropTypes.any,
+        wishlistPriority: PropTypes.number
       })
     }),
     navigate: PropTypes.func.isRequired,

@@ -24,8 +24,9 @@ export default class ImageList extends React.Component {
   static getDerivedStateFromProps(props, state) {
     const { objectId } = props
 
+    console.log({ objectId })
     if (objectId && objectId !== state.objectId) {
-      //clear out previous images
+      // clear out previous images
       return { objectId, images: null }
     }
 

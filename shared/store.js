@@ -80,9 +80,10 @@ export const setupStore = async () => {
       collection[idx] = game
     } else {
       // new game to collection
-
       collection.push(game)
     }
+
+    persistGlobal({ ...state, collection })
 
     return { collection }
   })
