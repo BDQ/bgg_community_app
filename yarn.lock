@@ -5657,7 +5657,7 @@ react-native-image-zoom-viewer@^2.2.23:
   dependencies:
     react-native-image-pan-zoom "^2.1.9"
 
-"react-native-maps@github:expo/react-native-maps#v0.22.1-exp.0":
+react-native-maps@expo/react-native-maps#v0.22.1-exp.0:
   version "0.22.1"
   resolved "https://codeload.github.com/expo/react-native-maps/tar.gz/e6f98ff7272e5d0a7fe974a41f28593af2d77bb2"
 
@@ -5927,9 +5927,9 @@ react@16.5.0:
     prop-types "^15.6.2"
     schedule "^0.3.0"
 
-reactn@^0.1.8:
-  version "0.1.8"
-  resolved "https://registry.yarnpkg.com/reactn/-/reactn-0.1.8.tgz#89b7c856edb788ca094328d34249610fa6feb1fe"
+reactn@^0.2.2:
+  version "0.2.2"
+  resolved "https://registry.yarnpkg.com/reactn/-/reactn-0.2.2.tgz#48aa099ac1e55254bc53a7d9a5e215d52a2caf4f"
   dependencies:
     use-force-update "^1.0.0"
 
