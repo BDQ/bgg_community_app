@@ -43,5 +43,9 @@ export default StyleSheet.create({
     fontSize: 12,
     color: '#999999',
     marginLeft: 10
+  },
+  link: {
+    color: 'blue',
+    textDecorationLine: 'underline'
   }
 })

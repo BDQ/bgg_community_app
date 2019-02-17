@@ -1,9 +1,11 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { FlatList, TouchableOpacity } from 'react-native'
+import { FlatList, TouchableOpacity, View, Text } from 'react-native'
 import { SearchBar } from 'react-native-elements'
 
 import GameListItem from './GameListItem'
+
+import styles from '../shared/styles'
 
 const applyFilter = (str, items) => {
   let re = new RegExp(str, 'gi')
@@ -50,8 +52,22 @@ export default class GameList extends React.PureComponent {
     })
   }
 
-  clearFilter = () => {
-    this.setState({ items: this.props.games })
+  clearFilter = () => this.filter('')
+
+  _renderEmpty = () => {
+    if (this.state.filterString !== '') {
+      return (
+        <View style={styles.emptyView}>
+          <View style={{ flexDirection: 'row' }}>
+            <Text>No matches, </Text>
+            <Text style={styles.link} onPress={this.clearFilter}>
+              clear search
+            </Text>
+            <Text>.</Text>
+          </View>
+        </View>
+      )
+    }
   }
 
   _renderHeader = () => {
@@ -60,6 +76,7 @@ export default class GameList extends React.PureComponent {
         onChangeText={this.filter}
         onClearText={this.clearFilter}
         placeholder="Type here to filter..."
+        value={this.state.filterString}
         // showLoadingIcon={true}
       />
     )
@@ -71,6 +88,7 @@ export default class GameList extends React.PureComponent {
     return (
       <FlatList
         ListHeaderComponent={this._renderHeader}
+        ListEmptyComponent={this._renderEmpty}
         data={this.state.games}
         keyExtractor={item => item.key || item.objectId}
         renderItem={this._renderItem}

@@ -1,15 +1,20 @@
 import React from 'reactn'
 import PropTypes from 'prop-types'
+import { View, Text } from 'react-native'
 import { createStackNavigator } from 'react-navigation'
 import { Icon } from 'react-native-elements'
+import ProgressBar from 'react-native-progress/Circle'
 
 import GameScreen from './GameScreen'
 import GameSearch from './GameSearch'
 import GameAddTo from './GameAddTo'
 import GameList from './../components/GameList'
 
+import styles from '../shared/styles'
+
 class OwnedListScreen extends React.PureComponent {
   state = {
+    collectionFetched: false,
     refreshing: false
   }
 
@@ -32,6 +37,7 @@ class OwnedListScreen extends React.PureComponent {
     const { collectionFetchedAt, loggedIn } = this.global
 
     const aWeekAgo = new Date().getTime() - 1000 * 60 * 60 * 24 * 7
+
     if (loggedIn && collectionFetchedAt < aWeekAgo) {
       this.handleRefresh()
     } else {
@@ -48,17 +54,32 @@ class OwnedListScreen extends React.PureComponent {
   }
 
   render() {
-    const { navigate } = this.props.navigation
-    const games = this.global.collection.filter(game => game.status.own === '1')
+    if (this.global.collectionFetchedAt > 0) {
+      const { navigate } = this.props.navigation
+      const games = this.global.collection.filter(
+        game => game.status.own === '1'
+      )
 
-    return (
-      <GameList
-        navigation={{ navigate }}
-        games={games}
-        refreshing={this.state.refreshing}
-        onRefresh={this.handleRefresh}
-      />
-    )
+      return (
+        <GameList
+          navigation={{ navigate }}
+          games={games}
+          refreshing={this.state.refreshing}
+          onRefresh={this.handleRefresh}
+        />
+      )
+    } else {
+      return (
+        <View style={styles.emptyView}>
+          <ProgressBar
+            indeterminate={true}
+            color="#000000"
+            style={{ marginBottom: 10 }}
+          />
+          <Text>Loading your collection...</Text>
+        </View>
+      )
+    }
   }
 }
 
