@@ -19,7 +19,7 @@ export const logIn = async (username, password) => {
   // so we can inspect the cookies... like a monster ;)
   const { status, headers } = await fetchRaw('/login/api/v1', init)
 
-  if (status === 200) {
+  if (status === 200 || status === 202) {
     return { success: true, headers }
   } else {
     return { success: false, headers: null }

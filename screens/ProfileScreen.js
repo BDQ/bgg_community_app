@@ -11,14 +11,16 @@ import { showMessage } from 'react-native-flash-message'
 
 import { logIn, getUserId } from '../shared/auth'
 
-const styles = StyleSheet.create({
+import styles from '../shared/styles'
+
+const customStyles = StyleSheet.create({
   text: {
     paddingHorizontal: 20,
     paddingVertical: 10
   },
 
   bottomText: {
-    padding: 20
+    paddingVertical: 20
   }
 })
 
@@ -140,10 +142,10 @@ export class ProfileEditScreen extends React.PureComponent {
       msg = this.state.message
     }
 
-    return <Text style={styles.text}>{msg}</Text>
+    return <Text style={customStyles.bottomText}>{msg}</Text>
   }
 
-  _renderLoggedOut = () => {
+  _renderState = () => {
     if (!this.global.loggedIn) {
       return (
         <React.Fragment>
@@ -172,21 +174,31 @@ export class ProfileEditScreen extends React.PureComponent {
         </React.Fragment>
       )
     } else {
-      return <Text style={styles.bottomText}>You are logged in!</Text>
+      return <Text style={customStyles.bottomText}>You are logged in!</Text>
     }
   }
 
   render = () => {
     return (
-      <View style={{ flex: 1, backgroundColor: '#ffffff' }}>
-        {this._renderLoggedOut()}
-        <Button
-          raised
-          backgroundColor="#03A9F4"
-          onPress={this.global.loggedIn ? this.handleLogOut : this.handleLogIn}
-          loading={this.state.loading}
-          title={this.global.loggedIn ? 'Log Out' : 'Log In'}
-        />
+      <View style={styles.mainView}>
+        <Text style={styles.formHeader}>Welcome to the BGG Community App!</Text>
+        <Text>
+          This app is an open source community initiative to build and maintain
+          a mobile application for the amazing BoardGameGeek.com site.
+        </Text>
+        {this._renderState()}
+        <View style={{ alignSelf: 'center' }}>
+          <Button
+            raised
+            backgroundColor="#03A9F4"
+            style={customStyles.bottomText}
+            onPress={
+              this.global.loggedIn ? this.handleLogOut : this.handleLogIn
+            }
+            loading={this.state.loading}
+            title={this.global.loggedIn ? 'Log Out' : 'Log In'}
+          />
+        </View>
       </View>
     )
   }
