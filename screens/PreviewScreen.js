@@ -1,6 +1,6 @@
 import React from 'react'
 import { createStackNavigator } from 'react-navigation'
-import { AsyncStorage, View } from 'react-native'
+import { AsyncStorage } from 'react-native'
 
 import GameScreen from './GameScreen'
 import GameAddTo from './GameAddTo'
@@ -15,7 +15,7 @@ class PreviewListScreen extends React.Component {
     games: [],
     companies: [],
     userSelections: [],
-    previewId: 14,
+    previewId: 17,
     loading: false
   }
 
@@ -55,8 +55,6 @@ class PreviewListScreen extends React.Component {
 
     // get the games!
     await this.getPreviewItems('thing')
-
-    const { setParams } = this.props.navigation
 
     this.setState({ loading: false })
     console.log('loading all end')

@@ -1,6 +1,6 @@
 import React from 'react'
 import { Text, View, TouchableOpacity } from 'react-native'
-import { Camera, Permissions, ImageManipulator, ImagePicker } from 'expo'
+import { Camera, Permissions, ImageManipulator } from 'expo'
 
 export default class Scanner extends React.Component {
   state = {

@@ -86,7 +86,10 @@ class VisualSearchScreen extends React.Component {
       await this.setState({ searchComplete: true })
 
       // navigate to the results list
-      this.props.navigation.push('List', { games })
+      this.props.navigation.push('List', {
+        games,
+        onRefresh: () => console.log('refrehs')
+      })
 
       if (games.length > 2) {
         // if the top game has a good score, and is at least 1 full point above the next game

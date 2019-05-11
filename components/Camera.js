@@ -30,8 +30,7 @@ export default class Camera extends React.Component {
         //landscape snap
         resize = { width: 250 }
       }
-
-      const resized = await ImageManipulator.manipulate(
+      const resized = await ImageManipulator.manipulateAsync(
         photo.uri,
         [{ resize }],
         {
