@@ -1,6 +1,6 @@
 import React from 'reactn'
 import { createAppContainer, createStackNavigator } from 'react-navigation'
-import { View, Text, StyleSheet } from 'react-native'
+import { View, Text, StyleSheet, Linking } from 'react-native'
 import {
   FormLabel,
   FormInput,
@@ -21,6 +21,10 @@ const customStyles = StyleSheet.create({
 
   bottomText: {
     paddingVertical: 20
+  },
+
+  strong: {
+    fontWeight: 'bold'
   }
 })
 
@@ -101,10 +105,10 @@ export class ProfileEditScreen extends React.PureComponent {
     try {
       const { success } = await logIn(username, password)
 
+      this.setState({ loading: false })
+
       if (success) {
         const { userid, firstname, lastname } = await getUserId()
-
-        this.setState({ loading: false })
 
         if (userid > 0) {
           this.showFlash(`Successfully signed in as ${username}.`, 'success')
@@ -142,7 +146,9 @@ export class ProfileEditScreen extends React.PureComponent {
       msg = this.state.message
     }
 
-    return <Text style={customStyles.bottomText}>{msg}</Text>
+    return (
+      <Text style={[customStyles.bottomText, customStyles.strong]}>{msg}</Text>
+    )
   }
 
   _renderState = () => {
@@ -174,7 +180,11 @@ export class ProfileEditScreen extends React.PureComponent {
         </React.Fragment>
       )
     } else {
-      return <Text style={customStyles.bottomText}>You are logged in!</Text>
+      return (
+        <Text style={[customStyles.bottomText, customStyles.strong]}>
+          You are logged in!
+        </Text>
+      )
     }
   }
 
@@ -183,8 +193,17 @@ export class ProfileEditScreen extends React.PureComponent {
       <View style={styles.mainView}>
         <Text style={styles.formHeader}>Welcome to the BGG Community App!</Text>
         <Text>
-          This app is an open source community initiative to build and maintain
-          a mobile application for the amazing BoardGameGeek.com site.
+          This app is an <Text style={customStyles.strong}>unofficial</Text>{' '}
+          <Text
+            style={{ color: 'blue', textDecorationLine: 'underline' }}
+            onPress={() =>
+              Linking.openURL('https://github.com/BDQ/bgg_community_app')
+            }
+          >
+            open source
+          </Text>{' '}
+          community initiative to build and maintain a mobile application for
+          the amazing BoardGameGeek.com site.
         </Text>
         {this._renderState()}
         <View style={{ alignSelf: 'center' }}>
@@ -198,6 +217,19 @@ export class ProfileEditScreen extends React.PureComponent {
             loading={this.state.loading}
             title={this.global.loggedIn ? 'Log Out' : 'Log In'}
           />
+        </View>
+        <View
+          style={{
+            alignItems: 'flex-end',
+            justifyContent: 'flex-end',
+            flexGrow: 1,
+            marginBottom: 20
+          }}
+        >
+          <Text>
+            Geekdo, BoardGameGeek, the Geekdo logo, and the BoardGameGeek logo
+            are trademarks of BoardGameGeek, LLC.
+          </Text>
         </View>
       </View>
     )

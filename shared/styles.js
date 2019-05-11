@@ -10,8 +10,7 @@ export default StyleSheet.create({
 
   mainView: {
     flex: 1,
-    alignItems: 'flex-start',
-    justifyContent: 'flex-start',
+
     padding: 10,
     backgroundColor: '#ffffff'
   },
