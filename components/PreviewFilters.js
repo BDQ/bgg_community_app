@@ -147,7 +147,8 @@ export default class PreviewFilters extends React.Component {
               />
             </View>
 
-            <TouchableOpacity
+            {/* Disabling Halls for Origins */}
+            {/* <TouchableOpacity
               style={styles.formLabelRow}
               onPress={() => this.toggleTags('hallTags')}
             >
@@ -165,7 +166,7 @@ export default class PreviewFilters extends React.Component {
                 data={halls}
                 theme="info"
               />
-            </View>
+            </View> */}
 
             <TouchableOpacity
               style={styles.formLabelRow}
