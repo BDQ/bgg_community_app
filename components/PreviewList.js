@@ -299,7 +299,9 @@ export default class PreviewList extends React.PureComponent {
             justifyContent: 'center',
             alignItems: 'center',
             width: '10%',
-            backgroundColor: '#393e42'
+            backgroundColor: '#393e42',
+            borderBottomColor: 'black',
+            borderBottomWidth: 1
           }}
         >
           <TouchableOpacity

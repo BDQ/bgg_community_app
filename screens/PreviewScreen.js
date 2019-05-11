@@ -21,7 +21,7 @@ class PreviewListScreen extends React.Component {
 
   static navigationOptions = ({ navigation }) => {
     return {
-      title: `Preview (${navigation.getParam('gameCount', '0')})`
+      title: `Origins (${navigation.getParam('gameCount', '0')})`
     }
   }
 
