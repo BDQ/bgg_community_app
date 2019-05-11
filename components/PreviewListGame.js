@@ -242,7 +242,7 @@ export default class PreviewListGame extends React.PureComponent {
 const styles = StyleSheet.create({
   itemContainer: {
     borderBottomWidth: 1,
-    borderColor: '#132d3d',
+    borderColor: '#dde4eb',
     backgroundColor: '#ffffff',
     padding: 10
   },

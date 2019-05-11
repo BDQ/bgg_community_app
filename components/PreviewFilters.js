@@ -147,26 +147,27 @@ export default class PreviewFilters extends React.Component {
               />
             </View>
 
-            {/* Disabling Halls for Origins */}
-            {/* <TouchableOpacity
-              style={styles.formLabelRow}
-              onPress={() => this.toggleTags('hallTags')}
-            >
-              <Text style={styles.formLabel}>Halls</Text>
-              <Text style={styles.toggleText}>(Toggle All)</Text>
-            </TouchableOpacity>
+            <View style={{ display: 'none' }}>
+              <TouchableOpacity
+                style={styles.formLabelRow}
+                onPress={() => this.toggleTags('hallTags')}
+              >
+                <Text style={styles.formLabel}>Halls</Text>
+                <Text style={styles.toggleText}>(Toggle All)</Text>
+              </TouchableOpacity>
 
-            <View style={{ marginLeft: 5, marginBottom: 15 }}>
-              <TagSelect
-                labelAttr="name"
-                value={filters.halls}
-                ref={tag => {
-                  this.hallTags = tag
-                }}
-                data={halls}
-                theme="info"
-              />
-            </View> */}
+              <View style={{ marginLeft: 5, marginBottom: 15 }}>
+                <TagSelect
+                  labelAttr="name"
+                  value={filters.halls}
+                  ref={tag => {
+                    this.hallTags = tag
+                  }}
+                  data={halls}
+                  theme="info"
+                />
+              </View>
+            </View>
 
             <TouchableOpacity
               style={styles.formLabelRow}

@@ -16,12 +16,11 @@ export default class PreviewListCompany extends React.PureComponent {
       <View style={styles.itemContainer}>
         <Avatar
           medium
-          rounded
           source={{ uri: this.props.thumbnail }}
           activeOpacity={0.7}
         />
-        <View style={styles.gameDetails}>
-          <Text numberOfLines={1} style={styles.gameName}>
+        <View style={styles.companyDetails}>
+          <Text numberOfLines={1} style={styles.companyName}>
             {this.props.name}
           </Text>
           {this._renderLocation()}
@@ -36,24 +35,24 @@ const styles = StyleSheet.create({
     height: 58,
     padding: 3,
     paddingLeft: 10,
-    borderBottomWidth: 1,
-    borderColor: '#132d3d',
+    borderBottomWidth: 2,
+    borderColor: '#e8ad4b',
     flexDirection: 'row',
-    backgroundColor: '#292e62'
+    backgroundColor: '#f3f3f4'
   },
-  gameDetails: {
+  companyDetails: {
     paddingLeft: 10,
     flex: 1,
     flexDirection: 'column'
   },
-  gameName: {
+  companyName: {
     fontFamily: 'lato-bold',
     fontSize: 20,
-    color: '#ffffff'
+    color: '#292e62'
   },
   location: {
     fontFamily: 'lato-bold',
-    color: '#eeeeee'
+    color: '#161616'
   },
   text: {
     color: '#132d3d'
