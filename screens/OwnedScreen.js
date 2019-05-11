@@ -20,7 +20,7 @@ class OwnedListScreen extends React.PureComponent {
 
   static navigationOptions = ({ navigation }) => {
     return {
-      title: 'Owned',
+      title: 'My Collection',
       headerRight: (
         <Icon
           name="add-to-list"

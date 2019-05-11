@@ -1,14 +1,14 @@
-import React, { Component } from 'react'
+import React from 'react'
+import PropTypes from 'prop-types'
 import { StyleSheet, View, Text } from 'react-native'
 import { Avatar } from 'react-native-elements'
-import { Font } from 'expo'
 
 export default class GameListItem extends React.PureComponent {
   render() {
     return (
       <View style={styles.itemContainer}>
         <Avatar
-          large
+          size="large"
           source={{ uri: this.props.thumbnail }}
           activeOpacity={0.7}
         />
@@ -23,12 +23,18 @@ export default class GameListItem extends React.PureComponent {
   }
 }
 
+GameListItem.propTypes = {
+  thumbnail: PropTypes.string.isRequired,
+  name: PropTypes.string.isRequired,
+  subtitle: PropTypes.string.isRequired
+}
+
 const styles = StyleSheet.create({
   itemContainer: {
-    height: 100,
+    height: 99,
     padding: 10,
-    borderTopWidth: 1,
-    borderColor: '#132d3d',
+    borderTopWidth: 2,
+    borderColor: '#dde4eb',
     flexDirection: 'row',
     backgroundColor: '#ffffff'
   },

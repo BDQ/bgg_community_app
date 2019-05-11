@@ -1,12 +1,7 @@
 import React from 'reactn'
 import { createAppContainer, createStackNavigator } from 'react-navigation'
 import { View, Text, StyleSheet, Linking } from 'react-native'
-import {
-  FormLabel,
-  FormInput,
-  FormValidationMessage,
-  Button
-} from 'react-native-elements'
+import { Input, Button } from 'react-native-elements'
 import { showMessage } from 'react-native-flash-message'
 
 import { logIn, getUserId } from '../shared/auth'
@@ -157,26 +152,27 @@ export class ProfileEditScreen extends React.PureComponent {
         <React.Fragment>
           {this._renderMessage()}
 
-          <FormLabel>BGG Username</FormLabel>
-          <FormInput
+          <Input
             id="usernameInput"
+            label="BGG Username"
             focus={true}
             autoCapitalize={'none'}
             autoCorrect={false}
             spellCheck={false}
             onChangeText={this.usernameChange}
             value={this.state.username}
+            errorMessage={this.state.usernameError}
           />
-          <FieldValidation message={this.state.usernameError} />
 
-          <FormLabel>BGG Password</FormLabel>
-          <FormInput
+          <Input
             id="passwordInput"
+            label="BGG Password"
+            containerStyle={{ marginTop: 25 }}
             onChangeText={this.passwordChange}
             secureTextEntry={true}
             value={this.state.password}
+            errorMessage={this.state.passwordError}
           />
-          <FieldValidation message={this.state.passwordError} />
         </React.Fragment>
       )
     } else {
@@ -208,7 +204,6 @@ export class ProfileEditScreen extends React.PureComponent {
         {this._renderState()}
         <View style={{ alignSelf: 'center' }}>
           <Button
-            raised
             backgroundColor="#03A9F4"
             style={customStyles.bottomText}
             onPress={

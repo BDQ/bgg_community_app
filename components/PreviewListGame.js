@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import { TouchableOpacity, StyleSheet, View, Text } from 'react-native'
 import { Avatar, Badge } from 'react-native-elements'
 import Swipeout from 'react-native-swipeout'
@@ -97,9 +98,14 @@ export default class PreviewListGame extends React.PureComponent {
     return color ? (
       <Badge
         style={styles.minorValue}
-        value={name}
-        textStyle={{ color: '#ffffff', fontSize: 9 }}
-        containerStyle={{ backgroundColor: color }}
+        value={
+          <Text
+            style={{ paddingHorizontal: 10, color: '#ffffff', fontSize: 9 }}
+          >
+            {name}
+          </Text>
+        }
+        badgeStyle={{ backgroundColor: color }}
         wrapperStyle={{ flex: 1 }}
       />
     ) : null
@@ -208,7 +214,7 @@ export default class PreviewListGame extends React.PureComponent {
           >
             <View style={styles.mainContainer}>
               <Avatar
-                large
+                size="large"
                 source={{ uri: this.props.thumbnail }}
                 activeOpacity={0.7}
               />
@@ -237,6 +243,24 @@ export default class PreviewListGame extends React.PureComponent {
       </Swipeout>
     )
   }
+}
+
+PreviewListGame.propTypes = {
+  navigation: PropTypes.shape({
+    navigate: PropTypes.func.isRequired
+  }).isRequired,
+  userSelection: PropTypes.shape({
+    notes: PropTypes.string.isRequired,
+    priority: PropTypes.number.isRequired
+  }),
+  setUserSelection: PropTypes.func.isRequired,
+  thumbnail: PropTypes.string.isRequired,
+  name: PropTypes.string.isRequired,
+  versionName: PropTypes.string.isRequired,
+  status: PropTypes.string.isRequired,
+  game: PropTypes.any.isRequired,
+  price: PropTypes.number,
+  priceCurrency: PropTypes.string
 }
 
 const styles = StyleSheet.create({

@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import { View, Text, TouchableOpacity, ScrollView } from 'react-native'
 import { TagSelect } from 'react-native-tag-select'
 import { Button } from 'react-native-elements'
@@ -44,7 +45,7 @@ export default class PreviewFilters extends React.Component {
         <Button
           onPress={navigation.state.params.applyFilters}
           title="Apply"
-          buttonStyle={{ backgroundColor: '#03A9F4' }}
+          buttonStyle={{ height: '90%', backgroundColor: '#03A9F4' }}
         />
       )
     }
@@ -79,10 +80,9 @@ export default class PreviewFilters extends React.Component {
   }
 
   render = () => {
-    const { pop } = this.props.navigation
     const { filters, sortBy } = this.state
     const { filterTextOn } = filters
-    const { setFilters, defaultFilters } = this.props.navigation.state.params
+    const { defaultFilters } = this.props.navigation.state.params
 
     const sortingOptions = [
       { label: 'Publisher, Game', value: 'publisherGame' },
@@ -215,6 +215,7 @@ export default class PreviewFilters extends React.Component {
                 backgroundColor="#03A9F4"
                 title="Apply Filters"
                 onPress={this.applyFilters}
+                containerStyle={{ marginHorizontal: 10 }}
               />
               <Button
                 style={{ flex: 1 }}
@@ -234,4 +235,18 @@ export default class PreviewFilters extends React.Component {
       </ScrollView>
     )
   }
+}
+
+PreviewFilters.propTypes = {
+  navigation: PropTypes.shape({
+    pop: PropTypes.func.isRequired,
+    setParams: PropTypes.func.isRequired,
+    navigate: PropTypes.func.isRequired,
+    state: PropTypes.shape({
+      params: PropTypes.shape({
+        setFilters: PropTypes.func.isRequired,
+        defaultFilters: PropTypes.object.isRequired
+      })
+    }).isRequired
+  }).isRequired
 }

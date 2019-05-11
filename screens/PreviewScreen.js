@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import { createStackNavigator } from 'react-navigation'
 import { AsyncStorage } from 'react-native'
 
@@ -46,7 +47,6 @@ class PreviewListScreen extends React.Component {
   }
 
   loadAllData = async () => {
-    console.log('loading all start')
     this.setState({ loading: true })
 
     // load user selections and companies first, as they are need
@@ -57,7 +57,6 @@ class PreviewListScreen extends React.Component {
     await this.getPreviewItems('thing')
 
     this.setState({ loading: false })
-    console.log('loading all end')
   }
 
   // updates cached user priorities, so filtering will
@@ -353,6 +352,19 @@ class PreviewListScreen extends React.Component {
       />
     )
   }
+}
+
+PreviewListScreen.propTypes = {
+  navigation: PropTypes.shape({
+    state: PropTypes.shape({
+      params: PropTypes.shape({
+        reload: PropTypes.func,
+        next: PropTypes.func
+      })
+    }),
+    navigate: PropTypes.func.isRequired,
+    setParams: PropTypes.func.isRequired
+  }).isRequired
 }
 
 export default createStackNavigator({

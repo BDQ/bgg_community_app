@@ -14,7 +14,7 @@ import styles from '../shared/styles'
 class WishlistListScreen extends React.PureComponent {
   static navigationOptions = ({ navigation }) => {
     return {
-      title: 'Wishlist',
+      title: 'My Wishlist',
       headerRight: (
         <Icon
           name="add-to-list"

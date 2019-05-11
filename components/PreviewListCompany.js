@@ -1,7 +1,7 @@
-import React, { Component } from 'react'
+import React from 'react'
+import PropTypes from 'prop-types'
 import { StyleSheet, View, Text } from 'react-native'
 import { Avatar } from 'react-native-elements'
-import { Font } from 'expo'
 
 export default class PreviewListCompany extends React.PureComponent {
   _renderLocation = () => {
@@ -15,7 +15,7 @@ export default class PreviewListCompany extends React.PureComponent {
     return (
       <View style={styles.itemContainer}>
         <Avatar
-          medium
+          size="medium"
           source={{ uri: this.props.thumbnail }}
           activeOpacity={0.7}
         />
@@ -28,6 +28,12 @@ export default class PreviewListCompany extends React.PureComponent {
       </View>
     )
   }
+}
+
+PreviewListCompany.propTypes = {
+  thumbnail: PropTypes.string.isRequired,
+  name: PropTypes.string.isRequired,
+  location: PropTypes.string.isRequired
 }
 
 const styles = StyleSheet.create({
