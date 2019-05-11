@@ -310,6 +310,7 @@ export default class GameScreen extends React.Component {
               indicatorProps={{
                 color: '#ffffff'
               }}
+              resizeMode="contain"
               style={styles.headerImage}
             />
           </View>
@@ -364,8 +365,7 @@ const styles = StyleSheet.create({
   },
   headerImage: {
     width: '90%',
-    height: '95%',
-    resizeMode: 'contain'
+    height: '92%'
   },
   headerIcon: {
     width: 50,
