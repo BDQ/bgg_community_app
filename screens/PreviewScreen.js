@@ -17,7 +17,8 @@ class PreviewListScreen extends React.Component {
     companies: [],
     userSelections: [],
     previewId: 17,
-    loading: false
+    loading: false,
+    firstLoad: true
   }
 
   static navigationOptions = ({ navigation }) => {
@@ -56,7 +57,7 @@ class PreviewListScreen extends React.Component {
     // get the games!
     await this.getPreviewItems('thing')
 
-    this.setState({ loading: false })
+    this.setState({ loading: false, firstLoad: false })
   }
 
   // updates cached user priorities, so filtering will
@@ -109,6 +110,7 @@ class PreviewListScreen extends React.Component {
     // }
 
     if (force || Object.keys(loadStatus).length === 0) {
+      // firstLoad: true <-- already set
       console.log('full load', objectType)
       await this.fullLoad(loadStatus, objectType, force)
     } else {
@@ -333,7 +335,7 @@ class PreviewListScreen extends React.Component {
 
   render = () => {
     const { navigation } = this.props
-    const { games, companies, userSelections, loading } = this.state
+    const { games, companies, userSelections, loading, firstLoad } = this.state
 
     return (
       <PreviewList
@@ -341,7 +343,8 @@ class PreviewListScreen extends React.Component {
         games={games}
         userSelections={userSelections}
         navigation={navigation}
-        loading={loading}
+        loading={firstLoad ? false : loading}
+        firstLoad={firstLoad}
         onRefresh={this.loadAllData}
         forceCompanyFullLoad={this.forceCompanyFullLoad}
         setUserSelection={this.setUserSelection}

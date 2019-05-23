@@ -12,6 +12,7 @@ import { SearchBar } from 'react-native-elements'
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import sectionListGetItemLayout from 'react-native-section-list-get-item-layout'
 import ProgressBar from 'react-native-progress/Circle'
+import Spinner from 'react-native-loading-spinner-overlay'
 
 import PreviewListCompany from './PreviewListCompany'
 import PreviewListGame from './PreviewListGame'
@@ -226,11 +227,16 @@ export default class PreviewList extends React.PureComponent {
   }
 
   loadFiltersFromStorage = async () => {
-    const filters = await AsyncStorage.getItem('@BGGApp:PreviewFilters')
+    const rawFilters = await AsyncStorage.getItem('@BGGApp:PreviewFilters')
 
-    if (filters) {
+    if (rawFilters) {
       try {
-        this.setState({ filtersSet: true, filters: JSON.parse(filters) })
+        const filters = JSON.parse(rawFilters)
+
+        this.setState({
+          filtersSet: this.props.firstLoad ? false : true,
+          filters
+        })
       } catch (err) {
         console.warn(err)
       }
@@ -339,22 +345,14 @@ export default class PreviewList extends React.PureComponent {
 
   _renderEmpty = () => {
     const { filtersSet } = this.state
+    const { firstLoad } = this.props
 
-    if (filtersSet) {
+    if (firstLoad) {
+      return <React.Fragment />
+    } else if (filtersSet) {
       return (
         <React.Fragment>
           <Text>No matches found.</Text>
-        </React.Fragment>
-      )
-    } else {
-      return (
-        <React.Fragment>
-          <ProgressBar
-            indeterminate={true}
-            color="#000000"
-            style={{ marginBottom: 10 }}
-          />
-          <Text>Loading Preview...</Text>
         </React.Fragment>
       )
     }
@@ -380,45 +378,48 @@ export default class PreviewList extends React.PureComponent {
   })
 
   render() {
-    const { loading, onRefresh } = this.props
+    const { loading, onRefresh, firstLoad } = this.props
     const { sections } = this.state
 
     return (
-      <SectionList
-        style={{
-          flex: 1
-        }}
-        ListHeaderComponent={this._renderHeader}
-        renderSectionHeader={({ section }) => {
-          return (
-            <PreviewListCompany
-              name={section.name}
-              thumbnail={section.thumbnail}
-              location={section.location}
-            />
-          )
-        }}
-        sections={sections}
-        keyExtractor={item => item.key || item.objectId}
-        renderItem={this._renderItem}
-        refreshControl={
-          <RefreshControl refreshing={loading} onRefresh={onRefresh} />
-        }
-        stickySectionHeadersEnabled={false}
-        getItemLayout={this.getItemLayout}
-        initialNumToRender={15}
-        ListEmptyComponent={() => (
-          <View
-            style={{
-              height: 300,
-              alignItems: 'center',
-              justifyContent: 'center'
-            }}
-          >
-            {this._renderEmpty()}
-          </View>
-        )}
-      />
+      <React.Fragment>
+        <Spinner visible={firstLoad} textContent={'Importing Preview...'} />
+        <SectionList
+          style={{
+            flex: 1
+          }}
+          ListHeaderComponent={this._renderHeader}
+          renderSectionHeader={({ section }) => {
+            return (
+              <PreviewListCompany
+                name={section.name}
+                thumbnail={section.thumbnail}
+                location={section.location}
+              />
+            )
+          }}
+          sections={sections}
+          keyExtractor={item => item.key || item.objectId}
+          renderItem={this._renderItem}
+          refreshControl={
+            <RefreshControl refreshing={loading} onRefresh={onRefresh} />
+          }
+          stickySectionHeadersEnabled={false}
+          getItemLayout={this.getItemLayout}
+          initialNumToRender={15}
+          ListEmptyComponent={() => (
+            <View
+              style={{
+                height: 300,
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}
+            >
+              {this._renderEmpty()}
+            </View>
+          )}
+        />
+      </React.Fragment>
     )
   }
 }

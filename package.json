@@ -70,6 +70,7 @@
     "react-native-htmlview": "^0.13.0",
     "react-native-image-progress": "^1.1.1",
     "react-native-image-zoom-viewer": "^2.2.25",
+    "react-native-loading-spinner-overlay": "^1.0.1",
     "react-native-material-dropdown": "^0.11.1",
     "react-native-progress": "^3.5.0",
     "react-native-section-list-get-item-layout": "^2.2.3",
