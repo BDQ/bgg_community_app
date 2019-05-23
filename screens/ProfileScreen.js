@@ -23,20 +23,6 @@ const customStyles = StyleSheet.create({
   }
 })
 
-class FieldValidation extends React.PureComponent {
-  constructor(props) {
-    super(props)
-  }
-
-  render = () => {
-    if (this.props.message) {
-      return <FormValidationMessage>{this.props.message}</FormValidationMessage>
-    } else {
-      return null
-    }
-  }
-}
-
 export class ProfileEditScreen extends React.PureComponent {
   state = {
     username: '',
