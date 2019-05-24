@@ -10,7 +10,7 @@ export const removeDuplicates = (myArr, prop) => {
   })
 }
 
-export const fetchCollection = async username => {
+export const fetchCollectionFromBGG = async username => {
   if (!username) {
     return false
   }
@@ -24,7 +24,7 @@ export const fetchCollection = async username => {
       // collection is being prepared, come back late to try again
       console.log('gonna sleep on it')
       await timeout(2000)
-      return fetchCollection(username)
+      return fetchCollectionFromBGG(username)
     } else if (response.status == 200) {
       // yay! we have a collection response
       const xml = await response.text()
@@ -63,7 +63,9 @@ export const fetchCollection = async username => {
     } else {
       Sentry.captureMessage(
         'Non 200/202 Response from BGG when loading collection.',
-        (extra: { url: url, stauts: response.status })
+        {
+          extra: { url: url, stauts: response.status }
+        }
       )
     }
   } catch (error) {

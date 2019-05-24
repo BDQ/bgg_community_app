@@ -2,13 +2,12 @@ import { setGlobal, addReducer } from 'reactn'
 
 import initialState from './initialState'
 import { getPersisted } from './persistence'
-// import { fetchCollection } from '../../shared/collection'
+
 import {
   fetchCollection,
   addOrUpdateGameInCollection,
   removeGameFromCollection
 } from './reducers/collection'
-
 import { setCredentials, logOut } from './reducers/authorization'
 
 const reducers = [
@@ -24,7 +23,7 @@ export const setupStore = async () => {
   let persistedData = await getPersisted()
 
   // update global store with stuff from async and initial
-  setGlobal({
+  await setGlobal({
     ...initialState,
     ...persistedData
   })

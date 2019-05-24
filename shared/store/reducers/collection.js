@@ -1,8 +1,10 @@
 import { persistGlobal } from '../persistence'
 
+import { fetchCollectionFromBGG } from '../../../shared/collection'
+
 export const fetchCollection = async state => {
   const { username } = state.bggCredentials
-  const collection = await fetchCollection(username)
+  const collection = await fetchCollectionFromBGG(username)
 
   const collectionFetchedAt = new Date().getTime()
 
