@@ -18,7 +18,7 @@ class PreviewListScreen extends React.Component {
     userSelections: [],
     previewId: 17,
     loading: false,
-    firstLoad: true
+    firstLoad: 'ever'
   }
 
   static navigationOptions = ({ navigation }) => {
@@ -57,7 +57,7 @@ class PreviewListScreen extends React.Component {
     // get the games!
     await this.getPreviewItems('thing')
 
-    this.setState({ loading: false, firstLoad: false })
+    this.setState({ loading: false, firstLoad: 'complete' })
   }
 
   // updates cached user priorities, so filtering will
@@ -110,10 +110,15 @@ class PreviewListScreen extends React.Component {
     // }
 
     if (force || Object.keys(loadStatus).length === 0) {
-      // firstLoad: true <-- already set
+      // firstLoad: 'ever' <-- already set by default
+      // so "Importing" overlay will apppear.
       console.log('full load', objectType)
       await this.fullLoad(loadStatus, objectType, force)
     } else {
+      // only show overlay on first load when app boots
+      if (this.state.firstLoad === 'ever') {
+        this.setState({ firstLoad: 'sinceAppStart' })
+      }
       console.log('partial load', objectType)
       await this.checkForNewPages(loadStatus, objectType)
 
@@ -343,7 +348,7 @@ class PreviewListScreen extends React.Component {
         games={games}
         userSelections={userSelections}
         navigation={navigation}
-        loading={firstLoad ? false : loading}
+        loading={firstLoad !== 'complete' ? false : loading}
         firstLoad={firstLoad}
         onRefresh={this.loadAllData}
         forceCompanyFullLoad={this.forceCompanyFullLoad}

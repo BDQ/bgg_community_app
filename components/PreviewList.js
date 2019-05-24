@@ -382,7 +382,14 @@ export default class PreviewList extends React.PureComponent {
 
     return (
       <React.Fragment>
-        <Spinner visible={firstLoad} textContent={'Importing Preview...'} />
+        <Spinner
+          visible={firstLoad !== 'complete'}
+          textContent={
+            firstLoad === 'ever'
+              ? 'Importing Preview...'
+              : 'Updating Preview...'
+          }
+        />
         <SectionList
           style={{
             flex: 1
