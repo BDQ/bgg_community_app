@@ -11,8 +11,8 @@ import { priorities, halls, seen, availability } from '../shared/data'
 
 export default class PreviewFilters extends React.Component {
   state = {
-    filters: {},
-    sortBy: 'publisherGame'
+    filters: this.props.navigation.state.params.filters,
+    sortBy: this.props.navigation.state.params.sortBy
   }
 
   toggleTags = name => {
@@ -30,14 +30,25 @@ export default class PreviewFilters extends React.Component {
     }
   }
 
-  static getDerivedStateFromProps(props, state) {
-    const { filters, sortBy } = props.navigation.state.params
-    if (filters !== state.filters || sortBy !== state.sortBy) {
-      return { filters, sortBy }
-    } else {
-      return null
-    }
+  setFilterTextOn = filterTextOn => {
+    this.setState({
+      filters: {
+        ...this.state.filters,
+        filterTextOn
+      }
+    })
   }
+
+  // static getDerivedStateFromProps(props, state) {
+  //   console.log(props)
+  //   const { filters, sortBy } = props.navigation.state.params
+  //   console.log('here')
+  //   if (filters !== state.filters || sortBy !== state.sortBy) {
+  //     return { filters, sortBy }
+  //   } else {
+  //     return null
+  //   }
+  // }
 
   static navigationOptions = ({ navigation }) => {
     return {
@@ -45,7 +56,10 @@ export default class PreviewFilters extends React.Component {
         <Button
           onPress={navigation.state.params.applyFilters}
           title="Apply"
-          buttonStyle={{ height: '90%', backgroundColor: '#03A9F4' }}
+          buttonStyle={{
+            height: '90%',
+            backgroundColor: '#03A9F4'
+          }}
         />
       )
     }
@@ -85,8 +99,14 @@ export default class PreviewFilters extends React.Component {
     const { defaultFilters } = this.props.navigation.state.params
 
     const sortingOptions = [
-      { label: 'Publisher, Game', value: 'publisherGame' },
-      { label: 'Location, Publisher, Game', value: 'locationPublisherGame' }
+      {
+        label: 'Publisher, Game',
+        value: 'publisherGame'
+      },
+      {
+        label: 'Location, Publisher, Game',
+        value: 'locationPublisherGame'
+      }
     ]
 
     const sortIndex = sortingOptions.findIndex(
@@ -95,7 +115,10 @@ export default class PreviewFilters extends React.Component {
 
     const filterTextOnOptions = [
       { label: 'Game Name', value: 'game' },
-      { label: 'Publisher Name', value: 'publisher' },
+      {
+        label: 'Publisher Name',
+        value: 'publisher'
+      },
       { label: 'Notes', value: 'note' }
     ]
 
@@ -113,17 +136,21 @@ export default class PreviewFilters extends React.Component {
           <Text style={styles.formHeader}>Filters</Text>
           <View style={{ padding: 5 }}>
             <Text style={styles.formLabel}>Text Filter on:</Text>
-            <View style={{ marginLeft: 5, marginBottom: 15 }}>
+            <View
+              style={{
+                marginLeft: 5,
+                marginBottom: 15
+              }}
+            >
               <Dropdown
-                dropdownOffset={{ top: 8, left: 0 }}
+                dropdownOffset={{
+                  top: 8,
+                  left: 0
+                }}
                 itemCount={3}
                 data={filterTextOnOptions}
                 value={filterTextOn}
-                onChangeText={filterTextOn =>
-                  this.setState({
-                    filters: { ...this.state.filters, filterTextOn }
-                  })
-                }
+                onChangeText={this.setFilterTextOn}
               />
             </View>
 
@@ -135,7 +162,12 @@ export default class PreviewFilters extends React.Component {
               <Text style={styles.toggleText}>(Toggle All)</Text>
             </TouchableOpacity>
 
-            <View style={{ marginLeft: 5, marginBottom: 15 }}>
+            <View
+              style={{
+                marginLeft: 5,
+                marginBottom: 15
+              }}
+            >
               <TagSelect
                 labelAttr="name"
                 value={filters.priorities}
@@ -156,7 +188,12 @@ export default class PreviewFilters extends React.Component {
                 <Text style={styles.toggleText}>(Toggle All)</Text>
               </TouchableOpacity>
 
-              <View style={{ marginLeft: 5, marginBottom: 15 }}>
+              <View
+                style={{
+                  marginLeft: 5,
+                  marginBottom: 15
+                }}
+              >
                 <TagSelect
                   labelAttr="name"
                   value={filters.halls}
@@ -177,7 +214,12 @@ export default class PreviewFilters extends React.Component {
               <Text style={styles.toggleText}>(Toggle All)</Text>
             </TouchableOpacity>
 
-            <View style={{ marginLeft: 5, marginBottom: 15 }}>
+            <View
+              style={{
+                marginLeft: 5,
+                marginBottom: 15
+              }}
+            >
               <TagSelect
                 labelAttr="name"
                 value={filters.seen}
@@ -215,18 +257,30 @@ export default class PreviewFilters extends React.Component {
                 backgroundColor="#03A9F4"
                 title="Apply Filters"
                 onPress={this.applyFilters}
-                containerStyle={{ marginHorizontal: 10 }}
+                containerStyle={{
+                  marginHorizontal: 10
+                }}
               />
               <Button
                 style={{ flex: 1 }}
                 title="Reset"
                 onPress={() => {
-                  this.setState({ filters: defaultFilters })
+                  this.setState({
+                    filters: defaultFilters
+                  })
 
-                  this.priorityTags.setState({ value: [] })
-                  this.hallTags.setState({ value: [] })
-                  this.seenTags.setState({ value: [] })
-                  this.availabilityTags.setState({ value: [] })
+                  this.priorityTags.setState({
+                    value: []
+                  })
+                  this.hallTags.setState({
+                    value: []
+                  })
+                  this.seenTags.setState({
+                    value: []
+                  })
+                  this.availabilityTags.setState({
+                    value: []
+                  })
                 }}
               />
             </View>
@@ -244,6 +298,8 @@ PreviewFilters.propTypes = {
     navigate: PropTypes.func.isRequired,
     state: PropTypes.shape({
       params: PropTypes.shape({
+        filters: PropTypes.object.isRequired,
+        sortBy: PropTypes.string.isRequired,
         setFilters: PropTypes.func.isRequired,
         defaultFilters: PropTypes.object.isRequired
       })

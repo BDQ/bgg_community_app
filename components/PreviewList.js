@@ -253,7 +253,6 @@ export default class PreviewList extends React.PureComponent {
 
   setFilters = (filterChanges, sortBy) => {
     const filters = { ...this.state.filters, ...filterChanges }
-    console.log(filterChanges, this.state.filters, filters)
     this.persistFilterAndApply(filters, sortBy)
   }
 
