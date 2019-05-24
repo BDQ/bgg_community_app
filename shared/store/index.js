@@ -18,6 +18,8 @@ const reducers = [
   logOut
 ]
 
+let reducersLoaded = false
+
 export const setupStore = async () => {
   // now we load the data from Async store
   let persistedData = await getPersisted()
@@ -29,7 +31,11 @@ export const setupStore = async () => {
   })
 
   // wire up all the imported reducers
-  reducers.forEach(func => {
-    addReducer(func.name, func)
-  })
+  if (!reducersLoaded) {
+    reducers.forEach(func => {
+      addReducer(func.name, func)
+    })
+
+    reducersLoaded = true
+  }
 }

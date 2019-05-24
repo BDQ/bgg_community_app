@@ -190,6 +190,7 @@ export class ProfileEditScreen extends React.PureComponent {
         {this._renderState()}
         <View style={{ alignSelf: 'center' }}>
           <Button
+            id="submitButton"
             backgroundColor="#03A9F4"
             style={customStyles.bottomText}
             onPress={
