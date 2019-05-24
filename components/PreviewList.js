@@ -11,12 +11,13 @@ import {
 import { SearchBar } from 'react-native-elements'
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import sectionListGetItemLayout from 'react-native-section-list-get-item-layout'
-import Spinner from 'react-native-loading-spinner-overlay'
+import ProgressBar from 'react-native-progress/Circle'
 
 import PreviewListCompany from './PreviewListCompany'
 import PreviewListGame from './PreviewListGame'
 
 import { priorities, halls, availability } from '../shared/data'
+import styles from '../shared/styles'
 
 const hasNotesRE = new RegExp(`"text":.?".+"`, 'g')
 
@@ -346,7 +347,7 @@ export default class PreviewList extends React.PureComponent {
     const { filtersSet } = this.state
     const { firstLoad } = this.props
 
-    if (firstLoad) {
+    if (firstLoad !== 'complete') {
       return <React.Fragment />
     } else if (filtersSet) {
       return (
@@ -354,6 +355,21 @@ export default class PreviewList extends React.PureComponent {
           <Text>No matches found.</Text>
         </React.Fragment>
       )
+    }
+  }
+
+  _renderFirstLoadMessage = () => {
+    const { firstLoad } = this.props
+
+    if (firstLoad === 'ever') {
+      return (
+        <View style={{ alignItems: 'center' }}>
+          <Text style={styles.formHeader}>Importing preview</Text>
+          <Text>This can take a while the first time, grab a rule book!</Text>
+        </View>
+      )
+    } else {
+      return <Text style={styles.formHeader}>Updating preview...</Text>
     }
   }
 
@@ -380,52 +396,57 @@ export default class PreviewList extends React.PureComponent {
     const { loading, onRefresh, firstLoad } = this.props
     const { sections } = this.state
 
-    return (
-      <React.Fragment>
-        <Spinner
-          visible={firstLoad !== 'complete'}
-          textContent={
-            firstLoad === 'ever'
-              ? 'Importing Preview...'
-              : 'Updating Preview...'
-          }
-        />
-        <SectionList
-          style={{
-            flex: 1
-          }}
-          ListHeaderComponent={this._renderHeader}
-          renderSectionHeader={({ section }) => {
-            return (
-              <PreviewListCompany
-                name={section.name}
-                thumbnail={section.thumbnail}
-                location={section.location}
-              />
-            )
-          }}
-          sections={sections}
-          keyExtractor={item => item.key || item.objectId}
-          renderItem={this._renderItem}
-          refreshControl={
-            <RefreshControl refreshing={loading} onRefresh={onRefresh} />
-          }
-          stickySectionHeadersEnabled={false}
-          getItemLayout={this.getItemLayout}
-          initialNumToRender={15}
-          ListEmptyComponent={() => (
-            <View
-              style={{
-                height: 300,
-                alignItems: 'center',
-                justifyContent: 'center'
-              }}
-            >
-              {this._renderEmpty()}
-            </View>
-          )}
-        />
-      </React.Fragment>
-    )
+    if (firstLoad === 'complete') {
+      return (
+        <React.Fragment>
+          <SectionList
+            style={{
+              flex: 1
+            }}
+            ListHeaderComponent={this._renderHeader}
+            renderSectionHeader={({ section }) => {
+              return (
+                <PreviewListCompany
+                  name={section.name}
+                  thumbnail={section.thumbnail}
+                  location={section.location}
+                />
+              )
+            }}
+            sections={sections}
+            keyExtractor={item => item.key || item.objectId}
+            renderItem={this._renderItem}
+            refreshControl={
+              <RefreshControl refreshing={loading} onRefresh={onRefresh} />
+            }
+            stickySectionHeadersEnabled={false}
+            getItemLayout={this.getItemLayout}
+            initialNumToRender={15}
+            ListEmptyComponent={() => (
+              <View
+                style={{
+                  height: 300,
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}
+              >
+                {this._renderEmpty()}
+              </View>
+            )}
+          />
+        </React.Fragment>
+      )
+    } else {
+      return (
+        <View style={styles.emptyView}>
+          <ProgressBar
+            indeterminate={true}
+            color="#000000"
+            style={{ marginBottom: 10 }}
+          />
+          {this._renderFirstLoadMessage()}
+        </View>
+      )
+    }
   }
 }

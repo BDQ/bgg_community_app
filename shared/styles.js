@@ -10,7 +10,6 @@ export default StyleSheet.create({
 
   mainView: {
     flex: 1,
-
     padding: 10,
     backgroundColor: '#ffffff'
   },
