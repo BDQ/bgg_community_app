@@ -10,15 +10,11 @@ import {
 } from './reducers/collection'
 import { setCredentials, logOut } from './reducers/authorization'
 
-const reducers = [
-  fetchCollection,
-  addOrUpdateGameInCollection,
-  removeGameFromCollection,
-  setCredentials,
-  logOut
-]
-
-let reducersLoaded = false
+addReducer('fetchCollection', fetchCollection)
+addReducer('addOrUpdateGameInCollection', addOrUpdateGameInCollection)
+addReducer('removeGameFromCollection', removeGameFromCollection)
+addReducer('setCredentials', setCredentials)
+addReducer('logOut', logOut)
 
 export const setupStore = async () => {
   // now we load the data from Async store
@@ -29,13 +25,4 @@ export const setupStore = async () => {
     ...initialState,
     ...persistedData
   })
-
-  // wire up all the imported reducers
-  if (!reducersLoaded) {
-    reducers.forEach(func => {
-      addReducer(func.name, func)
-    })
-
-    reducersLoaded = true
-  }
 }

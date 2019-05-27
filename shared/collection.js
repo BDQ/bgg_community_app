@@ -12,7 +12,7 @@ export const removeDuplicates = (myArr, prop) => {
 
 export const fetchCollectionFromBGG = async username => {
   if (!username) {
-    return false
+    return []
   }
 
   const url = `https://www.boardgamegeek.com/xmlapi2/collection?username=${username}`

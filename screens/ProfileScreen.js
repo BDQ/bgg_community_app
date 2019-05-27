@@ -1,4 +1,5 @@
 import React from 'reactn'
+import Sentry from 'sentry-expo'
 import { createAppContainer, createStackNavigator } from 'react-navigation'
 import { View, Text, StyleSheet, Linking } from 'react-native'
 import { Input, Button } from 'react-native-elements'
@@ -23,7 +24,7 @@ const customStyles = StyleSheet.create({
   }
 })
 
-export class ProfileEditScreen extends React.PureComponent {
+class ProfileEditScreen extends React.PureComponent {
   state = {
     username: '',
     password: '',
@@ -55,12 +56,11 @@ export class ProfileEditScreen extends React.PureComponent {
       password: '',
       passwordError: '',
       loading: false,
-      isLoggedIn: false,
       message: null
     })
 
     //tells global store we've logged in
-    this.global.logOut()
+    this.dispatch.logOut()
   }
 
   handleLogIn = () => {
@@ -101,7 +101,7 @@ export class ProfileEditScreen extends React.PureComponent {
             lastname
           }
 
-          this.global.setCredentials(bggCredentials)
+          this.dispatch.setCredentials(bggCredentials)
         } else {
           this.showFlash(
             'Failed to get user data while logging in, please try again.'
@@ -115,10 +115,9 @@ export class ProfileEditScreen extends React.PureComponent {
       }
     } catch (error) {
       this.showFlash('Unexpected error logging in, please try again.')
-      console.warn('LOGIN ERROR', error)
+      console.warn(error)
+      Sentry.captureException(error)
     }
-
-    // this.setState({ loading: false })
   }
 
   _renderMessage = () => {
@@ -133,7 +132,13 @@ export class ProfileEditScreen extends React.PureComponent {
   }
 
   _renderState = () => {
-    if (!this.global.loggedIn) {
+    if (this.global.loggedIn) {
+      return (
+        <Text style={[customStyles.bottomText, customStyles.strong]}>
+          You are logged in!
+        </Text>
+      )
+    } else {
       return (
         <React.Fragment>
           {this._renderMessage()}
@@ -161,19 +166,15 @@ export class ProfileEditScreen extends React.PureComponent {
           />
         </React.Fragment>
       )
-    } else {
-      return (
-        <Text style={[customStyles.bottomText, customStyles.strong]}>
-          You are logged in!
-        </Text>
-      )
     }
   }
 
   render = () => {
     return (
       <View style={styles.mainView}>
-        <Text style={styles.formHeader}>Welcome to the BGG Community App!</Text>
+        <Text style={styles.formHeader}>
+          Welcome to the BGG Community App! (v0.2)
+        </Text>
         <Text>
           This app is an <Text style={customStyles.strong}>unofficial</Text>{' '}
           <Text
@@ -220,6 +221,8 @@ export class ProfileEditScreen extends React.PureComponent {
 
 export default createAppContainer(
   createStackNavigator({
-    Edit: { screen: ProfileEditScreen }
+    Edit: {
+      screen: ProfileEditScreen
+    }
   })
 )

@@ -50,7 +50,7 @@ class OwnedListScreen extends React.PureComponent {
 
   handleRefresh = async () => {
     this.setState({ refreshing: true })
-    this.global.fetchCollection()
+    this.dispatch.fetchCollection()
     this.setState({ refreshing: false })
   }
 

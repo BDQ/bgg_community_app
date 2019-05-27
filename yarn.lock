@@ -6031,11 +6031,11 @@ react@16.5.0:
     prop-types "^15.6.2"
     schedule "^0.3.0"
 
-reactn@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/reactn/-/reactn-1.0.0.tgz#e521d9bab4cd0de75777cabbe2b327a994783243"
+reactn@^2.0.2:
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/reactn/-/reactn-2.0.2.tgz#446d700a2bd17f418c342e2a0792a85a0a2f3e57"
   dependencies:
-    use-force-update "^1.0.0"
+    use-force-update "^1.0.5"
 
 read-env@^1.3.0:
   version "1.3.0"
@@ -7040,9 +7040,9 @@ url-loader@^1.1.2:
     mime "^2.0.3"
     schema-utils "^1.0.0"
 
-use-force-update@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/use-force-update/-/use-force-update-1.0.0.tgz#8b4c3893575b8246a2d9c785a9921572db50e182"
+use-force-update@^1.0.5:
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/use-force-update/-/use-force-update-1.0.5.tgz#9b7192f73f6cb90d592b225858c1562719d7c184"
 
 use@^3.1.0:
   version "3.1.1"

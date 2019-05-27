@@ -3,7 +3,7 @@ import Sentry from 'sentry-expo'
 
 // increment the vX when we need to blow up the old key
 // todo: figure out a nice way to kill the old key.
-export const ASYNC_KEY = '@BGGApp:v6'
+export const ASYNC_KEY = '@BGGApp:v10'
 
 export const getPersisted = async () => {
   try {
