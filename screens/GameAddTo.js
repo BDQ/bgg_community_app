@@ -14,7 +14,8 @@ const styles = StyleSheet.create({
   },
 
   headerButton: {
-    backgroundColor: '#03A9F4'
+    backgroundColor: '#03A9F4',
+    marginRight: 10
   },
 
   gameName: {
