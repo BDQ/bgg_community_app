@@ -46,8 +46,6 @@ export default class App extends React.PureComponent {
       })
     } else {
       AppNavigator = createBottomTabNavigator({
-        Owned,
-        Wishlist,
         Preview,
         Profile
       })
