@@ -6031,9 +6031,9 @@ react@16.5.0:
     prop-types "^15.6.2"
     schedule "^0.3.0"
 
-reactn@^2.0.2:
-  version "2.0.2"
-  resolved "https://registry.yarnpkg.com/reactn/-/reactn-2.0.2.tgz#446d700a2bd17f418c342e2a0792a85a0a2f3e57"
+reactn@^2.1.2:
+  version "2.1.2"
+  resolved "https://registry.yarnpkg.com/reactn/-/reactn-2.1.2.tgz#9e5327286222e26ad8e21bd7796142a4f587f474"
   dependencies:
     use-force-update "^1.0.5"
 
