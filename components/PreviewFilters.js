@@ -57,7 +57,7 @@ export default class PreviewFilters extends React.Component {
           onPress={navigation.state.params.applyFilters}
           title="Apply"
           buttonStyle={{
-            height: '90%',
+            marginRight: 10,
             backgroundColor: '#03A9F4'
           }}
         />
