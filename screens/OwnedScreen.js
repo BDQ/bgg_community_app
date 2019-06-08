@@ -33,7 +33,6 @@ class OwnedListScreen extends React.PureComponent {
   }
 
   componentDidMount = async () => {
-    console.log('didMount')
     // check if we need to update the users collection
     const { collectionFetchedAt, loggedIn } = this.global
 

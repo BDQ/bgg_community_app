@@ -27,6 +27,17 @@ export default class GameList extends React.PureComponent {
     }
   }
 
+  keyExtractor = item => item.key || item.objectId
+
+  getItemLayout = (_, index) => {
+    const itemHeight = 100
+    return {
+      length: itemHeight,
+      offset: itemHeight * index,
+      index
+    }
+  }
+
   _renderItem = ({ item }) => {
     const { navigate } = this.props.navigation
 
@@ -90,20 +101,13 @@ export default class GameList extends React.PureComponent {
         ListHeaderComponent={this._renderHeader}
         ListEmptyComponent={this._renderEmpty}
         data={this.state.games}
-        keyExtractor={item => item.key || item.objectId}
+        keyExtractor={this.keyExtractor}
         renderItem={this._renderItem}
         onRefresh={this.props.onRefresh}
         refreshing={this.props.refreshing}
-        getItemLayout={(data, index) => {
-          const itemHeight = 100
-          return {
-            length: itemHeight,
-            offset: itemHeight * index,
-            index
-          }
-        }}
-        initialNumToRender={15}
-        removeClippedSubviews={true}
+        getItemLayout={this.getItemLayout}
+        initialNumToRender={8}
+        maxToRenderPerBatch={2}
       />
     )
   }
