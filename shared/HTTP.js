@@ -23,9 +23,13 @@ export const fetchJSON = async (path, args = {}, headers = {}) => {
 
     let response = await fetchRaw(path, args, headers)
 
+    // console.log(response)
     if (response.status == 200) {
       return response.json()
     } else {
+      console.log(
+        `Got status code: ${response.status} instead when fetching: ${path}`
+      )
       Sentry.captureMessage('Non 200 Response for HTTP request.', {
         extra: { url: path, stauts: response.status }
       })

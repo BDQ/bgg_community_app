@@ -16,14 +16,14 @@ class PreviewListScreen extends React.Component {
     games: [],
     companies: [],
     userSelections: [],
-    previewId: 17,
+    previewId: 13,
     loading: false,
     firstLoad: 'ever'
   }
 
   static navigationOptions = ({ navigation }) => {
     return {
-      title: `Origins 2019 (${navigation.getParam('gameCount', '0')})`
+      title: `GenCon 2019 (${navigation.getParam('gameCount', '0')})`
     }
   }
 

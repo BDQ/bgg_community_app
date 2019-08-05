@@ -81,6 +81,8 @@ export default class GameAddTo extends React.Component {
   static getDerivedStateFromProps(props, state) {
     const { collectionStatus, wishlistPriority } = props.navigation.state.params
 
+    // console.log(collectionStatus)
+
     if (collectionStatus !== state.collectionStatus) {
       return { collectionStatus, wishlistPriority }
     }
