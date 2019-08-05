@@ -24,7 +24,7 @@ const customStyles = StyleSheet.create({
   }
 })
 
-class ProfileEditScreen extends React.PureComponent {
+export class ProfileEditScreen extends React.PureComponent {
   state = {
     username: '',
     password: '',
