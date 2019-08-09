@@ -8,6 +8,8 @@ import ProfileScreen from './screens/ProfileScreen'
 import VisualSearchScreen from './screens/VisualSearchScreen'
 import SubscriptionsWebScreen from './screens/SubcriptionsScreen/Web'
 
+import { PREVIEW_SHORT_NAME } from 'react-native-dotenv'
+
 export const Owned = {
   screen: OwnedScreen,
   navigationOptions: {
@@ -41,7 +43,7 @@ export const Scan = {
 export const Preview = {
   screen: PreviewScreen,
   navigationOptions: {
-    tabBarLabel: 'Origins 2019',
+    tabBarLabel: PREVIEW_SHORT_NAME,
     tabBarIcon: ({ tintColor }) => (
       <Ionicons name="ios-eye" size={26} style={{ color: tintColor }} />
     )

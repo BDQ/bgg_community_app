@@ -9,6 +9,7 @@ import PreviewFilters from '../components/PreviewFilters'
 import PreviewList from '../components/PreviewList'
 import PreviewEdit from '../components/PreviewEdit'
 
+import { PREVIEW_ID, PREVIEW_FULL_NAME } from 'react-native-dotenv'
 import { fetchJSON } from '../shared/HTTP'
 
 class PreviewListScreen extends React.Component {
@@ -16,14 +17,14 @@ class PreviewListScreen extends React.Component {
     games: [],
     companies: [],
     userSelections: [],
-    previewId: 13,
+    previewId: PREVIEW_ID,
     loading: false,
     firstLoad: 'ever'
   }
 
   static navigationOptions = ({ navigation }) => {
     return {
-      title: `GenCon 2019 (${navigation.getParam('gameCount', '0')})`
+      title: `${PREVIEW_FULL_NAME} (${navigation.getParam('gameCount', '0')})`
     }
   }
 
