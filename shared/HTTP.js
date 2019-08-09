@@ -1,4 +1,6 @@
 import Sentry from 'sentry-expo'
+import { getDispatch } from 'reactn'
+import { showMessage } from 'react-native-flash-message'
 
 const baseURL = 'https://bgg.cc'
 
@@ -23,9 +25,16 @@ export const fetchJSON = async (path, args = {}, headers = {}) => {
 
     let response = await fetchRaw(path, args, headers)
 
-    // console.log(response)
     if (response.status == 200) {
       return response.json()
+    } else if (response.status == 403) {
+      getDispatch().logOut()
+      showMessage({
+        message: 'Your session has expired, please log in again to continue.',
+        type: 'danger',
+        icon: 'auto',
+        duration: 3000
+      })
     } else {
       console.log(
         `Got status code: ${response.status} instead when fetching: ${path}`
