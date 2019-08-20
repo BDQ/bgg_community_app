@@ -393,7 +393,7 @@ export default class PreviewList extends React.PureComponent {
   })
 
   render() {
-    const { loading, onRefresh, firstLoad } = this.props
+    const { loading, onRefresh, firstLoad, navigation } = this.props
     const { sections } = this.state
 
     if (firstLoad === 'complete') {
@@ -410,6 +410,7 @@ export default class PreviewList extends React.PureComponent {
                   name={section.name}
                   thumbnail={section.thumbnail}
                   location={section.location}
+                  navigation={navigation}
                 />
               )
             }}

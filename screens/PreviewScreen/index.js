@@ -3,14 +3,15 @@ import PropTypes from 'prop-types'
 import { createStackNavigator } from 'react-navigation'
 import { AsyncStorage } from 'react-native'
 
-import GameScreen from './GameScreen'
-import GameAddTo from './GameAddTo'
-import PreviewFilters from '../components/PreviewFilters'
-import PreviewList from '../components/PreviewList'
-import PreviewEdit from '../components/PreviewEdit'
+import GameScreen from '../GameScreen'
+import GameAddTo from '../GameAddTo'
+import PreviewFilters from '../../components/PreviewFilters'
+import PreviewList from '../../components/PreviewList'
+import PreviewEdit from '../../components/PreviewEdit'
+import PreviewMap from '../../components/PreviewMap'
 
 import { PREVIEW_ID, PREVIEW_FULL_NAME } from 'react-native-dotenv'
-import { fetchJSON } from '../shared/HTTP'
+import { fetchJSON } from '../../shared/HTTP'
 
 class PreviewListScreen extends React.Component {
   state = {
@@ -83,9 +84,9 @@ class PreviewListScreen extends React.Component {
       this.state.previewId
     }`
 
-    const { items: userSelections } = await fetchJSON(path)
+    // const { items: userSelections } = await fetchJSON(path)
 
-    this.setState({ userSelections })
+    // this.setState({ userSelections })
   }
 
   getPreviewItems = async (objectType, force = false) => {
@@ -381,5 +382,6 @@ export default createStackNavigator({
   Game: { screen: GameScreen },
   Filter: { screen: PreviewFilters },
   AddTo: { screen: GameAddTo },
-  EditNotes: { screen: PreviewEdit }
+  EditNotes: { screen: PreviewEdit },
+  Map: { screen: PreviewMap }
 })
