@@ -6129,6 +6129,10 @@ react-native-dotenv@^0.2.0:
   dependencies:
     babel-plugin-dotenv "0.1.1"
 
+"react-native-easy-gestures@github:Bounteous-Inc/react-native-easy-gestures":
+  version "1.0.6"
+  resolved "https://codeload.github.com/Bounteous-Inc/react-native-easy-gestures/tar.gz/c15725e30396da741e4c2b5e0c729ce3a7f39cc3"
+
 react-native-elements@^1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/react-native-elements/-/react-native-elements-1.1.0.tgz#f99bcda4459a886f3ab4591c684c099d37aedf2b"

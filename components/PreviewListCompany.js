@@ -1,10 +1,27 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { StyleSheet, View, Text } from 'react-native'
-import { Avatar } from 'react-native-elements'
 // import { logger } from '../shared/debug'
+import { Avatar, Icon } from 'react-native-elements'
 
 export default class PreviewListCompany extends React.PureComponent {
+  _renderMapButton = () => {
+    const { location } = this.props
+
+    const { navigate } = this.props.navigation
+
+    if (location) {
+      return (
+        <Icon
+          name="map"
+          iconStyle={{ marginRight: 10, marginTop: 10 }}
+          type="entypo"
+          // onPress={() => console.log('click')}
+          onPress={() => navigate('Map', { location })}
+        />
+      )
+    }
+  }
   _renderLocation = () => {
     const { location } = this.props
 
@@ -12,6 +29,7 @@ export default class PreviewListCompany extends React.PureComponent {
       return <Text style={styles.location}>Location: {location}</Text>
     }
   }
+
   render() {
     return (
       <View
@@ -32,6 +50,7 @@ export default class PreviewListCompany extends React.PureComponent {
           </Text>
           {this._renderLocation()}
         </View>
+        {this._renderMapButton()}
       </View>
     )
   }
@@ -40,7 +59,10 @@ export default class PreviewListCompany extends React.PureComponent {
 PreviewListCompany.propTypes = {
   thumbnail: PropTypes.string.isRequired,
   name: PropTypes.string.isRequired,
-  location: PropTypes.string.isRequired
+  location: PropTypes.string.isRequired,
+  navigation: PropTypes.shape({
+    navigate: PropTypes.func.isRequired
+  }).isRequired
 }
 
 const styles = StyleSheet.create({
