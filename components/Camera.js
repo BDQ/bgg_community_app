@@ -1,7 +1,9 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { Text, View } from 'react-native'
-import { ImagePicker, Permissions, ImageManipulator } from 'expo'
+import * as ImageManipulator from 'expo-image-manipulator';
+import * as Permissions from 'expo-permissions';
+import * as ImagePicker from 'expo-image-picker';
 import ProgressBar from 'react-native-progress/Circle'
 import styles from '../shared/styles'
 

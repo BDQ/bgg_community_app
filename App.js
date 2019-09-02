@@ -5,7 +5,8 @@ Sentry.config(SENTRY_CONFIG).install()
 import React from 'reactn'
 import { View } from 'react-native'
 import { createAppContainer, createBottomTabNavigator } from 'react-navigation'
-import { Font, AppLoading } from 'expo'
+import { AppLoading } from 'expo';
+import * as Font from 'expo-font';
 import FlashMessage from 'react-native-flash-message'
 
 import { Owned, Wishlist, Scan, Preview, Profile, Subscriptions } from './tabs'
