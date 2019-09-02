@@ -9,7 +9,7 @@ import {
 import { Icon } from 'react-native-elements'
 
 // import styles from '../shared/styles'
-
+import Svg, { Circle, Image } from 'react-native-svg'
 const MIN_SCALE = 0.2
 const MAX_SCALE = 1.6
 
@@ -130,18 +130,23 @@ export class PinchableBox extends React.Component {
                   ]
                 }}
               >
-                <Icon
-                  name="location-pin"
-                  iconStyle={{
-                    marginRight: 10,
-                    marginTop: 10,
-                    color: 'red'
-                  }}
-                  type="entypo"
-                  onPress={() => console.log('click')}
-                />
+                <Svg width="3754" height="3992" viewBox="0 0 100 100">
+                  <Image
+                    width="100%"
+                    height="100%"
+                    href={require('../assets/halls/essen/h1&2.jpeg')}
+                  />
+                  <Circle
+                    cx="10"
+                    cy="10"
+                    r="5"
+                    stroke="blue"
+                    strokeWidth="2.5"
+                    fill="green"
+                  />
+                </Svg>
               </Animated.View>
-              <Animated.Image
+              {/* <Animated.Image
                 style={[
                   styles.pinchableImage,
                   {
@@ -154,7 +159,7 @@ export class PinchableBox extends React.Component {
                   }
                 ]}
                 source={require('../assets/halls/essen/h1&2.jpeg')}
-              />
+              /> */}
             </Animated.View>
           </PanGestureHandler>
         </Animated.View>
