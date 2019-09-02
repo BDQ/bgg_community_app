@@ -21,7 +21,7 @@
     },
     "name": "BGG",
     "slug": "bggca",
-    "version": "0.2.0",
+    "version": "0.3.0",
     "description": "Board Game Geek community app",
     "ios": {
       "bundleIdentifier": "io.bdq.bggca"
