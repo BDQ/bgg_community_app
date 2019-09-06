@@ -1,6 +1,5 @@
 {
   "name": "bggca",
-  "version": "0.3.0",
   "license": "MIT",
   "repository": "https://github.com/BDQ/bgg_community_app",
   "devDependencies": {
