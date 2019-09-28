@@ -1,7 +1,7 @@
 import React from 'reactn'
 import PropTypes from 'prop-types'
 import { View, Text } from 'react-native'
-import { createStackNavigator } from 'react-navigation'
+import { createStackNavigator } from 'react-navigation-stack'
 import { Icon } from 'react-native-elements'
 
 import GameScreen from './GameScreen'

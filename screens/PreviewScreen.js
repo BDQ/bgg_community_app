@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { createStackNavigator } from 'react-navigation'
+import { createStackNavigator } from 'react-navigation-stack'
 import { AsyncStorage } from 'react-native'
 
 import GameScreen from './GameScreen'
@@ -36,13 +36,9 @@ class PreviewListScreen extends React.Component {
 
   buildItemURL = (pageId, objectType) => {
     if (objectType === 'thing') {
-      return `https://api.geekdo.com/api/geekpreviewitems?nosession=1&pageid=${pageId}&previewid=${
-        this.state.previewId
-      }`
+      return `https://api.geekdo.com/api/geekpreviewitems?nosession=1&pageid=${pageId}&previewid=${this.state.previewId}`
     } else if (objectType === 'company') {
-      return `https://api.geekdo.com/api/geekpreviewparentitems?nosession=1&pageid=${pageId}&previewid=${
-        this.state.previewId
-      }`
+      return `https://api.geekdo.com/api/geekpreviewparentitems?nosession=1&pageid=${pageId}&previewid=${this.state.previewId}`
     } else {
       console.warn(`Got unexpected objectType: '${objectType}'`)
     }
@@ -79,9 +75,7 @@ class PreviewListScreen extends React.Component {
   }
 
   getUserItems = async () => {
-    const path = `/api/geekpreviewitems/userinfo?previewid=${
-      this.state.previewId
-    }`
+    const path = `/api/geekpreviewitems/userinfo?previewid=${this.state.previewId}`
 
     const { items: userSelections } = await fetchJSON(path)
 
@@ -267,9 +261,7 @@ class PreviewListScreen extends React.Component {
           } = record
 
           game = {
-            key: `${record.objectid}-${objectType}-${record.versionid}-${
-              record.itemid
-            }`,
+            key: `${record.objectid}-${objectType}-${record.versionid}-${record.itemid}`,
             itemId: record.itemid,
             name: item.primaryname.name,
             versionName: version ? version.item.primaryname.name : '',

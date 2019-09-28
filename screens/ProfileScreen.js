@@ -1,6 +1,7 @@
 import React from 'reactn'
 import Sentry from 'sentry-expo'
-import { createAppContainer, createStackNavigator } from 'react-navigation'
+import { createAppContainer } from 'react-navigation'
+import { createStackNavigator } from 'react-navigation-stack'
 import { View, Text, StyleSheet, Linking } from 'react-native'
 import { Input, Button } from 'react-native-elements'
 import { showMessage } from 'react-native-flash-message'

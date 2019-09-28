@@ -1,5 +1,5 @@
 import React from 'react'
-import { createStackNavigator } from 'react-navigation'
+import { createStackNavigator } from 'react-navigation-stack'
 import { View, Text, Image } from 'react-native'
 import ProgressBar from 'react-native-progress/Circle'
 import { Button } from 'react-native-elements'

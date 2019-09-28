@@ -1,12 +1,18 @@
 import { SENTRY_CONFIG } from 'react-native-dotenv'
-import Sentry from 'sentry-expo'
-Sentry.config(SENTRY_CONFIG).install()
+console.log(SENTRY_CONFIG)
+import * as Sentry from 'sentry-expo'
+Sentry.init({
+  dsn: SENTRY_CONFIG,
+  enableInExpoDevelopment: true,
+  debug: true
+})
 
 import React from 'reactn'
 import { View } from 'react-native'
-import { createAppContainer, createBottomTabNavigator } from 'react-navigation'
-import { AppLoading } from 'expo';
-import * as Font from 'expo-font';
+import { createAppContainer } from 'react-navigation'
+import { createBottomTabNavigator } from 'react-navigation-tabs'
+import { AppLoading } from 'expo'
+import * as Font from 'expo-font'
 import FlashMessage from 'react-native-flash-message'
 
 import { Owned, Wishlist, Scan, Preview, Profile, Subscriptions } from './tabs'
