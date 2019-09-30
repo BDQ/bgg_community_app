@@ -15,9 +15,11 @@ export default class PreviewMap extends React.PureComponent {
     return (
       <View style={styles.container}>
         <MapView
-          zoomControlEnabled={true}
+          // provider="google"
           style={styles.map}
-          initialRegion={{
+          showsPointsOfInterest={false}
+          // showsUserLocation={true}
+          region={{
             latitude: 51.427790453806146,
             latitudeDelta: 0.002539088740931561,
             longitude: 6.994015671123037,
@@ -33,21 +35,32 @@ export default class PreviewMap extends React.PureComponent {
           //   altitude: 500,
           //   zoom: 16
           // }}
-          // onRegionChange={(a, b, c) => console.log(a, b, c)}
+          onRegionChange={(a, b, c) => console.log(a, b, c)}
+          // minZoomLevel={16}
+          maxZoomLevel={19}
         >
-          {/* <Marker
-          draggable
-          coordinate={{
-            latitude: 51.4272,
-            longitude: 6.9957
-          }}
-          onDragEnd={e => console.log(e.nativeEvent.coordinate)}
-        /> */}
-          <Overlay
+          <UrlTile
+            urlTemplate={
+              'http://bggca.s3-website-us-east-1.amazonaws.com/essen/{z}/{x}/{y}.png'
+            }
+            minimumZ={16}
+            maximumZ={20}
+            zIndex={-1}
+            // shouldReplaceMapContent={true}
+          />
+          <Marker
+            draggable
+            coordinate={{
+              latitude: 51.4272,
+              longitude: 6.9957
+            }}
+            onDragEnd={e => console.log(e.nativeEvent.coordinate)}
+          />
+          {/* <Overlay
             style={{ zIndex: 999 }}
             image={map}
             bounds={[[51.42869, 6.99275], [51.4267, 6.9957]]}
-          />
+          /> */}
         </MapView>
       </View>
     )
