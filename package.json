@@ -56,9 +56,12 @@
   "jest": {
     "preset": "jest-expo",
     "testEnvironment": "jsdom",
-    "setupTestFrameworkScriptFile": "./setupTests.js"
+    "setupFilesAfterEnv": [
+      "./setupTests.js"
+    ]
   },
   "dependencies": {
+    "debug": "^4.1.1",
     "expo": "^35.0.0",
     "expo-image-manipulator": "~7.0.0",
     "expo-image-picker": "~7.0.0",
@@ -75,7 +78,6 @@
     "react-native-material-dropdown": "^0.11.1",
     "react-native-progress": "^3.5.0",
     "react-native-reanimated": "~1.2.0",
-    "react-native-section-list-get-item-layout": "^2.2.3",
     "react-native-simple-radio-button": "^2.7.3",
     "react-native-swipeout": "^2.3.6",
     "react-native-tag-select": "^2.0.0",

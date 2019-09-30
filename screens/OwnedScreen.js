@@ -1,6 +1,6 @@
 import React from 'reactn'
 import PropTypes from 'prop-types'
-import { View, Text } from 'react-native'
+import { View, Text, InteractionManager } from 'react-native'
 import { createStackNavigator } from 'react-navigation-stack'
 import { Icon } from 'react-native-elements'
 import ProgressBar from 'react-native-progress/Circle'
@@ -11,6 +11,7 @@ import GameAddTo from './GameAddTo'
 import GameList from './../components/GameList'
 
 import styles from '../shared/styles'
+import { logger } from '../shared/debug'
 
 class OwnedListScreen extends React.PureComponent {
   state = {
@@ -33,18 +34,20 @@ class OwnedListScreen extends React.PureComponent {
   }
 
   componentDidMount = async () => {
-    // check if we need to update the users collection
-    const { collectionFetchedAt, loggedIn } = this.global
+    InteractionManager.runAfterInteractions(() => {
+      // check if we need to update the users collection
+      const { collectionFetchedAt, loggedIn } = this.global
 
-    const aWeekAgo = new Date().getTime() - 1000 * 60 * 60 * 24 * 7
+      const aWeekAgo = new Date().getTime() - 1000 * 60 * 60 * 24 * 7
 
-    if (loggedIn && collectionFetchedAt < aWeekAgo) {
-      this.handleRefresh()
-    } else {
-      console.log(
-        'Not logged in, or collection fetched less a week ago, so skipping fetch.'
-      )
-    }
+      if (loggedIn && collectionFetchedAt < aWeekAgo) {
+        this.handleRefresh()
+      } else {
+        logger(
+          'Not logged in, or collection fetched less a week ago, so skipping fetch.'
+        )
+      }
+    })
   }
 
   handleRefresh = async () => {

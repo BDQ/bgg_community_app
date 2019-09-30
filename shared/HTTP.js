@@ -2,6 +2,8 @@ import Sentry from 'sentry-expo'
 import { getDispatch } from 'reactn'
 import { showMessage } from 'react-native-flash-message'
 
+import { logger } from './debug'
+
 const baseURL = 'https://bgg.cc'
 
 export const fetchRaw = async (path, args = {}, headers = {}) => {
@@ -36,7 +38,7 @@ export const fetchJSON = async (path, args = {}, headers = {}) => {
         duration: 3000
       })
     } else {
-      console.log(
+      logger(
         `Got status code: ${response.status} instead when fetching: ${path}`
       )
       Sentry.captureMessage('Non 200 Response for HTTP request.', {
@@ -44,7 +46,7 @@ export const fetchJSON = async (path, args = {}, headers = {}) => {
       })
     }
   } catch (error) {
-    console.log(`Error fetching: ${path}`)
+    logger(`Error fetching: ${path}`)
     Sentry.captureException(error)
   }
 }

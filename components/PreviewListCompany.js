@@ -2,6 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { StyleSheet, View, Text } from 'react-native'
 import { Avatar } from 'react-native-elements'
+// import { logger } from '../shared/debug'
 
 export default class PreviewListCompany extends React.PureComponent {
   _renderLocation = () => {
@@ -13,7 +14,13 @@ export default class PreviewListCompany extends React.PureComponent {
   }
   render() {
     return (
-      <View style={styles.itemContainer}>
+      <View
+        style={styles.itemContainer}
+        // onLayout={event => {
+        //   var { x, y, width, height } = event.nativeEvent.layout
+        //   logger({ x, y, width, height })
+        // }}
+      >
         <Avatar
           size="medium"
           source={{ uri: this.props.thumbnail }}

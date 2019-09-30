@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { createStackNavigator } from 'react-navigation-stack'
-import { AsyncStorage } from 'react-native'
+import { AsyncStorage, InteractionManager } from 'react-native'
 
 import GameScreen from './GameScreen'
 import GameAddTo from './GameAddTo'
@@ -11,6 +11,7 @@ import PreviewEdit from '../components/PreviewEdit'
 
 import { PREVIEW_ID, PREVIEW_FULL_NAME } from 'react-native-dotenv'
 import { fetchJSON } from '../shared/HTTP'
+import { logger } from '../shared/debug'
 
 class PreviewListScreen extends React.Component {
   state = {
@@ -29,7 +30,9 @@ class PreviewListScreen extends React.Component {
   }
 
   componentDidMount() {
-    this.loadAllData()
+    InteractionManager.runAfterInteractions(() => {
+      this.loadAllData()
+    })
   }
 
   pageLimit = objectType => (objectType === 'thing' ? 10 : 50)
@@ -92,29 +95,29 @@ class PreviewListScreen extends React.Component {
           )
         ) || {}
     } catch (e) {
-      console.warn('Persisted EventPreview data is not JSON', objectType)
-      console.log(e)
+      logger('Persisted EventPreview data is not JSON', objectType)
+      logger(e)
     }
 
     // if (objectType === 'thing') {
     //   Object.keys(loadStatus).forEach(key => {
-    //     console.log(key, loadStatus[key].items.length)
+    //     logger(key, loadStatus[key].items.length)
     //   })
 
-    //   console.log(loadStatus['1'])
+    //   logger(loadStatus['1'])
     // }
 
     if (force || Object.keys(loadStatus).length === 0) {
       // firstLoad: 'ever' <-- already set by default
       // so "Importing" overlay will apppear.
-      console.log('full load', objectType)
+      logger('full load', objectType)
       await this.fullLoad(loadStatus, objectType, force)
     } else {
       // only show overlay on first load when app boots
       if (this.state.firstLoad === 'ever') {
         this.setState({ firstLoad: 'sinceAppStart' })
       }
-      console.log('partial load', objectType)
+      logger('partial load', objectType)
       await this.checkForNewPages(loadStatus, objectType)
 
       let all = []
@@ -153,7 +156,7 @@ class PreviewListScreen extends React.Component {
 
       this.persistLoadStatus(loadStatus, objectType)
     } else {
-      console.log('got full page on the last page, do a full load')
+      logger('got full page on the last page, do a full load')
       return this.fullLoad(loadStatus, objectType)
     }
   }
@@ -173,14 +176,14 @@ class PreviewListScreen extends React.Component {
       const anHourAgo = new Date().getTime() - 1000 * 60 * 60
 
       if (!loadedAt || loadedAt < anHourAgo || force) {
-        console.log(`  - updating page: ${pageId} `)
+        logger(`  - updating page: ${pageId} `)
 
         // start the fetch
         fetches[pageId] = fetchJSON(this.buildItemURL(pageId, objectType))
 
         // we only block and process when we have 5 requests in parallel
         if (Object.keys(fetches).length === 5) {
-          console.log('awaiting for 5 fetches')
+          logger('awaiting for 5 fetches')
           // wait for the fetchs and parse responses
           loadStatus = await this.processItems(fetches, loadStatus, objectType)
 
@@ -210,7 +213,7 @@ class PreviewListScreen extends React.Component {
       : this.processCompanies(fetches, loadStatus, objectType)
 
   processCompanies = async (fetches, loadStatus, objectType) => {
-    console.log('processing companies')
+    logger('processing companies')
     const promises = Object.entries(fetches).map(async ([pageId, request]) => {
       const response = await request
 
@@ -248,7 +251,7 @@ class PreviewListScreen extends React.Component {
   }
 
   processGames = async (fetches, loadStatus, objectType) => {
-    console.log('processing games')
+    logger('processing games')
     const promises = Object.entries(fetches).map(async ([pageId, request]) => {
       const response = await request
 

@@ -1,5 +1,4 @@
 import { SENTRY_CONFIG } from 'react-native-dotenv'
-console.log(SENTRY_CONFIG)
 import * as Sentry from 'sentry-expo'
 Sentry.init({
   dsn: SENTRY_CONFIG,

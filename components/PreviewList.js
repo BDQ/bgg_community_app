@@ -3,14 +3,12 @@ import {
   TouchableOpacity,
   View,
   SectionList,
-  PixelRatio,
   Text,
   RefreshControl,
   AsyncStorage
 } from 'react-native'
 import { SearchBar } from 'react-native-elements'
 import Ionicons from 'react-native-vector-icons/Ionicons'
-import sectionListGetItemLayout from 'react-native-section-list-get-item-layout'
 import ProgressBar from 'react-native-progress/Circle'
 
 import PreviewListCompany from './PreviewListCompany'
@@ -18,8 +16,9 @@ import PreviewListGame from './PreviewListGame'
 
 import { priorities, halls, availability } from '../shared/data'
 import styles from '../shared/styles'
+import { logger } from '../shared/debug'
 
-const hasNotesRE = new RegExp(`"text":.?".+"`, 'g')
+// const hasNotesRE = new RegExp(`"text":.?".+"`, 'g')
 
 const defaultFilters = {
   name: '',
@@ -219,7 +218,7 @@ export default class PreviewList extends React.PureComponent {
     }
 
     if (missingCompanies && prevState.missingCompanies != missingCompanies) {
-      console.log(
+      logger(
         `Missing ${missingCompanies} companies, forcing full load in ComponentDidUpdate`
       )
       this.props.forceCompanyFullLoad()
@@ -238,7 +237,7 @@ export default class PreviewList extends React.PureComponent {
           filters
         })
       } catch (err) {
-        console.warn(err)
+        logger(err)
       }
     }
   }
@@ -271,7 +270,7 @@ export default class PreviewList extends React.PureComponent {
     )
 
     if (missingCompanies > 0 && !loading) {
-      console.log(`Missing ${missingCompanies} companies, forcing full load`)
+      logger(`Missing ${missingCompanies} companies, forcing full load`)
       this.props.forceCompanyFullLoad()
     }
 
@@ -372,25 +371,6 @@ export default class PreviewList extends React.PureComponent {
       return <Text style={styles.formHeader}>Updating preview...</Text>
     }
   }
-
-  getItemLayout = sectionListGetItemLayout({
-    // The height of the row with rowData at the given sectionIndex and rowIndex
-    // args can include: (sectionIndex, rowIndex, rowData)
-    getItemHeight: row => {
-      return row.objecttype === 'thing'
-        ? row.userSelection &&
-          (row.userSelection.notes.match(hasNotesRE) ||
-            row.userSelection.notes !== '')
-          ? 161
-          : 101
-        : 55
-    },
-
-    // These three properties are optional
-    getSeparatorHeight: () => 1 / PixelRatio.get(), // The height of your separators
-    getSectionHeaderHeight: () => 58, // The height of your section headers
-    getSectionFooterHeight: () => 0 // The height of your section footers
-  })
 
   render() {
     const { loading, onRefresh, firstLoad } = this.props

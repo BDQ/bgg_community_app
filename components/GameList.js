@@ -94,7 +94,7 @@ export default class GameList extends React.PureComponent {
   }
 
   render() {
-    // console.log('GameList render', this.state.games.length)
+    // logger('GameList render', this.state.games.length)
 
     return (
       <FlatList

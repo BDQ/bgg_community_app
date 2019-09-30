@@ -13,6 +13,7 @@ import GameScreen from './GameScreen'
 import GameAddTo from './GameAddTo'
 
 import { fetchJSON } from '../shared/HTTP'
+import { logger } from '../shared/debug'
 import { removeDuplicates } from '../shared/collection'
 
 class VisualSearchScreen extends React.Component {
@@ -69,7 +70,7 @@ class VisualSearchScreen extends React.Component {
         const { metadata } = result.input.data
         const { score } = result
 
-        console.log(result)
+        logger(result)
         return {
           key: result.input.id,
           objectId: metadata.id,
@@ -88,7 +89,7 @@ class VisualSearchScreen extends React.Component {
       // navigate to the results list
       this.props.navigation.push('List', {
         games,
-        onRefresh: () => console.log('refrehs')
+        onRefresh: () => logger('refrehs')
       })
 
       if (games.length > 2) {

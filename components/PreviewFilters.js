@@ -40,9 +40,9 @@ export default class PreviewFilters extends React.Component {
   }
 
   // static getDerivedStateFromProps(props, state) {
-  //   console.log(props)
+  //   logger(props)
   //   const { filters, sortBy } = props.navigation.state.params
-  //   console.log('here')
+  //   logger('here')
   //   if (filters !== state.filters || sortBy !== state.sortBy) {
   //     return { filters, sortBy }
   //   } else {

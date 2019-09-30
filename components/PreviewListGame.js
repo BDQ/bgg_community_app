@@ -6,6 +6,7 @@ import Swipeout from 'react-native-swipeout'
 
 import { priorities } from '../shared/data'
 import { fetchJSON } from '../shared/HTTP'
+import { logger } from '../shared/debug'
 
 export default class PreviewListGame extends React.PureComponent {
   constructor(props) {
@@ -209,7 +210,7 @@ export default class PreviewListGame extends React.PureComponent {
             style={styles.itemContainer}
             // onLayout={event => {
             //   var { x, y, width, height } = event.nativeEvent.layout
-            //   console.log({ x, y, width, height })
+            //   logger({ x, y, width, height })
             // }}
           >
             <View style={styles.mainContainer}>

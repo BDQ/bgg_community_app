@@ -1,5 +1,11 @@
 import React from 'react'
-import { View, Text, FlatList, TouchableOpacity } from 'react-native'
+import {
+  View,
+  Text,
+  FlatList,
+  TouchableOpacity,
+  InteractionManager
+} from 'react-native'
 import { SearchBar } from 'react-native-elements'
 import PropTypes from 'prop-types'
 import { debounce } from 'throttle-debounce'
@@ -9,15 +15,11 @@ import { fetchJSON } from '../shared/HTTP'
 import GameListItem from './../components/GameListItem'
 
 export default class GameSearch extends React.PureComponent {
+  state = { games: [], searchFor: '' }
   static navigationOptions = () => {
     return {
       title: 'Add to collection'
     }
-  }
-
-  constructor(props) {
-    super(props)
-    this.state = { games: [] }
   }
 
   _renderItem = ({ item }) => {
@@ -46,10 +48,11 @@ export default class GameSearch extends React.PureComponent {
     return (
       <SearchBar
         autoFocus={true}
-        onChangeText={debounce(500, this.searchBGG)}
+        onChangeText={this.handlerSearch}
         onClearText={this.clearSearch}
         showLoadingIcon={this.state.loading}
         placeholder="Type game name to search"
+        value={this.state.searchFor}
       />
     )
   }
@@ -82,6 +85,7 @@ export default class GameSearch extends React.PureComponent {
     <FlatList
       ListHeaderComponent={this._renderHeader}
       ListFooterComponent={this._renderFooter}
+      extraData={this.state}
       data={this.state.games}
       keyExtractor={item => item.objectId}
       renderItem={this._renderItem}
@@ -127,22 +131,29 @@ export default class GameSearch extends React.PureComponent {
     }
   }
 
-  searchBGG = async str => {
-    if (str.length > 2) {
+  handlerSearch = str => {
+    this.setState({ searchFor: str })
+    debounce(500, this.searchBGG(str))
+  }
+
+  searchBGG = async searchFor => {
+    if (searchFor.length > 2) {
       this.setState({ loading: true, games: [] })
 
-      const url = `https://bgg.cc/search/boardgame?q=${str}&showcount=20`
+      InteractionManager.runAfterInteractions(async () => {
+        const url = `https://bgg.cc/search/boardgame?q=${searchFor}&showcount=20`
 
-      const response = await fetchJSON(url)
+        const response = await fetchJSON(url)
 
-      const games = response.items.map(game => ({
-        objectId: game.objectid,
-        name: game.name,
-        yearpublished: game.yearpublished
-      }))
+        const games = response.items.map(game => ({
+          objectId: game.objectid,
+          name: game.name,
+          yearpublished: game.yearpublished
+        }))
 
-      this.setState({ games, loading: false })
-      this.enrich(games)
+        this.setState({ games, loading: false })
+        this.enrich(games)
+      })
     }
   }
 }

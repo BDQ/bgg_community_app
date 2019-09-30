@@ -2,6 +2,8 @@ import Sentry from 'sentry-expo'
 import parse from 'xml-parser'
 import { AsyncStorage } from 'react-native'
 
+import { logger } from './debug'
+
 const timeout = ms => new Promise(res => setTimeout(res, ms))
 
 export const removeDuplicates = (myArr, prop) => {
@@ -22,7 +24,7 @@ export const fetchCollectionFromBGG = async username => {
 
     if (response.status == 202) {
       // collection is being prepared, come back late to try again
-      console.log('gonna sleep on it')
+      logger('gonna sleep on it')
       await timeout(2000)
       return fetchCollectionFromBGG(username)
     } else if (response.status == 200) {
