@@ -11,8 +11,8 @@ import PreviewEdit from '../../components/PreviewEdit'
 import PreviewMap from '../../components/PreviewMap'
 
 import { PREVIEW_ID, PREVIEW_FULL_NAME } from 'react-native-dotenv'
-import { fetchJSON } from '../shared/HTTP'
-import { logger } from '../shared/debug'
+import { fetchJSON } from '../../shared/HTTP'
+import { logger } from '../../shared/debug'
 
 class PreviewListScreen extends React.Component {
   state = {

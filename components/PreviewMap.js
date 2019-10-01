@@ -1,17 +1,47 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { StyleSheet, View } from 'react-native'
-import MapView, { Marker, Overlay, UrlTile, LocalTile } from 'react-native-maps'
+import MapView, { Marker, Callout, UrlTile } from 'react-native-maps'
 
-import map from '../assets/halls/essen/h1-2.png'
+import { points } from '../assets/halls/essen/points'
+import PreviewMapCallout from './PreviewMapCallout'
 
 export default class PreviewMap extends React.PureComponent {
   state = {
-    x: 1
+    coordinate: this.findLocation()
   }
-  render() {
-    // const { location } = this.props.navigation.state.params
 
+  findLocation() {
+    let { location } = this.props.navigation.state.params
+    location = location.replace(/[^a-zA-Z0-9]/, '')
+    if (points.hasOwnProperty(location)) {
+      return points[location]
+    }
+  }
+
+  renderMarker() {
+    const { location, company } = this.props.navigation.state.params
+    const { coordinate } = this.state
+
+    if (coordinate) {
+      return (
+        <Marker
+          draggable
+          coordinate={coordinate}
+          onDragEnd={e => console.log(e.nativeEvent.coordinate)}
+        >
+          <Callout>
+            <PreviewMapCallout
+              location={location}
+              company={company}
+            ></PreviewMapCallout>
+          </Callout>
+        </Marker>
+      )
+    }
+  }
+
+  render() {
     return (
       <View style={styles.container}>
         <MapView
@@ -35,9 +65,8 @@ export default class PreviewMap extends React.PureComponent {
           //   altitude: 500,
           //   zoom: 16
           // }}
-          onRegionChange={(a, b, c) => console.log(a, b, c)}
           // minZoomLevel={16}
-          maxZoomLevel={19}
+          maxZoomLevel={18}
         >
           <UrlTile
             urlTemplate={
@@ -46,21 +75,9 @@ export default class PreviewMap extends React.PureComponent {
             minimumZ={16}
             maximumZ={20}
             zIndex={-1}
-            // shouldReplaceMapContent={true}
+            shouldReplaceMapContent={true}
           />
-          <Marker
-            draggable
-            coordinate={{
-              latitude: 51.4272,
-              longitude: 6.9957
-            }}
-            onDragEnd={e => console.log(e.nativeEvent.coordinate)}
-          />
-          {/* <Overlay
-            style={{ zIndex: 999 }}
-            image={map}
-            bounds={[[51.42869, 6.99275], [51.4267, 6.9957]]}
-          /> */}
+          {this.renderMarker()}
         </MapView>
       </View>
     )
@@ -71,7 +88,8 @@ PreviewMap.propTypes = {
   navigation: PropTypes.shape({
     state: PropTypes.shape({
       params: PropTypes.shape({
-        location: PropTypes.string
+        location: PropTypes.string,
+        company: PropTypes.string.isRequired
       })
     })
   }).isRequired
@@ -84,10 +102,5 @@ const styles = StyleSheet.create({
   },
   map: {
     ...StyleSheet.absoluteFillObject
-  },
-  overlay: {
-    position: 'absolute',
-    bottom: 50,
-    backgroundColor: 'rgba(255, 255, 255, 1)'
   }
 })

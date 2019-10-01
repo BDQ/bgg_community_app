@@ -179,7 +179,7 @@ export default class PreviewFilters extends React.Component {
               />
             </View>
 
-            <View style={{ display: 'none' }}>
+            <View style={{ display: 'block' }}>
               <TouchableOpacity
                 style={styles.formLabelRow}
                 onPress={() => this.toggleTags('hallTags')}
