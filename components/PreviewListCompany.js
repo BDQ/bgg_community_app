@@ -6,7 +6,7 @@ import { Avatar, Icon } from 'react-native-elements'
 
 export default class PreviewListCompany extends React.PureComponent {
   _renderMapButton = () => {
-    const { location } = this.props
+    const { location, games } = this.props
     const { navigate } = this.props.navigation
 
     if (location) {
@@ -16,7 +16,11 @@ export default class PreviewListCompany extends React.PureComponent {
           iconStyle={{ marginRight: 10, marginTop: 10 }}
           type="entypo"
           onPress={() =>
-            navigate('Map', { location, company: this.props.name })
+            navigate('Map', {
+              location,
+              company: this.props.name,
+              games: games
+            })
           }
         />
       )
@@ -60,6 +64,7 @@ PreviewListCompany.propTypes = {
   thumbnail: PropTypes.string.isRequired,
   name: PropTypes.string.isRequired,
   location: PropTypes.string.isRequired,
+  games: PropTypes.any,
   navigation: PropTypes.shape({
     navigate: PropTypes.func.isRequired
   }).isRequired

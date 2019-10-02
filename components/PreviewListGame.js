@@ -6,7 +6,7 @@ import Swipeout from 'react-native-swipeout'
 
 import { priorities } from '../shared/data'
 import { fetchJSON } from '../shared/HTTP'
-import { logger } from '../shared/debug'
+// import { logger } from '../shared/debug'
 
 export default class PreviewListGame extends React.PureComponent {
   constructor(props) {

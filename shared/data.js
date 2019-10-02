@@ -21,7 +21,7 @@ export const priorities = [
   },
   {
     id: -1,
-    color: '#d4d4d4',
+    color: 'orange',
     name: 'Not Prioritized'
   }
 ]

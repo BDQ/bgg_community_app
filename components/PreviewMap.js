@@ -5,6 +5,7 @@ import MapView, { Marker, Callout, UrlTile } from 'react-native-maps'
 
 import { points } from '../assets/halls/essen/points'
 import PreviewMapCallout from './PreviewMapCallout'
+import PreviewMapMarker from './PreviewMapMarker'
 
 export default class PreviewMap extends React.PureComponent {
   state = {
@@ -20,7 +21,7 @@ export default class PreviewMap extends React.PureComponent {
   }
 
   renderMarker() {
-    const { location, company } = this.props.navigation.state.params
+    const { location, company, games } = this.props.navigation.state.params
     const { coordinate } = this.state
 
     if (coordinate) {
@@ -30,11 +31,13 @@ export default class PreviewMap extends React.PureComponent {
           coordinate={coordinate}
           onDragEnd={e => console.log(e.nativeEvent.coordinate)}
         >
-          <Callout>
+          <PreviewMapMarker amount={`${location} (${games.length})`} />
+          <Callout style={{ width: 130 }}>
             <PreviewMapCallout
               location={location}
               company={company}
-            ></PreviewMapCallout>
+              games={games}
+            />
           </Callout>
         </Marker>
       )
@@ -42,6 +45,13 @@ export default class PreviewMap extends React.PureComponent {
   }
 
   render() {
+    const {
+      coordinate = {
+        latitude: 51.427790453806146,
+        longitude: 6.994015671123037
+      }
+    } = this.state
+
     return (
       <View style={styles.container}>
         <MapView
@@ -49,11 +59,13 @@ export default class PreviewMap extends React.PureComponent {
           style={styles.map}
           showsPointsOfInterest={false}
           // showsUserLocation={true}
+          // cacheEnabled={true}
           region={{
-            latitude: 51.427790453806146,
-            latitudeDelta: 0.002539088740931561,
-            longitude: 6.994015671123037,
-            longitudeDelta: 0.0025975481686373314
+            ...coordinate,
+
+            latitudeDelta: 0.0015,
+
+            longitudeDelta: 0.0015
           }}
           // camera={{
           //   center: {
@@ -89,7 +101,8 @@ PreviewMap.propTypes = {
     state: PropTypes.shape({
       params: PropTypes.shape({
         location: PropTypes.string,
-        company: PropTypes.string.isRequired
+        company: PropTypes.string.isRequired,
+        games: PropTypes.any
       })
     })
   }).isRequired

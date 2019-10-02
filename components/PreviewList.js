@@ -135,7 +135,7 @@ const buildSections = (games, companies, userSelections, filters, sortBy) => {
   }
 
   const filteredCompanies = applyCompanyFilters(filters, companies)
-  const filteredGames = [...applyGameFilters(filters, games)]
+  const filteredGames = applyGameFilters(filters, games)
 
   const gameCount = filteredGames.length
   // build array of companies, followed by their games
@@ -144,20 +144,24 @@ const buildSections = (games, companies, userSelections, filters, sortBy) => {
 
     // some records can have not previewItems
     if (company.previewItemIds) {
-      companyGames = company.previewItemIds.map(itemId => {
-        const gameIndex = filteredGames.findIndex(g => g.itemId === itemId)
+      companyGames = company.previewItemIds
+        .map(itemId => {
+          const gameIndex = filteredGames.findIndex(g => g.itemId === itemId)
 
-        if (gameIndex > -1) {
-          const [game] = filteredGames.splice(gameIndex, 1)
+          if (gameIndex > -1) {
+            const [game] = filteredGames.splice(gameIndex, 1)
 
-          if (game) {
-            game.userSelection = userSelections[itemId]
-            game.location = company.location
+            if (game) {
+              game.userSelection = userSelections[itemId]
+              game.location = company.location
+            }
+
+            return game
           }
+        })
+        .filter(g => g) //drop undefineds
 
-          return game
-        }
-      })
+      company.games = companyGames
     }
 
     return {
@@ -390,6 +394,7 @@ export default class PreviewList extends React.PureComponent {
                   name={section.name}
                   thumbnail={section.thumbnail}
                   location={section.location}
+                  games={section.games}
                   navigation={navigation}
                 />
               )

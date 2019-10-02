@@ -81,9 +81,9 @@ class PreviewListScreen extends React.Component {
   getUserItems = async () => {
     const path = `/api/geekpreviewitems/userinfo?previewid=${this.state.previewId}`
 
-    // const { items: userSelections } = await fetchJSON(path)
+    const { items: userSelections } = await fetchJSON(path)
 
-    // this.setState({ userSelections })
+    this.setState({ userSelections })
   }
 
   getPreviewItems = async (objectType, force = false) => {
