@@ -59,6 +59,9 @@
     "testEnvironment": "jsdom",
     "setupFilesAfterEnv": [
       "./setupTests.js"
+    ],
+    "transformIgnorePatterns": [
+      "node_modules/?!(sentry)"
     ]
   },
   "dependencies": {

@@ -18,8 +18,6 @@ it('renders without crashing', async () => {
   )
 
   await waitUntil(() => wrap.state('details') !== null)
-  //   waitUntil(() => wrap.state('stats').usersrated !== undefined)
-  // ]
 
   // console.log(wrap.debug())
   wrap.update()
