@@ -135,7 +135,7 @@ const buildSections = (games, companies, userSelections, filters, sortBy) => {
   }
 
   const filteredCompanies = applyCompanyFilters(filters, companies)
-  const filteredGames = applyGameFilters(filters, games)
+  const filteredGames = [...applyGameFilters(filters, games)]
 
   const gameCount = filteredGames.length
   // build array of companies, followed by their games
