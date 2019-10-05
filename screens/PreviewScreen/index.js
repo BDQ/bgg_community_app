@@ -13,11 +13,13 @@ import PreviewMap from '../../components/PreviewMap'
 import { PREVIEW_ID, PREVIEW_FULL_NAME } from 'react-native-dotenv'
 import { fetchJSON } from '../../shared/HTTP'
 import { logger } from '../../shared/debug'
+import { getPurchases } from './data/purchases'
 
 class PreviewListScreen extends React.Component {
   state = {
     games: [],
     companies: [],
+    purchases: {},
     userSelections: [],
     previewId: PREVIEW_ID,
     loading: false,
@@ -44,7 +46,7 @@ class PreviewListScreen extends React.Component {
     } else if (objectType === 'company') {
       return `https://api.geekdo.com/api/geekpreviewparentitems?nosession=1&pageid=${pageId}&previewid=${this.state.previewId}`
     } else {
-      console.warn(`Got unexpected objectType: '${objectType}'`)
+      logger(`Got unexpected objectType: '${objectType}'`)
     }
   }
 
@@ -57,8 +59,10 @@ class PreviewListScreen extends React.Component {
 
     // get the games!
     await this.getPreviewItems('thing')
-
     this.setState({ loading: false, firstLoad: 'complete' })
+
+    const purchases = await getPurchases()
+    this.setState({ purchases })
   }
 
   // updates cached user priorities, so filtering will
@@ -260,6 +264,7 @@ class PreviewListScreen extends React.Component {
         let game = {}
         try {
           const {
+            preorder,
             geekitem: { item },
             version
           } = record
@@ -277,14 +282,21 @@ class PreviewListScreen extends React.Component {
             price: record.msrp,
             status: record.pretty_availability_status,
             reactions: record.reactions,
-            stats: record.stats
+            stats: record.stats,
+            preorder: preorder.map(({ product }) => ({
+              productId: product.productid,
+              currency: product.currency,
+              currencySymbol: product.currencysymbol,
+              price: product.price,
+              notes: product.notes
+            }))
           }
 
           game
         } catch (err) {
-          console.warn(err)
-          console.warn('Bad data:')
-          console.warn(record)
+          logger(err)
+          logger('Bad data:')
+          logger(record)
         }
 
         return game
@@ -331,19 +343,26 @@ class PreviewListScreen extends React.Component {
         JSON.stringify(loadStatus)
       )
     } catch (err) {
-      console.warn(err)
+      logger(err)
     }
   }
 
   render = () => {
     const { navigation } = this.props
-    const { games, companies, userSelections, loading, firstLoad } = this.state
-
+    const {
+      games,
+      companies,
+      userSelections,
+      purchases,
+      loading,
+      firstLoad
+    } = this.state
     return (
       <PreviewList
         companies={companies} //.slice(1, 5)}
         games={games}
         userSelections={userSelections}
+        purchases={purchases}
         navigation={navigation}
         loading={firstLoad !== 'complete' ? false : loading}
         firstLoad={firstLoad}

@@ -41,7 +41,9 @@ export default class PreviewListGame extends React.PureComponent {
 
     // merge state and changes together
 
-    this.setState({ userSelection: { ...userSelection, ...changedAttrs } })
+    this.setState({
+      userSelection: { ...userSelection, ...changedAttrs }
+    })
 
     const data = {
       ...userSelection,
@@ -72,7 +74,9 @@ export default class PreviewListGame extends React.PureComponent {
     } = userSelection
 
     const seen = !oldSeen
-    const notes = Object.assign({}, userSelection.notes, { seen })
+    const notes = Object.assign({}, userSelection.notes, {
+      seen
+    })
 
     this.persistUserSelection({ notes })
   }
@@ -101,12 +105,41 @@ export default class PreviewListGame extends React.PureComponent {
         style={styles.minorValue}
         value={
           <Text
-            style={{ paddingHorizontal: 10, color: '#ffffff', fontSize: 9 }}
+            style={{
+              paddingHorizontal: 10,
+              color: '#ffffff',
+              fontSize: 9
+            }}
           >
             {name}
           </Text>
         }
         badgeStyle={{ backgroundColor: color }}
+        wrapperStyle={{ flex: 1 }}
+      />
+    ) : null
+  }
+
+  _renderPurchase = () => {
+    const {
+      game: { purchase }
+    } = this.props
+
+    return purchase ? (
+      <Badge
+        style={styles.minorValue}
+        value={
+          <Text
+            style={{
+              paddingHorizontal: 10,
+              color: '#ffffff',
+              fontSize: 9
+            }}
+          >
+            Preordered
+          </Text>
+        }
+        badgeStyle={{ backgroundColor: 'orange' }}
         wrapperStyle={{ flex: 1 }}
       />
     ) : null
@@ -144,19 +177,51 @@ export default class PreviewListGame extends React.PureComponent {
     </View>
   )
 
-  _renderNotes = () => {
+  _renderExpandedPreorder = (preorder, purchase) => {
+    return purchase && preorder ? (
+      <View>
+        <Text style={styles.minorLabel}>Preorder</Text>
+        <Text numberOfLines={2} style={styles.minorValue}>
+          {preorder.notes}
+        </Text>
+      </View>
+    ) : null
+  }
+
+  _renderExpandedNotes = notes => {
+    return notes ? (
+      <View>
+        <Text style={styles.minorLabel}>Notes</Text>
+        <Text numberOfLines={2} style={styles.minorValue}>
+          {notes}
+        </Text>
+      </View>
+    ) : null
+  }
+
+  _renderExpanded = () => {
     const {
       userSelection: {
         notes: { text }
       }
     } = this.state
 
-    return text ? (
-      <View style={styles.notesContainer}>
-        <Text style={styles.minorLabel}>Notes</Text>
-        <Text numberOfLines={2} style={styles.minorValue}>
-          {text}
-        </Text>
+    const {
+      game: {
+        preorder: [firstPreorder],
+        purchase
+      }
+    } = this.props
+
+    let maxHeight = 0
+
+    if (text) maxHeight += 70
+    if (purchase) maxHeight += 70
+
+    return text || purchase ? (
+      <View style={{ maxHeight }}>
+        {this._renderExpandedPreorder(firstPreorder, purchase)}
+        {this._renderExpandedNotes(text)}
       </View>
     ) : null
   }
@@ -234,11 +299,12 @@ export default class PreviewListGame extends React.PureComponent {
                   {this._renderPrice()}
                   <View style={[styles.minor, styles.priority]}>
                     {this._renderPriority()}
+                    {this._renderPurchase()}
                   </View>
                 </View>
               </View>
             </View>
-            {this._renderNotes()}
+            {this._renderExpanded()}
           </View>
         </TouchableOpacity>
       </Swipeout>
@@ -274,9 +340,6 @@ const styles = StyleSheet.create({
   mainContainer: {
     height: 80,
     flexDirection: 'row'
-  },
-  notesContainer: {
-    height: 60
   },
   gameDetails: {
     paddingLeft: 10,

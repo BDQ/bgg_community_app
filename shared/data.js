@@ -59,3 +59,5 @@ export const availability = [
   { id: 'Demo', name: 'Demo' },
   { id: 'For Sale', name: 'For Sale' }
 ]
+
+export const preorders = [{ id: 'Yes', name: 'Yes' }]

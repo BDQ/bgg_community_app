@@ -7,7 +7,13 @@ import RadioForm from 'react-native-simple-radio-button'
 import { Dropdown } from 'react-native-material-dropdown'
 
 import styles from '../shared/styles'
-import { priorities, halls, seen, availability } from '../shared/data'
+import {
+  priorities,
+  halls,
+  seen,
+  availability,
+  preorders
+} from '../shared/data'
 
 export default class PreviewFilters extends React.Component {
   state = {
@@ -85,6 +91,7 @@ export default class PreviewFilters extends React.Component {
         availability: this.availabilityTags.itemsSelected.map(
           avail => avail.id || avail
         ),
+        preorders: this.preorderTags.itemsSelected.map(t => t.id || t),
         filterTextOn: this.state.filters.filterTextOn
       },
       this.state.sortBy
@@ -247,6 +254,25 @@ export default class PreviewFilters extends React.Component {
                   this.availabilityTags = tag
                 }}
                 data={availability}
+                theme="info"
+              />
+            </View>
+
+            <TouchableOpacity
+              style={styles.formLabelRow}
+              onPress={() => this.toggleTags('preorderTags')}
+            >
+              <Text style={styles.formLabel}>Preordered</Text>
+            </TouchableOpacity>
+
+            <View style={{ marginLeft: 5 }}>
+              <TagSelect
+                labelAttr="name"
+                value={filters.preorders}
+                ref={tag => {
+                  this.preorderTags = tag
+                }}
+                data={preorders}
                 theme="info"
               />
             </View>

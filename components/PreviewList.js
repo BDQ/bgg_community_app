@@ -26,6 +26,7 @@ const defaultFilters = {
   halls: [],
   seen: [],
   availability: [],
+  preorders: [],
   filterTextOn: 'game'
 }
 
@@ -110,6 +111,15 @@ const applyGameFilters = (filters, items) => {
     })
   }
 
+  // preorders (only supports Yes now)
+  if (filters.preorders && filters.preorders.length > 0) {
+    if (filters.preorders.includes('Yes')) {
+      filteredItems = filteredItems.filter(item => {
+        return item.purchase !== undefined
+      })
+    }
+  }
+
   return filteredItems
 }
 
@@ -128,12 +138,18 @@ const sortByAttr = (a, b, attr) => {
   return 0
 }
 
-const buildSections = (games, companies, userSelections, filters, sortBy) => {
+const buildSections = (
+  games,
+  companies,
+  userSelections,
+  purchases,
+  filters,
+  sortBy
+) => {
   if (games.length === 0 || companies.length === 0) {
     //data's not loaded yet, so render empty
     return { sections: [], gameCount: 0, missingCompanies: false }
   }
-
   const filteredCompanies = applyCompanyFilters(filters, companies)
   const filteredGames = [...applyGameFilters(filters, games)]
 
@@ -152,7 +168,6 @@ const buildSections = (games, companies, userSelections, filters, sortBy) => {
             const [game] = filteredGames.splice(gameIndex, 1)
 
             if (game) {
-              game.userSelection = userSelections[itemId]
               game.location = company.location
             }
 
@@ -194,15 +209,32 @@ export default class PreviewList extends React.PureComponent {
   }
 
   static getDerivedStateFromProps(props, state) {
-    const { games, companies, userSelections } = props
+    const { games, companies, userSelections, purchases } = props
     if (!games) {
       return { sections: [], gameCount: 0 }
     }
 
+    const enrichedGames = games.map(game => {
+      game.userSelection = userSelections[game.itemId]
+
+      const purchase = purchases[game.objectId]
+      if (
+        purchase &&
+        game.preorder.some(
+          preorder => preorder.productId === purchase.productId
+        )
+      ) {
+        game.purchase = purchase
+      }
+
+      return game
+    })
+
     const { sections, gameCount, missingCompanies } = buildSections(
-      games,
+      enrichedGames,
       companies,
       userSelections,
+      purchases,
       state.filters,
       state.sortBy
     )
@@ -263,12 +295,13 @@ export default class PreviewList extends React.PureComponent {
   persistFilterAndApply = (filters, sortBy) => {
     AsyncStorage.setItem('@BGGApp:PreviewFilters', JSON.stringify(filters))
 
-    const { games, companies, userSelections, loading } = this.props
+    const { games, companies, userSelections, purchases, loading } = this.props
 
     const { sections, gameCount, missingCompanies } = buildSections(
       games,
       companies,
       userSelections,
+      purchases,
       filters,
       sortBy
     )
