@@ -2,7 +2,7 @@ import { AsyncStorage } from 'react-native'
 import Sentry from 'sentry-expo'
 
 // increment the vX when we need to blow up the old key
-// todo: figure out a nice way to kill the old key.
+// log out kills old keys
 export const ASYNC_KEY = '@BGGApp:v10'
 
 export const getPersisted = async () => {

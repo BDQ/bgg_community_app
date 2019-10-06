@@ -10,9 +10,12 @@ import {
 } from './reducers/collection'
 import { setCredentials, logOut } from './reducers/authorization'
 
+// collection
 addReducer('fetchCollection', fetchCollection)
 addReducer('addOrUpdateGameInCollection', addOrUpdateGameInCollection)
 addReducer('removeGameFromCollection', removeGameFromCollection)
+
+// account
 addReducer('setCredentials', setCredentials)
 addReducer('logOut', logOut)
 

@@ -5,7 +5,8 @@ import {
   SectionList,
   Text,
   RefreshControl,
-  AsyncStorage
+  AsyncStorage,
+  StyleSheet
 } from 'react-native'
 import { SearchBar } from 'react-native-elements'
 import Ionicons from 'react-native-vector-icons/Ionicons'
@@ -15,7 +16,7 @@ import PreviewListCompany from './PreviewListCompany'
 import PreviewListGame from './PreviewListGame'
 
 import { priorities, halls, availability } from '../shared/data'
-import styles from '../shared/styles'
+import sharedStyles from '../shared/styles'
 import { logger } from '../shared/debug'
 
 // const hasNotesRE = new RegExp(`"text":.?".+"`, 'g')
@@ -327,7 +328,7 @@ export default class PreviewList extends React.PureComponent {
 
     return (
       <View style={{ flexDirection: 'row' }}>
-        <View style={{ width: '90%' }}>
+        <View style={styles.searchMain}>
           <SearchBar
             onChangeText={this.handleFilterTextChange}
             value={name}
@@ -336,18 +337,8 @@ export default class PreviewList extends React.PureComponent {
             clearIcon
           />
         </View>
-        <View
-          style={{
-            justifyContent: 'center',
-            alignItems: 'center',
-            width: '10%',
-            backgroundColor: '#393e42',
-            borderBottomColor: 'black',
-            borderBottomWidth: 1
-          }}
-        >
+        <View style={styles.searchIcons}>
           <TouchableOpacity
-            style={{ backgroundColor: '#393e42' }}
             onPress={() =>
               navigate('Filter', {
                 filters,
@@ -400,12 +391,12 @@ export default class PreviewList extends React.PureComponent {
     if (firstLoad === 'ever') {
       return (
         <View style={{ alignItems: 'center' }}>
-          <Text style={styles.formHeader}>Importing preview</Text>
+          <Text style={sharedStyles.formHeader}>Importing preview</Text>
           <Text>This can take a while the first time, grab a rule book!</Text>
         </View>
       )
     } else {
-      return <Text style={styles.formHeader}>Updating preview...</Text>
+      return <Text style={sharedStyles.formHeader}>Updating preview...</Text>
     }
   }
 
@@ -457,7 +448,7 @@ export default class PreviewList extends React.PureComponent {
       )
     } else {
       return (
-        <View style={styles.emptyView}>
+        <View style={sharedStyles.emptyView}>
           <ProgressBar
             indeterminate={true}
             color="#000000"
@@ -469,3 +460,17 @@ export default class PreviewList extends React.PureComponent {
     }
   }
 }
+
+const styles = StyleSheet.create({
+  searchMain: {
+    width: '92%'
+  },
+  searchIcons: {
+    justifyContent: 'center',
+    alignItems: 'flex-start',
+    width: '8%',
+    backgroundColor: '#393e42',
+    borderBottomColor: 'black',
+    borderBottomWidth: 1
+  }
+})

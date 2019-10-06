@@ -5,7 +5,8 @@ import {
   Text,
   TouchableHighlight,
   Modal,
-  FlatList
+  FlatList,
+  SafeAreaView
 } from 'react-native'
 
 import ImageProgress from 'react-native-image-progress'
@@ -63,7 +64,7 @@ export default class ImageList extends React.Component {
     }
 
     return (
-      <View>
+      <SafeAreaView style={{ backgroundColor: '#000000' }}>
         <FlatList
           style={{ height: 104 }}
           data={this.state.images}
@@ -94,8 +95,6 @@ export default class ImageList extends React.Component {
           visible={this.state.imageModalIndex !== null}
           onRequestClose={this.hideImageModal}
         >
-          {/* <SafeAreaView style={{ backgroundColor: '#000000' }}> */}
-
           <ImageViewer
             renderImage={({ source, style }) => {
               return (
@@ -126,9 +125,8 @@ export default class ImageList extends React.Component {
             index={this.state.imageModalIndex}
             enableSwipeDown={true}
           />
-          {/* </SafeAreaView> */}
         </Modal>
-      </View>
+      </SafeAreaView>
     )
   }
 }
