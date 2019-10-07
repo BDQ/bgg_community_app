@@ -13,7 +13,7 @@ export const fetchCollection = async state => {
   return { collection, collectionFetchedAt }
 }
 
-export const addOrUpdateGameInCollection = async (state, game) => {
+export const addOrUpdateGameInCollection = async (state, _, game) => {
   const { collection } = state
 
   let idx = collection.findIndex(
@@ -34,7 +34,7 @@ export const addOrUpdateGameInCollection = async (state, game) => {
   return { collection }
 }
 
-export const removeGameFromCollection = async (state, game) => {
+export const removeGameFromCollection = async (state, _, game) => {
   const { collection } = state
   let idx = collection.findIndex(
     collectionGame =>
@@ -42,7 +42,7 @@ export const removeGameFromCollection = async (state, game) => {
   )
 
   if (idx > -1) {
-    // already exists
+    // exists
     collection.splice(idx, 1)
   }
 

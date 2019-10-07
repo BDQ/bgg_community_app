@@ -141,9 +141,10 @@ export default class GameAddTo extends React.Component {
         Object.keys(collectionStatus).map(key => {
           game.status[key] = collectionStatus[key] ? '1' : '0'
         })
-        this.global.addOrUpdateGameInCollection(game)
+
+        this.dispatch.addOrUpdateGameInCollection(game)
       } else {
-        this.global.removeGameFromCollection(game)
+        this.dispatch.removeGameFromCollection(game)
       }
 
       navigation.goBack(null)

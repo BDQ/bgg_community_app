@@ -90,7 +90,7 @@
     "react-navigation": "^4.0.6",
     "react-navigation-stack": "^1.7.3",
     "react-navigation-tabs": "^1.2.0",
-    "reactn": "^2.1.7",
+    "reactn": "^2.2.4",
     "sentry-expo": "~2.0.1",
     "throttle-debounce": "^1.0.1",
     "xml-parser": "^1.2.1"
