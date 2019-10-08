@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import { View, Text } from 'react-native'
 import { createStackNavigator } from 'react-navigation-stack'
 import { Icon } from 'react-native-elements'
+import ProgressBar from 'react-native-progress/Circle'
 
 import GameScreen from './GameScreen'
 import GameSearch from './GameSearch'
