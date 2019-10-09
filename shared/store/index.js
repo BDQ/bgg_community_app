@@ -1,23 +1,15 @@
-import { setGlobal, addReducer } from 'reactn'
+import { setGlobal, addReducers } from 'reactn'
 
 import initialState from './initialState'
 import { getPersisted } from './persistence'
 
-import {
-  fetchCollection,
-  addOrUpdateGameInCollection,
-  removeGameFromCollection
-} from './reducers/collection'
+import * as collectionReducers from './reducers/collection'
 import { setCredentials, logOut } from './reducers/authorization'
 
 // collection
-addReducer('fetchCollection', fetchCollection)
-addReducer('addOrUpdateGameInCollection', addOrUpdateGameInCollection)
-addReducer('removeGameFromCollection', removeGameFromCollection)
-
-// account
-addReducer('setCredentials', setCredentials)
-addReducer('logOut', logOut)
+addReducers(collectionReducers)
+// auth
+addReducers({ setCredentials, logOut })
 
 export const setupStore = async () => {
   // now we load the data from Async store

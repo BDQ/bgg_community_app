@@ -64,9 +64,9 @@ export default class ImageList extends React.Component {
     }
 
     return (
-      <SafeAreaView style={{ backgroundColor: '#000000' }}>
+      <React.Fragment>
         <FlatList
-          style={{ height: 104 }}
+          style={{ height: 104, backgroundColor: '#ffffff' }}
           data={this.state.images}
           horizontal={true}
           keyExtractor={img => img.id}
@@ -110,15 +110,15 @@ export default class ImageList extends React.Component {
               )
             }}
             renderHeader={() => (
-              <View style={{ padding: 10 }}>
+              <SafeAreaView>
                 <TouchableHighlight
                   onPress={() => {
                     this.hideImageModal()
                   }}
                 >
-                  <Text style={{ color: 'white' }}>Close</Text>
+                  <Text style={{ padding: 10, color: 'white' }}>Close</Text>
                 </TouchableHighlight>
-              </View>
+              </SafeAreaView>
             )}
             imageUrls={this.state.images}
             onCancel={() => this.hideImageModal()}
@@ -126,7 +126,7 @@ export default class ImageList extends React.Component {
             enableSwipeDown={true}
           />
         </Modal>
-      </SafeAreaView>
+      </React.Fragment>
     )
   }
 }

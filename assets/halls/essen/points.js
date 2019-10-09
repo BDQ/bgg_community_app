@@ -14,5 +14,9 @@ export const points = {
   '2F116': {
     latitude: 51.42710523263818,
     longitude: 6.99318002348906
+  },
+  '4J114': {
+    latitude: 51.42794119162605,
+    longitude: 6.9944936265959825
   }
 }

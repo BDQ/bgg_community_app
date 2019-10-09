@@ -1,11 +1,5 @@
 import React from 'react'
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  ScrollView,
-  TextInput
-} from 'react-native'
+import { View, Text, ScrollView, TextInput } from 'react-native'
 import { Button } from 'react-native-elements'
 
 import styles from '../shared/styles'
@@ -50,7 +44,7 @@ export default class PreviewEdit extends React.Component {
 
           <View style={styles.formButtons}>
             <Button
-              style={{ flex: 1 }}
+              style={{ flex: 1, marginRight: 10 }}
               backgroundColor="#03A9F4"
               title="Save"
               onPress={this.handleSave}

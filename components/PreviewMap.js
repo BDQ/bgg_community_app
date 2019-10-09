@@ -58,7 +58,7 @@ export default class PreviewMap extends React.PureComponent {
           // provider="google"
           style={styles.map}
           showsPointsOfInterest={false}
-          // showsUserLocation={true}
+          showsUserLocation={true}
           // cacheEnabled={true}
           region={{
             ...coordinate,
