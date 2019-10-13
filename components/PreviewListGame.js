@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'reactn'
 import PropTypes from 'prop-types'
 import { TouchableOpacity, StyleSheet, View, Text } from 'react-native'
 import { Avatar, Badge } from 'react-native-elements'
@@ -62,8 +62,8 @@ export default class PreviewListGame extends React.PureComponent {
 
     // check for success
     if (message === 'Info saved') {
-      // update our main state back in PreviewScreen (to save a reload from BGG)
-      this.props.setUserSelection(itemId, data)
+      // update store (to save a reload from BGG)
+      this.dispatch.setUserSelection(itemId, data)
     }
   }
 
@@ -169,7 +169,7 @@ export default class PreviewListGame extends React.PureComponent {
         style={{
           textAlign: 'center',
           color: '#ffffff',
-          fontSize: 12
+          fontSize: 13
         }}
       >
         {text}
@@ -237,7 +237,7 @@ export default class PreviewListGame extends React.PureComponent {
     const swipeoutRight = priorities
       .filter(p => ![-1, priority].includes(p.id))
       .map(({ id, color, name }) => ({
-        component: this._renderSwipeButton(name),
+        component: this._renderSwipeButton(name.replace(' ', '\n')),
         backgroundColor: color,
         onPress: () => this.handleSwipePriority(id)
       }))
@@ -258,7 +258,7 @@ export default class PreviewListGame extends React.PureComponent {
       //   onPress: this.handleSwipeThumbs
       // },
       {
-        component: this._renderSwipeButton(seen ? 'Not Seen' : 'Seen'),
+        component: this._renderSwipeButton(seen ? 'Not\nSeen' : 'Seen'),
         type: 'primary',
         onPress: this.handleSwipeSeen
       }
@@ -320,7 +320,6 @@ PreviewListGame.propTypes = {
     notes: PropTypes.string.isRequired,
     priority: PropTypes.number.isRequired
   }),
-  setUserSelection: PropTypes.func.isRequired,
   thumbnail: PropTypes.string.isRequired,
   name: PropTypes.string.isRequired,
   versionName: PropTypes.string.isRequired,

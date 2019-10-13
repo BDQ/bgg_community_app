@@ -17,37 +17,20 @@ import { fetchJSON } from '../../shared/HTTP'
 
 export default class ImageList extends React.Component {
   state = {
-    objectId: null,
     images: null,
     imageModalIndex: null
   }
 
-  static getDerivedStateFromProps(props, state) {
-    const { objectId } = props
+  componentDidUpdate = async prevProps => {
+    const { objectId } = this.props
 
-    if (objectId && objectId !== state.objectId) {
-      // clear out previous images
-      return { objectId, images: null }
+    if (prevProps.objectId !== objectId || this.state.images === null) {
+      const url = `https://api.geekdo.com/api/images?objectid=${objectId}&ajax=1&galleries%5B%5D=game&galleries%5B%5D=creative&nosession=1&objecttype=thing&showcount=17&size=crop100&sort=hot`
+      let { images } = await fetchJSON(url)
+      images = images.map(img => ({ id: img.imageid, url: img.imageurl_lg }))
+
+      this.setState({ images })
     }
-
-    // Return null to indicate no change to state.
-    return null
-  }
-
-  componentDidUpdate() {
-    // only fetch if we don't have images
-    if (this.state.objectId !== null && this.state.images === null) {
-      this.getGameImages()
-    }
-  }
-
-  getGameImages = async () => {
-    const { objectId } = this.state
-    const url = `https://api.geekdo.com/api/images?objectid=${objectId}&ajax=1&galleries%5B%5D=game&galleries%5B%5D=creative&nosession=1&objecttype=thing&showcount=17&size=crop100&sort=hot`
-    let { images } = await fetchJSON(url)
-    images = images.map(img => ({ id: img.imageid, url: img.imageurl_lg }))
-
-    this.setState({ images })
   }
 
   hideImageModal() {
