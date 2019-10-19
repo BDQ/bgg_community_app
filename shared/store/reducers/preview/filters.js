@@ -1,36 +1,32 @@
-export const previewFiltersSet = (state, dispatch, previewFilters) => {
+import { persistGlobal, getPersisted } from '../../helpers/persistence'
+
+import { PREVIEW_ID } from 'react-native-dotenv'
+const previewKey = `preview:${PREVIEW_ID}`
+const filtersKey = `${previewKey}:filters`
+
+export const previewFiltersLoad = async state => {
+  const {
+    previewFiltersSet,
+    previewFilters = state.previewFiltersDefault
+  } = await getPersisted(filtersKey)
+
   return {
-    previewFiltersSet: true,
-    previewFilters: {
-      ...previewFilters,
-      filterTextOn:
-        previewFilters.filterTextOn || state.previewFilters.filterTextOn //fallback to already stored value
-    }
+    previewFiltersSet,
+    previewFilters
   }
 }
 
-// export const previewSetFilterTextOn = (state, dispatch, filterTextOn) => {
-//   return {
-//     previewFiltersSet: true,
-//     previewFilters: {
-//       ...state.previewFilters,
-//       filterTextOn
-//     }
-//   }
-// }
-
-export const previewSetFilterName = (state, dispatch, name) => {
-  return {
-    previewFiltersSet: true,
+export const previewFiltersSet = async (state, dispatch, previewFilters) => {
+  return persistAndReturnFilterState({
     previewFilters: {
-      ...state.previewFilters,
-      name
+      ...state.previewFilters, //fallback to already stored value
+      ...previewFilters
     }
-  }
+  })
 }
 
-export const previewSetSortBy = (state, dispatch, previewSortBy) => {
-  return {
-    previewSortBy
-  }
+const persistAndReturnFilterState = async newFilterState => {
+  await persistGlobal(filtersKey, newFilterState)
+
+  return newFilterState
 }

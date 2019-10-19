@@ -3,6 +3,7 @@ import { priorities, halls, availability } from '../../shared/data'
 const applyCompanyFilters = (filters, companies) => {
   let filteredItems = companies
 
+  // name
   if (filters.name !== '') {
     const filterTextRE = new RegExp(filters.name, 'gi')
 
@@ -12,6 +13,14 @@ const applyCompanyFilters = (filters, companies) => {
         item.name.match(filterTextRE)
       )
     }
+  }
+
+  // halls
+  if (filters.halls.length > 0 && filters.halls.length < halls.length) {
+    let locationRE = new RegExp(`^[${filters.halls.join('')}]-.*`, 'gi')
+    filteredItems = filteredItems.filter(
+      item => item.location && item.location.match(locationRE)
+    )
   }
 
   return filteredItems
@@ -47,14 +56,6 @@ const applyGameFilters = (filters, items) => {
       const { priority } = item.userSelection || { priority: -1 }
       return filters.priorities.includes(priority)
     })
-  }
-
-  // halls
-  if (filters.halls.length > 0 && filters.halls.length < halls.length) {
-    let locationRE = new RegExp(`^[${filters.halls.join('')}]-.*`, 'gi')
-    filteredItems = filteredItems.filter(
-      item => item.location && item.location.match(locationRE)
-    )
   }
 
   // seen
@@ -106,11 +107,12 @@ const sortByAttr = (a, b, attr) => {
   return 0
 }
 
-export const buildSections = (filters, sortBy, games, companies) => {
+export const buildSections = (filters, games, companies) => {
   if (games.length === 0 || companies.length === 0) {
     //data's not loaded yet, so render empty
     return { sections: [], gameCount: 0 }
   }
+
   const filteredCompanies = applyCompanyFilters(filters, companies)
   const filteredGames = [...applyGameFilters(filters, games)]
 
@@ -146,7 +148,7 @@ export const buildSections = (filters, sortBy, games, companies) => {
     }
   })
 
-  if (sortBy === 'locationPublisherGame') {
+  if (filters.sortBy === 'locationPublisherGame') {
     sections = sections.sort(sortByLocation)
   }
 

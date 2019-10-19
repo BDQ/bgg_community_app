@@ -18,6 +18,8 @@ export const loadPreview = async (state, dispatch, force = false) => {
   await dispatch.getPurchases(force)
   await dispatch.enrichGames()
 
+  await dispatch.previewFiltersLoad()
+
   const previewFetchedAt = new Date().getTime()
   await persistGlobal(previewKey, { previewFetchedAt })
 
@@ -80,6 +82,12 @@ export const getPreviewCompanys = async (state, dispatch, force) => {
     previewCompanies = await getPreviewItems('company')
     await persistGlobal(key, { previewCompanies })
   }
+
+  // dump locations's
+  // const locs = new Set(
+  //   previewCompanies.map(c => c.locationParsed).filter(l => l)
+  // )
+  // console.log([...locs].sort())
 
   return { previewCompanies }
 }

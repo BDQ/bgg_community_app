@@ -1,25 +1,29 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { StyleSheet, View, Text } from 'react-native'
-// import { logger } from '../shared/debug'
 import { Avatar, Icon } from 'react-native-elements'
 
 export default class PreviewListCompany extends React.PureComponent {
   _renderMapButton = () => {
-    const { location, games } = this.props
+    const { locationParsed, games } = this.props
     const { navigate } = this.props.navigation
 
-    if (location) {
+    if (locationParsed) {
       return (
         <Icon
           name="map"
-          iconStyle={{ marginRight: 10, marginTop: 10 }}
+          iconStyle={{
+            backgroundColor: 'transparent'
+          }}
+          containerStyle={{
+            marginRight: 10,
+            marginTop: 10,
+            backgroundColor: 'transparent'
+          }}
           type="entypo"
           onPress={() =>
             navigate('Map', {
-              location,
-              company: this.props.name,
-              games: games
+              companies: [{ name: this.props.name, locationParsed, games }]
             })
           }
         />
@@ -63,7 +67,8 @@ export default class PreviewListCompany extends React.PureComponent {
 PreviewListCompany.propTypes = {
   thumbnail: PropTypes.string.isRequired,
   name: PropTypes.string.isRequired,
-  location: PropTypes.string.isRequired,
+  location: PropTypes.string,
+  locationParsed: PropTypes.string,
   games: PropTypes.any,
   navigation: PropTypes.shape({
     navigate: PropTypes.func.isRequired

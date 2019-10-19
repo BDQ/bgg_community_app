@@ -3,39 +3,36 @@ import PropTypes from 'prop-types'
 import { StyleSheet, View } from 'react-native'
 import MapView, { Marker, Callout, UrlTile } from 'react-native-maps'
 
-import { points } from '../assets/halls/essen/points'
+import { points } from '../shared/points'
 import PreviewMapCallout from './PreviewMapCallout'
 import PreviewMapMarker from './PreviewMapMarker'
 
 export default class PreviewMap extends React.PureComponent {
   state = {
-    coordinate: this.findLocation()
+    clickCoord: undefined
   }
 
-  findLocation() {
-    let { location } = this.props.navigation.state.params
-    location = location.replace(/[^a-zA-Z0-9]/, '')
-    if (points.hasOwnProperty(location)) {
-      return points[location]
+  findLocation(locationParsed) {
+    if (points.hasOwnProperty(locationParsed)) {
+      return points[locationParsed]
     }
   }
 
-  renderMarker() {
-    const { location, company, games } = this.props.navigation.state.params
-    const { coordinate } = this.state
+  renderSingleMarker(company) {
+    const { locationParsed, name, games } = company
+    const coordinate = this.findLocation(locationParsed)
 
     if (coordinate) {
       return (
         <Marker
-          draggable
+          key={`${company.name}-${locationParsed}-${Math.random()}`}
           coordinate={coordinate}
-          onDragEnd={e => console.log(e.nativeEvent.coordinate)}
         >
-          <PreviewMapMarker amount={`${location} (${games.length})`} />
+          <PreviewMapMarker amount={`${locationParsed} (${games.length})`} />
           <Callout style={{ width: 130 }}>
             <PreviewMapCallout
-              location={location}
-              company={company}
+              location={locationParsed}
+              name={name}
               games={games}
             />
           </Callout>
@@ -44,13 +41,19 @@ export default class PreviewMap extends React.PureComponent {
     }
   }
 
+  renderMarkers() {
+    const { companies } = this.props.navigation.state.params
+
+    return companies.map(company => this.renderSingleMarker(company))
+  }
+
   render() {
-    const {
-      coordinate = {
-        latitude: 51.427790453806146,
-        longitude: 6.994015671123037
-      }
-    } = this.state
+    const staringCoordinate = {
+      latitude: 51.427790453806146,
+      longitude: 6.994015671123037
+    }
+
+    let { clickCoord = staringCoordinate } = this.state
 
     return (
       <View style={styles.container}>
@@ -61,11 +64,9 @@ export default class PreviewMap extends React.PureComponent {
           showsUserLocation={true}
           // cacheEnabled={true}
           region={{
-            ...coordinate,
-
-            latitudeDelta: 0.0015,
-
-            longitudeDelta: 0.0015
+            ...clickCoord,
+            latitudeDelta: 0.0005,
+            longitudeDelta: 0.0005
           }}
           // camera={{
           //   center: {
@@ -78,18 +79,30 @@ export default class PreviewMap extends React.PureComponent {
           //   zoom: 16
           // }}
           // minZoomLevel={16}
-          maxZoomLevel={18}
+          maxZoomLevel={22}
+          onPress={evt => {
+            console.log(evt.nativeEvent)
+            this.setState({ clickCoord: evt.nativeEvent.coordinate })
+            console.log('--------------------------')
+          }}
         >
           <UrlTile
             urlTemplate={
-              'http://bggca.s3-website-us-east-1.amazonaws.com/essen/{z}/{x}/{y}.png'
+              'http://bggca.s3-website-us-east-1.amazonaws.com/essen19/{z}/{x}/{y}.png'
             }
-            minimumZ={16}
-            maximumZ={20}
+            minimumZ={15}
+            maximumZ={22}
             zIndex={-1}
             shouldReplaceMapContent={true}
           />
-          {this.renderMarker()}
+          <Marker
+            draggable
+            coordinate={clickCoord}
+            onDragEnd={e => console.log(e.nativeEvent.coordinate)}
+          >
+            <PreviewMapMarker amount="x" />
+          </Marker>
+          {this.renderMarkers()}
         </MapView>
       </View>
     )
@@ -100,9 +113,13 @@ PreviewMap.propTypes = {
   navigation: PropTypes.shape({
     state: PropTypes.shape({
       params: PropTypes.shape({
-        location: PropTypes.string,
-        company: PropTypes.string.isRequired,
-        games: PropTypes.any
+        companies: PropTypes.arrayOf(
+          PropTypes.shape({
+            name: PropTypes.string.isRequired,
+            locationParsed: PropTypes.string,
+            games: PropTypes.array.isRequired
+          })
+        )
       })
     })
   }).isRequired

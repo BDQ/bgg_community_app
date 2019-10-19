@@ -1,4 +1,5 @@
 import { logger } from '../../../debug'
+const locationRegEx = new RegExp(/[0-9]-[a-z][0-9]{3,5}/i)
 
 export const processCompanies = async (fetches, loadStatus, objectType) => {
   logger('processing companies')
@@ -15,6 +16,7 @@ export const processCompanies = async (fetches, loadStatus, objectType) => {
         objectId: record.objectid,
         objectType: record.objecttype,
         thumbnail: record.geekitem.item.images.thumb,
+        locationParsed: (record.location.match(locationRegEx) || [])[0],
         location: record.location,
         previewItemIds: record.previewitemids
       }

@@ -7,7 +7,8 @@ const previewFiltersDefault = {
   seen: [],
   availability: [],
   preorders: [],
-  filterTextOn: 'game'
+  filterTextOn: 'game',
+  sortBy: 'publisherGame'
 }
 
 export default {
@@ -24,8 +25,7 @@ export default {
   previewCompanies: [],
   previewUserSelections: [],
   previewLoading: false,
-  previewFilters: previewFiltersDefault,
+  previewFilters: { ...previewFiltersDefault },
   previewFiltersDefault,
-  previewFiltersSet: false,
-  previewSortBy: 'publisherGame'
+  previewFiltersSet: false
 }

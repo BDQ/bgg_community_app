@@ -1,14 +1,12 @@
 import React from 'reactn'
 import {
-  TouchableOpacity,
   View,
   SectionList,
   Text,
   RefreshControl,
   StyleSheet
 } from 'react-native'
-import { SearchBar } from 'react-native-elements'
-import Ionicons from 'react-native-vector-icons/Ionicons'
+import { SearchBar, Icon } from 'react-native-elements'
 import ProgressBar from 'react-native-progress/Circle'
 
 import PreviewListCompany from './PreviewListCompany'
@@ -24,11 +22,13 @@ export default class PreviewList extends React.PureComponent {
     }
   }
 
-  handleFilterTextChange = str => this.dispatch.previewSetFilterName(str)
+  handleFilterTextChange = str => this.dispatch.previewFiltersSet({ name: str })
 
   _renderHeader = () => {
     const { navigate } = this.props.navigation
+    const { sections } = this.props
     const { name, filterTextOn } = this.props.filters
+    const mapDisabled = sections.length > 200
 
     return (
       <View style={{ flexDirection: 'row' }}>
@@ -42,13 +42,26 @@ export default class PreviewList extends React.PureComponent {
           />
         </View>
         <View style={styles.searchIcons}>
-          <TouchableOpacity onPress={() => navigate('Filter')}>
-            <Ionicons
-              name="ios-funnel"
-              size={26}
-              style={{ color: '#ffffff' }}
-            />
-          </TouchableOpacity>
+          <Icon
+            name="ios-funnel"
+            color="#ffffff"
+            iconStyle={styles.icon}
+            containerStyle={styles.icon}
+            type="ionicon"
+            size={24}
+            onPress={() => navigate('Filter')}
+          />
+          <Icon
+            name="map"
+            iconStyle={styles.icon}
+            type="entypo"
+            color={mapDisabled ? '#333333' : '#ffffff'}
+            size={24}
+            disabledStyle={styles.icon}
+            containerStyle={[{ marginLeft: 12 }, styles.icon]}
+            disabled={mapDisabled}
+            onPress={() => navigate('Map', { companies: sections })}
+          />
         </View>
       </View>
     )
@@ -110,6 +123,7 @@ export default class PreviewList extends React.PureComponent {
                   name={section.name}
                   thumbnail={section.thumbnail}
                   location={section.location}
+                  locationParsed={section.locationParsed}
                   games={section.games}
                   navigation={navigation}
                 />
@@ -155,14 +169,20 @@ export default class PreviewList extends React.PureComponent {
 
 const styles = StyleSheet.create({
   searchMain: {
-    width: '92%'
+    width: '83%'
   },
   searchIcons: {
-    justifyContent: 'center',
+    justifyContent: 'flex-start',
     alignItems: 'flex-start',
-    width: '8%',
+    width: '17%',
     backgroundColor: '#393e42',
+    flex: 1,
+    flexDirection: 'row',
     borderBottomColor: 'black',
-    borderBottomWidth: 1
+    borderBottomWidth: 1,
+    paddingTop: 17
+  },
+  icon: {
+    backgroundColor: '#393e42'
   }
 })

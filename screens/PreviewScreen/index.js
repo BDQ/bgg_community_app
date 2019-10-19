@@ -13,6 +13,7 @@ import PreviewMap from '../../components/PreviewMap'
 import { buildSections } from './sections'
 
 import { PREVIEW_FULL_NAME } from 'react-native-dotenv'
+import { points } from '../../shared/points'
 
 class PreviewListScreen extends React.Component {
   state = {
@@ -37,35 +38,35 @@ class PreviewListScreen extends React.Component {
 
   render = () => {
     const { navigation } = this.props
-    const { previewFetchedAt, previewFiltersDefault } = this.global
+    const { previewFetchedAt, previewFilters } = this.global
 
     let previewGames = [],
       previewCompanies = [],
-      previewLoading = false,
-      previewSortBy = 'publisherGame',
-      previewFilters
+      previewLoading = false
 
     if (previewFetchedAt > 0) {
-      ;({
-        previewGames,
-        previewCompanies,
-        previewLoading,
-        previewSortBy,
-        previewFilters
-      } = this.global)
+      ;({ previewGames, previewCompanies, previewLoading } = this.global)
     }
 
     const { sections, gameCount } = buildSections(
       previewFilters,
-      previewSortBy,
       previewGames,
       previewCompanies
     )
 
+    if (previewCompanies.length > 0) {
+      previewCompanies.forEach(c => {
+        const pt = points[c.locationParsed]
+
+        if (!pt && c.locationParsed) {
+          console.log(c.locationParsed)
+        }
+      })
+    }
     return (
       <PreviewList
-        filters={previewFilters || previewFiltersDefault}
-        sortBy={previewSortBy}
+        filters={previewFilters}
+        sortBy={previewFilters.sortBy}
         sections={sections}
         gameCount={gameCount}
         navigation={navigation}

@@ -3,7 +3,6 @@ import PropTypes from 'prop-types'
 import { View, Text, TouchableOpacity, ScrollView } from 'react-native'
 import { TagSelect } from 'react-native-tag-select'
 import { Button } from 'react-native-elements'
-import RadioForm from 'react-native-simple-radio-button'
 import { Dropdown } from 'react-native-material-dropdown'
 
 import styles from '../shared/styles'
@@ -34,14 +33,7 @@ const filterTextOnOptions = [
   { label: 'Notes', value: 'note' }
 ]
 
-const stateDefaults = {
-  filterTextOn: Object.values(filterTextOnOptions)[0].value,
-  sortBy: Object.values(sortingOptions)[0].value
-}
-
 export default class PreviewFilters extends React.Component {
-  state = stateDefaults
-
   toggleTags = name => {
     const select = this[name]
 
@@ -76,15 +68,6 @@ export default class PreviewFilters extends React.Component {
   }
 
   componentDidMount() {
-    const {
-      previewFilters: { filterTextOn },
-      previewSortBy: sortBy
-    } = this.global
-
-    // we copy global to state, so we can mutate with the form
-    // and only apply when the button is pressed.
-    this.setState({ filterTextOn, sortBy })
-
     this.props.navigation.setParams({
       applyFilters: this.applyFilters
     })
@@ -92,7 +75,6 @@ export default class PreviewFilters extends React.Component {
 
   applyFilters = () => {
     const { pop } = this.props.navigation
-    const { filterTextOn, sortBy } = this.state
 
     const filterValues = {
       priorities: this.priorityTags.itemsSelected.map(
@@ -104,21 +86,17 @@ export default class PreviewFilters extends React.Component {
         avail => avail.id || avail
       ),
       preorders: this.preorderTags.itemsSelected.map(t => t.id || t),
-      filterTextOn
+      filterTextOn: this.filterTextOnRef.value(),
+      sortBy: this.sortByRef.value()
     }
 
     // update main filters
     this.dispatch.previewFiltersSet(filterValues)
 
-    // update sort
-    this.dispatch.previewSetSortBy(sortBy)
-
     pop()
   }
 
   reset = () => {
-    this.setState(stateDefaults)
-
     this.priorityTags.setState({
       value: []
     })
@@ -135,29 +113,38 @@ export default class PreviewFilters extends React.Component {
       value: []
     })
 
-    this.sortingRadio.updateIsActiveIndex(0)
+    this.filterTextOnRef.setState({ value: filterTextOnOptions[0].value })
+    this.sortByRef.setState({ value: sortingOptions[0].value })
   }
 
   render = () => {
     const { previewFilters: filters } = this.global
-    const { filterTextOn, sortBy } = this.state //copied from global on mount
-
-    const sortIndex = sortingOptions.findIndex(
-      sortOpt => sortOpt.value === sortBy
-    )
 
     return (
       <ScrollView>
         <View style={styles.mainView}>
           <Text style={styles.formHeader}>Sorting</Text>
-          <View style={{ padding: 5 }}>
-            <RadioForm
-              ref={ref => (this.sortingRadio = ref)}
-              radio_props={sortingOptions}
-              initial={sortIndex}
-              onPress={value => this.setState({ sortBy: value })}
+          <View
+            style={{
+              marginLeft: 5,
+              marginBottom: 15
+            }}
+          >
+            <Dropdown
+              dropdownOffset={{
+                top: 8,
+                left: 0
+              }}
+              itemCount={sortingOptions.length}
+              ref={ref => {
+                this.sortByRef = ref
+              }}
+              data={sortingOptions}
+              value={filters.sortBy || ''} //use local state if set, otherwise global
+              onChangeText={sortBy => this.setState({ sortBy })}
             />
           </View>
+
           <Text style={styles.formHeader}>Filters</Text>
           <View style={{ padding: 5 }}>
             <Text style={styles.formLabel}>Text Filter on:</Text>
@@ -172,9 +159,12 @@ export default class PreviewFilters extends React.Component {
                   top: 8,
                   left: 0
                 }}
-                itemCount={3}
+                itemCount={filterTextOnOptions.length}
+                ref={ref => {
+                  this.filterTextOnRef = ref
+                }}
                 data={filterTextOnOptions}
-                value={filterTextOn}
+                value={filters.filterTextOn || ''} //use local state if set, otherwise global
                 onChangeText={filterTextOn => this.setState({ filterTextOn })}
               />
             </View>

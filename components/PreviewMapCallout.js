@@ -18,14 +18,14 @@ export default class PreviewMapCallout extends React.PureComponent {
     return games.map(game => {
       const { color } = priorities.find(
         p => p.id === (game.userSelection || fallbackPriority).priority
-      )
+      ) || { color: 'black' }
 
       return (
         <Text
           style={{ color }}
           numberOfLines={1}
           ellipsizeMode="tail"
-          key={game.objectId}
+          key={`${Math.random()}-${game.objectId}`}
         >
           - {game.name}
         </Text>
@@ -37,7 +37,7 @@ export default class PreviewMapCallout extends React.PureComponent {
     return (
       <View>
         <View style={styles.wrapper}>
-          <Text style={styles.label}>{this.props.company}</Text>
+          <Text style={styles.label}>{this.props.name}</Text>
 
           <View>{this.renderGames()}</View>
         </View>
@@ -57,7 +57,7 @@ const styles = StyleSheet.create({
 })
 
 PreviewMapCallout.propTypes = {
-  company: PropTypes.string.isRequired,
+  name: PropTypes.string.isRequired,
   games: PropTypes.any,
   location: PropTypes.string.isRequired
 }
