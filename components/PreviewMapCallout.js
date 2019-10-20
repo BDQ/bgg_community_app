@@ -1,46 +1,74 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { StyleSheet, View, Text } from 'react-native'
+import { StyleSheet, Text, View } from 'react-native'
 import { priorities } from '../shared/data'
-// import defaultStyles from '../shared/styles'
 
 export default class PreviewMapCallout extends React.PureComponent {
-  renderGames() {
-    let { games } = this.props
+  renderCompanies() {
+    const { companies = [] } = this.props
+    let lineCount = 0
 
+    return companies.map(company => {
+      console.log(company)
+      const lines = (
+        <React.Fragment key={company.key}>
+          <Text
+            style={styles.companyName}
+            numberOfLines={1}
+            ellipsizeMode="tail"
+          >
+            {company.name}
+          </Text>
+          {this.renderGames(company.games, lineCount)}
+        </React.Fragment>
+      )
+
+      lineCount += company.games.length
+      return lines
+    })
+  }
+
+  renderGames(games, lineCount) {
     const fallbackPriority = { priority: -1 }
     games = games.sort(
       (a, b) =>
         (b.userSelection || fallbackPriority).priority <
         (a.userSelection || fallbackPriority).priority
     )
+    return games.map((game, i) => {
+      lineCount++
 
-    return games.map(game => {
-      const { color } = priorities.find(
-        p => p.id === (game.userSelection || fallbackPriority).priority
-      ) || { color: 'black' }
+      if (lineCount > 5 && i !== 0) return
 
-      return (
-        <Text
-          style={{ color }}
-          numberOfLines={1}
-          ellipsizeMode="tail"
-          key={`${Math.random()}-${game.objectId}`}
-        >
-          - {game.name}
-        </Text>
-      )
+      if (lineCount < 5) {
+        const { color } = priorities.find(
+          p => p.id === (game.userSelection || fallbackPriority).priority
+        ) || { color: 'black' }
+        return (
+          <Text
+            key={`line-${lineCount}`}
+            style={{ color }}
+            numberOfLines={1}
+            ellipsizeMode="tail"
+          >
+            - {game.name}
+          </Text>
+        )
+      } else {
+        return (
+          <Text key={`line-${lineCount}`} style={{ color: '#666666' }}>
+            - & {games.length - i} more
+          </Text>
+        )
+      }
     })
   }
 
   render() {
     return (
-      <View>
-        <View style={styles.wrapper}>
-          <Text style={styles.label}>{this.props.name}</Text>
-
-          <View>{this.renderGames()}</View>
-        </View>
+      <View style={styles.wrapper}>
+        <Text style={styles.locationName}>{this.props.location}</Text>
+        <View>{this.renderCompanies()}</View>
       </View>
     )
   }
@@ -48,16 +76,24 @@ export default class PreviewMapCallout extends React.PureComponent {
 
 const styles = StyleSheet.create({
   wrapper: {
-    padding: 4
+    padding: 4,
+    maxHeight: '50%'
   },
-  label: {
+  locationName: {
     fontSize: 16,
+    fontWeight: 'bold',
+    paddingBottom: 4,
+    borderBottomColor: 'black',
+    borderBottomWidth: 1
+  },
+  companyName: {
+    fontSize: 14,
     fontWeight: 'bold'
   }
 })
 
 PreviewMapCallout.propTypes = {
-  name: PropTypes.string.isRequired,
-  games: PropTypes.any,
+  companies: PropTypes.any,
+  count: PropTypes.number.isRequired,
   location: PropTypes.string.isRequired
 }

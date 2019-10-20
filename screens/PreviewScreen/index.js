@@ -54,15 +54,19 @@ class PreviewListScreen extends React.Component {
       previewCompanies
     )
 
+    // dumps parsed locations that aren't present
+    // in the points data
     if (previewCompanies.length > 0) {
       previewCompanies.forEach(c => {
         const pt = points[c.locationParsed]
+        const miss = points[`${c.locationParsed}-missing`]
 
-        if (!pt && c.locationParsed) {
+        if (!pt && c.locationParsed && !miss) {
           console.log(c.locationParsed)
         }
       })
     }
+
     return (
       <PreviewList
         filters={previewFilters}

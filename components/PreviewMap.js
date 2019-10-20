@@ -7,33 +7,116 @@ import { points } from '../shared/points'
 import PreviewMapCallout from './PreviewMapCallout'
 import PreviewMapMarker from './PreviewMapMarker'
 
-export default class PreviewMap extends React.PureComponent {
-  state = {
-    clickCoord: undefined
+const averageGeolocation = coords => {
+  if (coords.length === 1) {
+    return coords[0]
   }
 
-  findLocation(locationParsed) {
+  let x = 0.0
+  let y = 0.0
+  let z = 0.0
+
+  for (let coord of coords) {
+    let latitude = (coord.latitude * Math.PI) / 180
+    let longitude = (coord.longitude * Math.PI) / 180
+
+    x += Math.cos(latitude) * Math.cos(longitude)
+    y += Math.cos(latitude) * Math.sin(longitude)
+    z += Math.sin(latitude)
+  }
+
+  let total = coords.length
+
+  x = x / total
+  y = y / total
+  z = z / total
+
+  let centralLongitude = Math.atan2(y, x)
+  let centralSquareRoot = Math.sqrt(x * x + y * y)
+  let centralLatitude = Math.atan2(z, centralSquareRoot)
+
+  return {
+    latitude: (centralLatitude * 180) / Math.PI,
+    longitude: (centralLongitude * 180) / Math.PI
+  }
+}
+
+export default class PreviewMap extends React.PureComponent {
+  state = {
+    staringCoordinate: {
+      latitude: 51.427790453806146,
+      longitude: 6.994015671123037
+    },
+    locations: undefined,
+    locationCounts: {},
+    locationCoords: {}
+  }
+
+  static getDerivedStateFromProps(props, state) {
+    if (!state.locations) {
+      const { companies } = props.navigation.state.params
+
+      const locations = {}
+      const locationCounts = {}
+      const locationCoords = {}
+
+      companies.forEach(company => {
+        const { locationParsed } = company
+        if (!locationParsed) return
+
+        // setup empties
+        if (locations[locationParsed] === undefined) {
+          // empty  company arry
+          locations[locationParsed] = []
+
+          // get all the lat/longs as just two numbers so we can easily
+          // calculate the middle of them for the starting point
+          const locationCoord = PreviewMap.findCoordinates(locationParsed)
+          if (locationCoord) locationCoords[locationParsed] = locationCoord
+
+          // starting count of items at a location
+          locationCounts[locationParsed] = 0
+        }
+
+        locationCounts[locationParsed] += company.games.length
+
+        locations[locationParsed].push(company)
+      })
+
+      const startingCoordinate = averageGeolocation(
+        Object.values(locationCoords)
+      )
+
+      return {
+        locations,
+        locationCounts,
+        locationCoords,
+        startingCoordinate
+      }
+    } else {
+      return null
+    }
+  }
+
+  static findCoordinates(locationParsed) {
     if (points.hasOwnProperty(locationParsed)) {
       return points[locationParsed]
     }
   }
 
-  renderSingleMarker(company) {
-    const { locationParsed, name, games } = company
-    const coordinate = this.findLocation(locationParsed)
+  renderSingleMarker(location, companies) {
+    const coordinate = this.state.locationCoords[location]
 
     if (coordinate) {
+      const count = this.state.locationCounts[location]
       return (
-        <Marker
-          key={`${company.name}-${locationParsed}-${Math.random()}`}
-          coordinate={coordinate}
-        >
-          <PreviewMapMarker amount={`${locationParsed} (${games.length})`} />
+        <Marker key={location} coordinate={coordinate}>
+          <PreviewMapMarker amount={`${location} (${count})`} />
           <Callout style={{ width: 130 }}>
             <PreviewMapCallout
-              location={locationParsed}
-              name={name}
-              games={games}
+              location={location}
+              count={count}
+              companies={companies}
             />
           </Callout>
         </Marker>
@@ -42,18 +125,15 @@ export default class PreviewMap extends React.PureComponent {
   }
 
   renderMarkers() {
-    const { companies } = this.props.navigation.state.params
+    const { locations } = this.state
 
-    return companies.map(company => this.renderSingleMarker(company))
+    return Object.keys(locations).map(location => {
+      return this.renderSingleMarker(location, locations[location])
+    })
   }
 
   render() {
-    const staringCoordinate = {
-      latitude: 51.427790453806146,
-      longitude: 6.994015671123037
-    }
-
-    let { clickCoord = staringCoordinate } = this.state
+    const { startingCoordinate } = this.state
 
     return (
       <View style={styles.container}>
@@ -64,27 +144,17 @@ export default class PreviewMap extends React.PureComponent {
           showsUserLocation={true}
           // cacheEnabled={true}
           region={{
-            ...clickCoord,
+            ...startingCoordinate,
             latitudeDelta: 0.0005,
             longitudeDelta: 0.0005
           }}
-          // camera={{
-          //   center: {
-          //     latitude: 51.42779045380615,
-          //     longitude: 6.994015671123038
-          //   },
-          //   pitch: 0,
-          //   heading: -6,
-          //   altitude: 500,
-          //   zoom: 16
-          // }}
           // minZoomLevel={16}
-          maxZoomLevel={22}
-          onPress={evt => {
-            console.log(evt.nativeEvent)
-            this.setState({ clickCoord: evt.nativeEvent.coordinate })
-            console.log('--------------------------')
-          }}
+          maxZoomLevel={21}
+          // click on map to dump location
+          // onPress={evt => {
+          //   console.log(evt.nativeEvent)
+          //   this.setState({ startingCoordinate: evt.nativeEvent.coordinate })
+          // }}
         >
           <UrlTile
             urlTemplate={
@@ -95,13 +165,13 @@ export default class PreviewMap extends React.PureComponent {
             zIndex={-1}
             shouldReplaceMapContent={true}
           />
-          <Marker
+          {/* <Marker
             draggable
             coordinate={clickCoord}
             onDragEnd={e => console.log(e.nativeEvent.coordinate)}
           >
             <PreviewMapMarker amount="x" />
-          </Marker>
+          </Marker> */}
           {this.renderMarkers()}
         </MapView>
       </View>

@@ -23,7 +23,14 @@ export default class PreviewListCompany extends React.PureComponent {
           type="entypo"
           onPress={() =>
             navigate('Map', {
-              companies: [{ name: this.props.name, locationParsed, games }]
+              companies: [
+                {
+                  name: this.props.name,
+                  key: Math.random(),
+                  locationParsed,
+                  games
+                }
+              ]
             })
           }
         />
