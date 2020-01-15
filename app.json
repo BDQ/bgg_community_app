@@ -33,7 +33,7 @@
       "permissions": ["ACCESS_FINE_LOCATION", "CAMERA"],
       "config": {
         "googleMaps": {
-          "apiKey": "AIzaSyCTMCxnNMkV3vT4bieXIjKaDk_pIxIbxxw"
+          "apiKey": "tbd"
         }
       }
     }
