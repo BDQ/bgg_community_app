@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'reactn'
 import PropTypes from 'prop-types'
 import { TouchableOpacity, StyleSheet, View, Text } from 'react-native'
 import { Avatar, Badge } from 'react-native-elements'
@@ -6,7 +6,7 @@ import Swipeout from 'react-native-swipeout'
 
 import { priorities } from '../shared/data'
 import { fetchJSON } from '../shared/HTTP'
-import { logger } from '../shared/debug'
+// import { logger } from '../shared/debug'
 
 export default class PreviewListGame extends React.PureComponent {
   constructor(props) {
@@ -41,7 +41,9 @@ export default class PreviewListGame extends React.PureComponent {
 
     // merge state and changes together
 
-    this.setState({ userSelection: { ...userSelection, ...changedAttrs } })
+    this.setState({
+      userSelection: { ...userSelection, ...changedAttrs }
+    })
 
     const data = {
       ...userSelection,
@@ -60,8 +62,8 @@ export default class PreviewListGame extends React.PureComponent {
 
     // check for success
     if (message === 'Info saved') {
-      // update our main state back in PreviewScreen (to save a reload from BGG)
-      this.props.setUserSelection(itemId, data)
+      // update store (to save a reload from BGG)
+      this.dispatch.setUserSelection(itemId, data)
     }
   }
 
@@ -72,7 +74,9 @@ export default class PreviewListGame extends React.PureComponent {
     } = userSelection
 
     const seen = !oldSeen
-    const notes = Object.assign({}, userSelection.notes, { seen })
+    const notes = Object.assign({}, userSelection.notes, {
+      seen
+    })
 
     this.persistUserSelection({ notes })
   }
@@ -101,12 +105,41 @@ export default class PreviewListGame extends React.PureComponent {
         style={styles.minorValue}
         value={
           <Text
-            style={{ paddingHorizontal: 10, color: '#ffffff', fontSize: 9 }}
+            style={{
+              paddingHorizontal: 10,
+              color: '#ffffff',
+              fontSize: 9
+            }}
           >
             {name}
           </Text>
         }
         badgeStyle={{ backgroundColor: color }}
+        wrapperStyle={{ flex: 1 }}
+      />
+    ) : null
+  }
+
+  _renderPurchase = () => {
+    const {
+      game: { purchase }
+    } = this.props
+
+    return purchase ? (
+      <Badge
+        style={styles.minorValue}
+        value={
+          <Text
+            style={{
+              paddingHorizontal: 10,
+              color: '#ffffff',
+              fontSize: 9
+            }}
+          >
+            Preordered
+          </Text>
+        }
+        badgeStyle={{ backgroundColor: 'orange' }}
         wrapperStyle={{ flex: 1 }}
       />
     ) : null
@@ -136,7 +169,7 @@ export default class PreviewListGame extends React.PureComponent {
         style={{
           textAlign: 'center',
           color: '#ffffff',
-          fontSize: 12
+          fontSize: 13
         }}
       >
         {text}
@@ -144,19 +177,51 @@ export default class PreviewListGame extends React.PureComponent {
     </View>
   )
 
-  _renderNotes = () => {
+  _renderExpandedPreorder = (preorder, purchase) => {
+    return purchase && preorder ? (
+      <View>
+        <Text style={styles.minorLabel}>Preorder</Text>
+        <Text numberOfLines={2} style={styles.minorValue}>
+          {preorder.notes}
+        </Text>
+      </View>
+    ) : null
+  }
+
+  _renderExpandedNotes = notes => {
+    return notes ? (
+      <View>
+        <Text style={styles.minorLabel}>Notes</Text>
+        <Text numberOfLines={2} style={styles.minorValue}>
+          {notes}
+        </Text>
+      </View>
+    ) : null
+  }
+
+  _renderExpanded = () => {
     const {
       userSelection: {
         notes: { text }
       }
     } = this.state
 
-    return text ? (
-      <View style={styles.notesContainer}>
-        <Text style={styles.minorLabel}>Notes</Text>
-        <Text numberOfLines={2} style={styles.minorValue}>
-          {text}
-        </Text>
+    const {
+      game: {
+        preorder: [firstPreorder],
+        purchase
+      }
+    } = this.props
+
+    let maxHeight = 0
+
+    if (text) maxHeight += 70
+    if (purchase) maxHeight += 70
+
+    return text || purchase ? (
+      <View style={{ maxHeight }}>
+        {this._renderExpandedPreorder(firstPreorder, purchase)}
+        {this._renderExpandedNotes(text)}
       </View>
     ) : null
   }
@@ -172,7 +237,7 @@ export default class PreviewListGame extends React.PureComponent {
     const swipeoutRight = priorities
       .filter(p => ![-1, priority].includes(p.id))
       .map(({ id, color, name }) => ({
-        component: this._renderSwipeButton(name),
+        component: this._renderSwipeButton(name.replace(' ', '\n')),
         backgroundColor: color,
         onPress: () => this.handleSwipePriority(id)
       }))
@@ -193,7 +258,7 @@ export default class PreviewListGame extends React.PureComponent {
       //   onPress: this.handleSwipeThumbs
       // },
       {
-        component: this._renderSwipeButton(seen ? 'Not Seen' : 'Seen'),
+        component: this._renderSwipeButton(seen ? 'Not\nSeen' : 'Seen'),
         type: 'primary',
         onPress: this.handleSwipeSeen
       }
@@ -234,11 +299,12 @@ export default class PreviewListGame extends React.PureComponent {
                   {this._renderPrice()}
                   <View style={[styles.minor, styles.priority]}>
                     {this._renderPriority()}
+                    {this._renderPurchase()}
                   </View>
                 </View>
               </View>
             </View>
-            {this._renderNotes()}
+            {this._renderExpanded()}
           </View>
         </TouchableOpacity>
       </Swipeout>
@@ -254,7 +320,6 @@ PreviewListGame.propTypes = {
     notes: PropTypes.string.isRequired,
     priority: PropTypes.number.isRequired
   }),
-  setUserSelection: PropTypes.func.isRequired,
   thumbnail: PropTypes.string.isRequired,
   name: PropTypes.string.isRequired,
   versionName: PropTypes.string.isRequired,
@@ -274,9 +339,6 @@ const styles = StyleSheet.create({
   mainContainer: {
     height: 80,
     flexDirection: 'row'
-  },
-  notesContainer: {
-    height: 60
   },
   gameDetails: {
     paddingLeft: 10,

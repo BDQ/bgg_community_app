@@ -5,7 +5,8 @@ import {
   Text,
   TouchableHighlight,
   Modal,
-  FlatList
+  FlatList,
+  SafeAreaView
 } from 'react-native'
 
 import ImageProgress from 'react-native-image-progress'
@@ -16,37 +17,20 @@ import { fetchJSON } from '../../shared/HTTP'
 
 export default class ImageList extends React.Component {
   state = {
-    objectId: null,
     images: null,
     imageModalIndex: null
   }
 
-  static getDerivedStateFromProps(props, state) {
-    const { objectId } = props
+  componentDidUpdate = async prevProps => {
+    const { objectId } = this.props
 
-    if (objectId && objectId !== state.objectId) {
-      // clear out previous images
-      return { objectId, images: null }
+    if (prevProps.objectId !== objectId || this.state.images === null) {
+      const url = `https://api.geekdo.com/api/images?objectid=${objectId}&ajax=1&galleries%5B%5D=game&galleries%5B%5D=creative&nosession=1&objecttype=thing&showcount=17&size=crop100&sort=hot`
+      let { images } = await fetchJSON(url)
+      images = images.map(img => ({ id: img.imageid, url: img.imageurl_lg }))
+
+      this.setState({ images })
     }
-
-    // Return null to indicate no change to state.
-    return null
-  }
-
-  componentDidUpdate() {
-    // only fetch if we don't have images
-    if (this.state.objectId !== null && this.state.images === null) {
-      this.getGameImages()
-    }
-  }
-
-  getGameImages = async () => {
-    const { objectId } = this.state
-    const url = `https://api.geekdo.com/api/images?objectid=${objectId}&ajax=1&galleries%5B%5D=game&galleries%5B%5D=creative&nosession=1&objecttype=thing&showcount=17&size=crop100&sort=hot`
-    let { images } = await fetchJSON(url)
-    images = images.map(img => ({ id: img.imageid, url: img.imageurl_lg }))
-
-    this.setState({ images })
   }
 
   hideImageModal() {
@@ -63,9 +47,9 @@ export default class ImageList extends React.Component {
     }
 
     return (
-      <View>
+      <React.Fragment>
         <FlatList
-          style={{ height: 104 }}
+          style={{ height: 104, backgroundColor: '#ffffff' }}
           data={this.state.images}
           horizontal={true}
           keyExtractor={img => img.id}
@@ -94,8 +78,6 @@ export default class ImageList extends React.Component {
           visible={this.state.imageModalIndex !== null}
           onRequestClose={this.hideImageModal}
         >
-          {/* <SafeAreaView style={{ backgroundColor: '#000000' }}> */}
-
           <ImageViewer
             renderImage={({ source, style }) => {
               return (
@@ -111,24 +93,23 @@ export default class ImageList extends React.Component {
               )
             }}
             renderHeader={() => (
-              <View style={{ padding: 10 }}>
+              <SafeAreaView>
                 <TouchableHighlight
                   onPress={() => {
                     this.hideImageModal()
                   }}
                 >
-                  <Text style={{ color: 'white' }}>Close</Text>
+                  <Text style={{ padding: 10, color: 'white' }}>Close</Text>
                 </TouchableHighlight>
-              </View>
+              </SafeAreaView>
             )}
             imageUrls={this.state.images}
             onCancel={() => this.hideImageModal()}
             index={this.state.imageModalIndex}
             enableSwipeDown={true}
           />
-          {/* </SafeAreaView> */}
         </Modal>
-      </View>
+      </React.Fragment>
     )
   }
 }

@@ -1,20 +1,39 @@
-import React from 'react'
+import React from 'reactn'
 import PropTypes from 'prop-types'
 import { View, Text, TouchableOpacity, ScrollView } from 'react-native'
 import { TagSelect } from 'react-native-tag-select'
 import { Button } from 'react-native-elements'
-import RadioForm from 'react-native-simple-radio-button'
 import { Dropdown } from 'react-native-material-dropdown'
 
 import styles from '../shared/styles'
-import { priorities, halls, seen, availability } from '../shared/data'
+import {
+  priorities,
+  halls,
+  seen,
+  availability,
+  preorders
+} from '../shared/data'
+
+const sortingOptions = [
+  {
+    label: 'Publisher, Game',
+    value: 'publisherGame'
+  },
+  {
+    label: 'Location, Publisher, Game',
+    value: 'locationPublisherGame'
+  }
+]
+const filterTextOnOptions = [
+  { label: 'Game Name', value: 'game' },
+  {
+    label: 'Publisher Name',
+    value: 'publisher'
+  },
+  { label: 'Notes', value: 'note' }
+]
 
 export default class PreviewFilters extends React.Component {
-  state = {
-    filters: this.props.navigation.state.params.filters,
-    sortBy: this.props.navigation.state.params.sortBy
-  }
-
   toggleTags = name => {
     const select = this[name]
 
@@ -23,46 +42,29 @@ export default class PreviewFilters extends React.Component {
       return ids
     }, {})
 
-    if (select.state.value.length === 0) {
-      select.setState({ value })
+    if (
+      Object.values(select.state.value).length === Object.values(value).length
+    ) {
+      select.setState({ value: {} })
     } else {
-      select.setState({ value: [] })
+      select.setState({ value })
     }
   }
-
-  setFilterTextOn = filterTextOn => {
-    this.setState({
-      filters: {
-        ...this.state.filters,
-        filterTextOn
-      }
-    })
-  }
-
-  // static getDerivedStateFromProps(props, state) {
-  //   logger(props)
-  //   const { filters, sortBy } = props.navigation.state.params
-  //   logger('here')
-  //   if (filters !== state.filters || sortBy !== state.sortBy) {
-  //     return { filters, sortBy }
-  //   } else {
-  //     return null
-  //   }
-  // }
 
   static navigationOptions = ({ navigation }) => {
-    return {
-      headerRight: (
-        <Button
-          onPress={navigation.state.params.applyFilters}
-          title="Apply"
-          buttonStyle={{
-            marginRight: 10,
-            backgroundColor: '#03A9F4'
-          }}
-        />
-      )
-    }
+    if (navigation.state.params)
+      return {
+        headerRight: (
+          <Button
+            onPress={navigation.state.params.applyFilters}
+            title="Apply"
+            buttonStyle={{
+              marginRight: 10,
+              backgroundColor: '#03A9F4'
+            }}
+          />
+        )
+      }
   }
 
   componentDidMount() {
@@ -72,67 +74,77 @@ export default class PreviewFilters extends React.Component {
   }
 
   applyFilters = () => {
-    const { setFilters } = this.props.navigation.state.params
     const { pop } = this.props.navigation
 
-    setFilters(
-      {
-        priorities: this.priorityTags.itemsSelected.map(
-          priority => priority.id || priority
-        ),
-        halls: this.hallTags.itemsSelected.map(hall => hall.id || hall),
-        seen: this.seenTags.itemsSelected.map(seen => seen.id || seen),
-        availability: this.availabilityTags.itemsSelected.map(
-          avail => avail.id || avail
-        ),
-        filterTextOn: this.state.filters.filterTextOn
-      },
-      this.state.sortBy
-    )
+    const filterValues = {
+      priorities: this.priorityTags.itemsSelected.map(
+        priority => priority.id || priority
+      ),
+      halls: this.hallTags.itemsSelected.map(hall => hall.id || hall),
+      seen: this.seenTags.itemsSelected.map(seen => seen.id || seen),
+      availability: this.availabilityTags.itemsSelected.map(
+        avail => avail.id || avail
+      ),
+      preorders: this.preorderTags.itemsSelected.map(t => t.id || t),
+      filterTextOn: this.filterTextOnRef.value(),
+      sortBy: this.sortByRef.value()
+    }
+
+    // update main filters
+    this.dispatch.previewFiltersSet(filterValues)
 
     pop()
   }
 
+  reset = () => {
+    this.priorityTags.setState({
+      value: []
+    })
+    this.hallTags.setState({
+      value: []
+    })
+    this.seenTags.setState({
+      value: []
+    })
+    this.availabilityTags.setState({
+      value: []
+    })
+    this.preorderTags.setState({
+      value: []
+    })
+
+    this.filterTextOnRef.setState({ value: filterTextOnOptions[0].value })
+    this.sortByRef.setState({ value: sortingOptions[0].value })
+  }
+
   render = () => {
-    const { filters, sortBy } = this.state
-    const { filterTextOn } = filters
-    const { defaultFilters } = this.props.navigation.state.params
-
-    const sortingOptions = [
-      {
-        label: 'Publisher, Game',
-        value: 'publisherGame'
-      },
-      {
-        label: 'Location, Publisher, Game',
-        value: 'locationPublisherGame'
-      }
-    ]
-
-    const sortIndex = sortingOptions.findIndex(
-      sortOpt => sortOpt.value === sortBy
-    )
-
-    const filterTextOnOptions = [
-      { label: 'Game Name', value: 'game' },
-      {
-        label: 'Publisher Name',
-        value: 'publisher'
-      },
-      { label: 'Notes', value: 'note' }
-    ]
+    const { previewFilters: filters } = this.global
 
     return (
       <ScrollView>
         <View style={styles.mainView}>
           <Text style={styles.formHeader}>Sorting</Text>
-          <View style={{ padding: 5 }}>
-            <RadioForm
-              radio_props={sortingOptions}
-              initial={sortIndex}
-              onPress={value => this.setState({ sortBy: value })}
+          <View
+            style={{
+              marginLeft: 5,
+              marginBottom: 15
+            }}
+          >
+            <Dropdown
+              dropdownOffset={{
+                top: 8,
+                left: 0
+              }}
+              itemCount={sortingOptions.length}
+              ref={ref => {
+                this.sortByRef = ref
+              }}
+              data={sortingOptions}
+              value={filters.sortBy || ''} //use local state if set, otherwise global
+              onChangeText={sortBy => this.setState({ sortBy })}
             />
           </View>
+
           <Text style={styles.formHeader}>Filters</Text>
           <View style={{ padding: 5 }}>
             <Text style={styles.formLabel}>Text Filter on:</Text>
@@ -147,10 +159,13 @@ export default class PreviewFilters extends React.Component {
                   top: 8,
                   left: 0
                 }}
-                itemCount={3}
+                itemCount={filterTextOnOptions.length}
+                ref={ref => {
+                  this.filterTextOnRef = ref
+                }}
                 data={filterTextOnOptions}
-                value={filterTextOn}
-                onChangeText={this.setFilterTextOn}
+                value={filters.filterTextOn || ''} //use local state if set, otherwise global
+                onChangeText={filterTextOn => this.setState({ filterTextOn })}
               />
             </View>
 
@@ -179,7 +194,7 @@ export default class PreviewFilters extends React.Component {
               />
             </View>
 
-            <View style={{ display: 'none' }}>
+            <View>
               <TouchableOpacity
                 style={styles.formLabelRow}
                 onPress={() => this.toggleTags('hallTags')}
@@ -251,6 +266,25 @@ export default class PreviewFilters extends React.Component {
               />
             </View>
 
+            <TouchableOpacity
+              style={styles.formLabelRow}
+              onPress={() => this.toggleTags('preorderTags')}
+            >
+              <Text style={styles.formLabel}>Preordered</Text>
+            </TouchableOpacity>
+
+            <View style={{ marginLeft: 5 }}>
+              <TagSelect
+                labelAttr="name"
+                value={filters.preorders}
+                ref={tag => {
+                  this.preorderTags = tag
+                }}
+                data={preorders}
+                theme="info"
+              />
+            </View>
+
             <View style={styles.formButtons}>
               <Button
                 style={{ flex: 1 }}
@@ -261,28 +295,7 @@ export default class PreviewFilters extends React.Component {
                   marginHorizontal: 10
                 }}
               />
-              <Button
-                style={{ flex: 1 }}
-                title="Reset"
-                onPress={() => {
-                  this.setState({
-                    filters: defaultFilters
-                  })
-
-                  this.priorityTags.setState({
-                    value: []
-                  })
-                  this.hallTags.setState({
-                    value: []
-                  })
-                  this.seenTags.setState({
-                    value: []
-                  })
-                  this.availabilityTags.setState({
-                    value: []
-                  })
-                }}
-              />
+              <Button style={{ flex: 1 }} title="Reset" onPress={this.reset} />
             </View>
           </View>
         </View>
@@ -295,14 +308,6 @@ PreviewFilters.propTypes = {
   navigation: PropTypes.shape({
     pop: PropTypes.func.isRequired,
     setParams: PropTypes.func.isRequired,
-    navigate: PropTypes.func.isRequired,
-    state: PropTypes.shape({
-      params: PropTypes.shape({
-        filters: PropTypes.object.isRequired,
-        sortBy: PropTypes.string.isRequired,
-        setFilters: PropTypes.func.isRequired,
-        defaultFilters: PropTypes.object.isRequired
-      })
-    }).isRequired
+    navigate: PropTypes.func.isRequired
   }).isRequired
 }

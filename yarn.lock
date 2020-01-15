@@ -3590,7 +3590,7 @@ has@^1.0.1, has@^1.0.3:
   dependencies:
     function-bind "^1.1.1"
 
-hoist-non-react-statics@^2.3.1, hoist-non-react-statics@^2.5.0:
+hoist-non-react-statics@^2.3.1:
   version "2.5.5"
   resolved "https://registry.yarnpkg.com/hoist-non-react-statics/-/hoist-non-react-statics-2.5.5.tgz#c5903cf409c0dfd908f388e619d86b9c1174cb47"
 
@@ -6080,10 +6080,6 @@ react-clone-referenced-element@^1.0.1:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/react-clone-referenced-element/-/react-clone-referenced-element-1.1.0.tgz#9cdda7f2aeb54fea791f3ab8c6ab96c7a77d0158"
 
-react-content-loader@^3.0.1:
-  version "3.1.2"
-  resolved "https://registry.yarnpkg.com/react-content-loader/-/react-content-loader-3.1.2.tgz#98230b4604b4b744eaa2d3fc88917dd988df6766"
-
 react-deep-force-update@^1.0.0:
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/react-deep-force-update/-/react-deep-force-update-1.1.2.tgz#3d2ae45c2c9040cbb1772be52f8ea1ade6ca2ee1"
@@ -6123,6 +6119,11 @@ react-is@^16.8.4:
 react-is@^16.8.6:
   version "16.8.6"
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.8.6.tgz#5bbc1e2d29141c9fbdfed456343fe2bc430a6a16"
+
+react-lifecycles-compat@^3.0.4:
+  version "3.0.4"
+  resolved "https://registry.yarnpkg.com/react-lifecycles-compat/-/react-lifecycles-compat-3.0.4.tgz#4f1a273afdfc8f3488a8c516bfda78f872352362"
+  integrity sha512-fBASbA6LnOU9dOU2eW7aQ8xmYBSXUIWr+UmF9b1efZBazGNO+rcXT/icdKnYm2pTwcRylVUYwW7H1PHfLekVzA==
 
 react-native-branch@~3.0.1:
   version "3.0.1"
@@ -6177,11 +6178,15 @@ react-native-image-progress@^1.1.1:
   dependencies:
     prop-types "^15.5.10"
 
-react-native-image-zoom-viewer@^2.2.25:
-  version "2.2.25"
-  resolved "https://registry.yarnpkg.com/react-native-image-zoom-viewer/-/react-native-image-zoom-viewer-2.2.25.tgz#61d0978b26d5a07bbbdfe04791818e49d1e538a0"
+react-native-image-zoom-viewer@^2.2.26:
+  version "2.2.26"
+  resolved "https://registry.yarnpkg.com/react-native-image-zoom-viewer/-/react-native-image-zoom-viewer-2.2.26.tgz#c6f070abb094cfbe1b3b7d8a38ad979a5facbdc5"
   dependencies:
     react-native-image-pan-zoom "^2.1.9"
+
+react-native-maps@^0.25.0:
+  version "0.25.0"
+  resolved "https://registry.yarnpkg.com/react-native-maps/-/react-native-maps-0.25.0.tgz#81bc51eb50e33811a9e1c345cc48869413ead67d"
 
 react-native-material-buttons@^0.5.0:
   version "0.5.0"
@@ -6217,11 +6222,11 @@ react-native-material-textfield@^0.12.0:
   dependencies:
     prop-types "^15.5.9"
 
-react-native-progress@^3.5.0:
-  version "3.5.0"
-  resolved "https://registry.yarnpkg.com/react-native-progress/-/react-native-progress-3.5.0.tgz#d1ccc7f96dc17c609aedb43b2e6695d67deae0ec"
+react-native-progress@^3.6.0:
+  version "3.6.0"
+  resolved "https://registry.yarnpkg.com/react-native-progress/-/react-native-progress-3.6.0.tgz#feaf37491f91bb421207fd761e20cb7258a2a3a6"
   dependencies:
-    prop-types "^15.5.8"
+    prop-types "^15.7.2"
 
 react-native-ratings@^6.3.0:
   version "6.3.1"
@@ -6240,13 +6245,21 @@ react-native-safe-area-view@^0.14.1:
   dependencies:
     hoist-non-react-statics "^2.3.1"
 
+react-native-safe-area-view@^0.14.6:
+  version "0.14.8"
+  resolved "https://registry.yarnpkg.com/react-native-safe-area-view/-/react-native-safe-area-view-0.14.8.tgz#ef33c46ff8164ae77acad48c3039ec9c34873e5b"
+  integrity sha512-MtRSIcZNstxv87Jet+UsPhEd1tpGe8cVskDXlP657x6rHpSrbrc+y13ZNXrwAgGNNhqQNX7UJT68ZIq//ZRmvw==
+  dependencies:
+    hoist-non-react-statics "^2.3.1"
+
 "react-native-screens@^1.0.0 || ^1.0.0-alpha":
   version "1.0.0-alpha.22"
   resolved "https://registry.yarnpkg.com/react-native-screens/-/react-native-screens-1.0.0-alpha.22.tgz#7a120377b52aa9bbb94d0b8541a014026be9289b"
 
-react-native-simple-radio-button@^2.7.3:
-  version "2.7.3"
-  resolved "https://registry.yarnpkg.com/react-native-simple-radio-button/-/react-native-simple-radio-button-2.7.3.tgz#c7227c0f963d6bbcfa245255d18a5a8b98fde41f"
+react-native-simple-radio-button@^2.7.4:
+  version "2.7.4"
+  resolved "https://registry.yarnpkg.com/react-native-simple-radio-button/-/react-native-simple-radio-button-2.7.4.tgz#86e2dbe8af9e6bf60eee088f60466f7a975e7758"
+  integrity sha512-QOZNmJUn0ViBGU+at7wAG/uGzd5PfXi0kMHr9lfTCLXknW/f9f2fOVjxjdHvOCdf/zA/eMJBjGjtusSDzQf1+w==
 
 react-native-status-bar-height@^2.2.0:
   version "2.3.1"
@@ -6260,11 +6273,10 @@ react-native-swipeout@^2.3.6:
     prop-types "^15.5.10"
     react-tween-state "^0.1.5"
 
-react-native-tab-view@^1.4.1:
-  version "1.4.1"
-  resolved "https://registry.yarnpkg.com/react-native-tab-view/-/react-native-tab-view-1.4.1.tgz#f113cd87485808f0c991abec937f70fa380478b9"
-  dependencies:
-    prop-types "^15.6.1"
+react-native-tab-view@^2.9.0:
+  version "2.10.0"
+  resolved "https://registry.yarnpkg.com/react-native-tab-view/-/react-native-tab-view-2.10.0.tgz#5e249e5650502010013449ffd4e5edc18a95364b"
+  integrity sha512-qgexVz5eO4yaFjdkmn/sURXgVvaBo6pZD/q1eoca96SbPVbaH3WzVhF3bRUfeTHwZkXwznFTpS3JURqIFU8vQA==
 
 react-native-tag-select@^2.0.0:
   version "2.0.0"
@@ -6339,19 +6351,22 @@ react-native-view-shot@2.6.0:
     xmldoc "^0.4.0"
     yargs "^9.0.0"
 
-react-navigation-stack@^1.7.3:
-  version "1.9.1"
-  resolved "https://registry.yarnpkg.com/react-navigation-stack/-/react-navigation-stack-1.9.1.tgz#6634ad4e782fa52a6c38adccac2d2b795d7de756"
+react-navigation-stack@^1.9.4:
+  version "1.9.4"
+  resolved "https://registry.yarnpkg.com/react-navigation-stack/-/react-navigation-stack-1.9.4.tgz#9de7537bb83a1d30a177957bc7932b9447f4c409"
+  integrity sha512-0Iv8t99RPsznXVadlHGRwOJqLzJmj96PfWiwmZEhVnbNwMVXMLz3oOno0LL9tbiukQxEaFAKUIblElpd9izS6w==
   dependencies:
     prop-types "^15.7.2"
 
-react-navigation-tabs@^1.2.0:
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/react-navigation-tabs/-/react-navigation-tabs-1.2.0.tgz#602c147029bb4f1c569b26479ddba534fe3ebb19"
+react-navigation-tabs@^2.5.6:
+  version "2.5.6"
+  resolved "https://registry.yarnpkg.com/react-navigation-tabs/-/react-navigation-tabs-2.5.6.tgz#51f1a39b6c9525e6b5fe035945c243c04e53242b"
+  integrity sha512-4WivEAsChJ+MuJ6JHxhAUMekHnVIt/zc4y/07KChXD5NBkSE0sk4vmMRndZQ6AP3n/ZihACcfigBAsMoqt0JXA==
   dependencies:
-    hoist-non-react-statics "^2.5.0"
-    prop-types "^15.6.1"
-    react-native-tab-view "^1.4.1"
+    hoist-non-react-statics "^3.3.0"
+    react-lifecycles-compat "^3.0.4"
+    react-native-safe-area-view "^0.14.6"
+    react-native-tab-view "^2.9.0"
 
 react-navigation@^4.0.6:
   version "4.0.10"
@@ -6408,9 +6423,9 @@ react@16.8.3:
     prop-types "^15.6.2"
     scheduler "^0.13.3"
 
-reactn@^2.1.7:
-  version "2.1.7"
-  resolved "https://registry.yarnpkg.com/reactn/-/reactn-2.1.7.tgz#4ad933d765d7f0a4e527b1bc131e10510d09a8d2"
+reactn@^2.2.4:
+  version "2.2.4"
+  resolved "https://registry.yarnpkg.com/reactn/-/reactn-2.2.4.tgz#f42168177f865feeeba057c8ad558d5456c730f9"
   dependencies:
     use-force-update "^1.0.5"
 
@@ -6858,7 +6873,6 @@ send@0.16.2:
 sentry-expo@~2.0.1:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/sentry-expo/-/sentry-expo-2.0.1.tgz#11e3e8c14f4c17e356f01f4c1b84474e3c880508"
-  integrity sha512-kfVBm1ezUROfHdqJyCi8cLNTvF2smcXE5fv+If68mgtRcH822qeyE6ACXbxOR+UT2FZFlPwXJATCr/vBMVujeg==
   dependencies:
     "@expo/spawn-async" "^1.2.8"
     "@sentry/integrations" "^5.5.0"

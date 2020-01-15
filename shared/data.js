@@ -21,7 +21,7 @@ export const priorities = [
   },
   {
     id: -1,
-    color: '#d4d4d4',
+    color: 'orange',
     name: 'Not Prioritized'
   }
 ]
@@ -59,3 +59,5 @@ export const availability = [
   { id: 'Demo', name: 'Demo' },
   { id: 'For Sale', name: 'For Sale' }
 ]
+
+export const preorders = [{ id: 'Yes', name: 'Yes' }]

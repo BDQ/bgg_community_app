@@ -1,10 +1,42 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { StyleSheet, View, Text } from 'react-native'
-import { Avatar } from 'react-native-elements'
-// import { logger } from '../shared/debug'
+import { Avatar, Icon } from 'react-native-elements'
 
 export default class PreviewListCompany extends React.PureComponent {
+  _renderMapButton = () => {
+    const { locationParsed, games } = this.props
+    const { navigate } = this.props.navigation
+
+    if (locationParsed) {
+      return (
+        <Icon
+          name="map"
+          iconStyle={{
+            backgroundColor: 'transparent'
+          }}
+          containerStyle={{
+            marginRight: 10,
+            marginTop: 10,
+            backgroundColor: 'transparent'
+          }}
+          type="entypo"
+          onPress={() =>
+            navigate('Map', {
+              companies: [
+                {
+                  name: this.props.name,
+                  key: Math.random(),
+                  locationParsed,
+                  games
+                }
+              ]
+            })
+          }
+        />
+      )
+    }
+  }
   _renderLocation = () => {
     const { location } = this.props
 
@@ -12,6 +44,7 @@ export default class PreviewListCompany extends React.PureComponent {
       return <Text style={styles.location}>Location: {location}</Text>
     }
   }
+
   render() {
     return (
       <View
@@ -22,6 +55,7 @@ export default class PreviewListCompany extends React.PureComponent {
         // }}
       >
         <Avatar
+          // onPress={() => console.log(this.props.publisherId)}
           size="medium"
           source={{ uri: this.props.thumbnail }}
           activeOpacity={0.7}
@@ -32,6 +66,7 @@ export default class PreviewListCompany extends React.PureComponent {
           </Text>
           {this._renderLocation()}
         </View>
+        {this._renderMapButton()}
       </View>
     )
   }
@@ -40,7 +75,12 @@ export default class PreviewListCompany extends React.PureComponent {
 PreviewListCompany.propTypes = {
   thumbnail: PropTypes.string.isRequired,
   name: PropTypes.string.isRequired,
-  location: PropTypes.string.isRequired
+  location: PropTypes.string,
+  locationParsed: PropTypes.string,
+  games: PropTypes.any,
+  navigation: PropTypes.shape({
+    navigate: PropTypes.func.isRequired
+  }).isRequired
 }
 
 const styles = StyleSheet.create({

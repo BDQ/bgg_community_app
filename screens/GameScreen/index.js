@@ -1,5 +1,11 @@
 import React from 'react'
-import { StyleSheet, View, Text, ScrollView } from 'react-native'
+import {
+  StyleSheet,
+  View,
+  Text,
+  ScrollView,
+  InteractionManager
+} from 'react-native'
 import { Icon } from 'react-native-elements'
 import HTMLView from 'react-native-htmlview'
 import ImageProgress from 'react-native-image-progress'
@@ -37,8 +43,10 @@ export default class GameScreen extends React.Component {
     const objectId = game.objectId
 
     if (details === null) {
-      this.getGameStats(objectId)
-      this.getGameDetails(objectId)
+      InteractionManager.runAfterInteractions(async () => {
+        this.getGameStats(objectId)
+        this.getGameDetails(objectId)
+      })
     }
   }
 
@@ -293,6 +301,34 @@ export default class GameScreen extends React.Component {
     }
   }
 
+  _renderMainImage = images => {
+    if (images.previewthumb) {
+      return (
+        <ImageProgress
+          source={{ uri: images.previewthumb }}
+          indicator={ProgressBar}
+          indicatorProps={{
+            color: '#ffffff'
+          }}
+          resizeMode="contain"
+          style={styles.headerImage}
+        />
+      )
+    } else {
+      return (
+        <View style={styles.emptyView}>
+          <ProgressBar
+            indeterminate={true}
+            color="#ffffff"
+            style={{ margin: 12 }}
+          />
+
+          <Text style={{ marginTop: 10, color: 'white' }}>Loading...</Text>
+        </View>
+      )
+    }
+  }
+
   render = () => {
     const { navigation } = this.props
     const { params } = navigation.state
@@ -303,17 +339,7 @@ export default class GameScreen extends React.Component {
     return (
       <ScrollView>
         <View style={styles.itemContainer}>
-          <View style={styles.gameHeader}>
-            <ImageProgress
-              source={{ uri: images.previewthumb }}
-              indicator={ProgressBar}
-              indicatorProps={{
-                color: '#ffffff'
-              }}
-              resizeMode="contain"
-              style={styles.headerImage}
-            />
-          </View>
+          <View style={styles.gameHeader}>{this._renderMainImage(images)}</View>
           {this._renderHeaderRank()}
           <View style={{ padding: 10, backgroundColor: '#000000' }}>
             {this._renderHeaderName(params)}

@@ -2,7 +2,9 @@
   "expo": {
     "sdkVersion": "35.0.0",
     "splash": {
-      "image": "./assets/splash.png"
+      "image": "./assets/splash.png",
+      "backgroundColor": "#3F3A60",
+      "resizeMode": "cover"
     },
     "icon": "./assets/BGG-Logo.png",
     "privacy": "public",
@@ -21,14 +23,19 @@
     },
     "name": "BGG",
     "slug": "bggca",
-    "version": "0.3.0",
+    "version": "0.4.0",
     "description": "Board Game Geek community app",
     "ios": {
       "bundleIdentifier": "io.bdq.bggca"
     },
     "android": {
-      "package": "io.bdq.bggca",
-      "permissions": ["CAMERA"]
+      "package": "io.bdq.bggca.droid",
+      "permissions": ["ACCESS_FINE_LOCATION", "CAMERA"],
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyCTMCxnNMkV3vT4bieXIjKaDk_pIxIbxxw"
+        }
+      }
     }
   }
 }

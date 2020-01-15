@@ -1,6 +1,7 @@
-import { persistGlobal } from '../persistence'
-
+import { persistGlobal } from '../helpers/persistence'
 import { fetchCollectionFromBGG } from '../../../shared/collection'
+
+const collectionKey = 'collection'
 
 export const fetchCollection = async state => {
   const { username } = state.bggCredentials
@@ -8,12 +9,12 @@ export const fetchCollection = async state => {
 
   const collectionFetchedAt = new Date().getTime()
 
-  persistGlobal({ ...state, collection, collectionFetchedAt })
+  persistGlobal(collectionKey, { collection, collectionFetchedAt })
 
   return { collection, collectionFetchedAt }
 }
 
-export const addOrUpdateGameInCollection = async (state, game) => {
+export const addOrUpdateGameInCollection = async (state, _, game) => {
   const { collection } = state
 
   let idx = collection.findIndex(
@@ -29,12 +30,12 @@ export const addOrUpdateGameInCollection = async (state, game) => {
     collection.push(game)
   }
 
-  persistGlobal({ ...state, collection })
+  persistGlobal(collectionKey, { collection })
 
   return { collection }
 }
 
-export const removeGameFromCollection = async (state, game) => {
+export const removeGameFromCollection = async (state, _, game) => {
   const { collection } = state
   let idx = collection.findIndex(
     collectionGame =>
@@ -42,9 +43,11 @@ export const removeGameFromCollection = async (state, game) => {
   )
 
   if (idx > -1) {
-    // already exists
+    // exists
     collection.splice(idx, 1)
   }
+
+  persistGlobal(collectionKey, { collection })
 
   return { collection }
 }

@@ -72,3 +72,31 @@ If everything worked, then you should see a QR code which you can scan once you'
 _iOS Device:_ You must use the normal camera app to scan the QR code, and that will open the app within Expo.
 
 _Android_: You can scan the QR code using the Expo app on your device.
+
+### Publishing (App admins only)
+
+#### Publishing a dev build (EXPO only)
+
+```bash
+expo publish --release-channel=dev
+```
+
+#### Publishing new iOS app
+
+Expo SDK version bumps, and other major changes require that we submit an iOS build to Apple. That can be generated as follows.
+
+1. Ensure the `version` key has been bumped.
+
+2. Ensure logging is disabled in `shared/debug.js` - the `enable()` call should be commented out.
+
+3. Start the build, this takes a while.
+
+```bash
+expo build:ios
+```
+
+4. Once the build is finished, you need to upload the resulting file to Apple.
+
+```bash
+expo upload:ios --apple-id <PRIVATE> --apple-id-password <EVEN MORE PRIVATEapp>
+```
