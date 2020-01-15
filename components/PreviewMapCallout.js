@@ -9,7 +9,6 @@ export default class PreviewMapCallout extends React.PureComponent {
     let lineCount = 0
 
     return companies.map(company => {
-      console.log(company)
       const lines = (
         <React.Fragment key={company.key}>
           <Text
@@ -76,7 +75,7 @@ export default class PreviewMapCallout extends React.PureComponent {
 
 const styles = StyleSheet.create({
   wrapper: {
-    padding: 4,
+    padding: 2,
     maxHeight: '50%'
   },
   locationName: {

@@ -29,8 +29,13 @@
       "bundleIdentifier": "io.bdq.bggca"
     },
     "android": {
-      "package": "io.bdq.bggca",
-      "permissions": ["CAMERA"]
+      "package": "io.bdq.bggca.droid",
+      "permissions": ["ACCESS_FINE_LOCATION", "CAMERA"],
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyCTMCxnNMkV3vT4bieXIjKaDk_pIxIbxxw"
+        }
+      }
     }
   }
 }

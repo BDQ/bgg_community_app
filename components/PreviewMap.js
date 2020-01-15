@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { StyleSheet, View } from 'react-native'
+import { StyleSheet, View, PermissionsAndroid } from 'react-native'
 import MapView, { Marker, Callout, UrlTile } from 'react-native-maps'
 
 import { points } from '../shared/points'
@@ -43,7 +43,7 @@ const averageGeolocation = coords => {
 
 export default class PreviewMap extends React.PureComponent {
   state = {
-    staringCoordinate: {
+    startingCoordinate: {
       latitude: 51.427790453806146,
       longitude: 6.994015671123037
     },
@@ -83,9 +83,13 @@ export default class PreviewMap extends React.PureComponent {
         locations[locationParsed].push(company)
       })
 
-      const startingCoordinate = averageGeolocation(
-        Object.values(locationCoords)
-      )
+      // get default /fallback starting coord from state
+      let { startingCoordinate } = state
+
+      // only set starting Coord if we have locations to average out
+      if (Object.values(locationCoords).length > 0) {
+        startingCoordinate = averageGeolocation(Object.values(locationCoords))
+      }
 
       return {
         locations,
@@ -142,14 +146,15 @@ export default class PreviewMap extends React.PureComponent {
           style={styles.map}
           showsPointsOfInterest={false}
           showsUserLocation={true}
+          showsMyLocationButton={true}
           // cacheEnabled={true}
           region={{
             ...startingCoordinate,
-            latitudeDelta: 0.0005,
-            longitudeDelta: 0.0005
+            latitudeDelta: 0.001,
+            longitudeDelta: 0.001
           }}
           // minZoomLevel={16}
-          maxZoomLevel={21}
+          maxZoomLevel={20}
           // click on map to dump location
           // onPress={evt => {
           //   console.log(evt.nativeEvent)
@@ -167,7 +172,7 @@ export default class PreviewMap extends React.PureComponent {
           />
           {/* <Marker
             draggable
-            coordinate={clickCoord}
+            coordinate={startingCoordinate}
             onDragEnd={e => console.log(e.nativeEvent.coordinate)}
           >
             <PreviewMapMarker amount="x" />

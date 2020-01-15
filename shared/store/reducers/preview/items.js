@@ -6,6 +6,8 @@ import { processGames } from '../../helpers/preview/games'
 import { processCompanies } from '../../helpers/preview/companies'
 
 import { PREVIEW_ID } from 'react-native-dotenv'
+import { companiesOverride } from '../../../previewOverride'
+
 const previewKey = `preview:${PREVIEW_ID}`
 const previewKeyUserSelections = `${previewKey}:userSelections`
 const previewKeyGames = `${previewKey}:games`
@@ -17,6 +19,7 @@ export const loadPreview = async (state, dispatch, force = false) => {
   await dispatch.getPreviewGames(force)
   await dispatch.getPurchases(force)
   await dispatch.enrichGames()
+  await dispatch.applyOverrides()
 
   await dispatch.previewFiltersLoad()
 
@@ -83,7 +86,7 @@ export const getPreviewCompanys = async (state, dispatch, force) => {
     await persistGlobal(key, { previewCompanies })
   }
 
-  // dump locations's
+  // dump ALL locations's
   // const locs = new Set(
   //   previewCompanies.map(c => c.locationParsed).filter(l => l)
   // )
@@ -111,6 +114,24 @@ export const enrichGames = async state => {
   })
 
   return { previewGames: enrichedGames }
+}
+
+export const applyOverrides = async state => {
+  const { previewCompanies } = state
+
+  companiesOverride.forEach(companyOveride => {
+    if (!companyOveride.publisherId) return
+
+    const idx = previewCompanies.findIndex(
+      company => company.publisherId === companyOveride.publisherId
+    )
+
+    const previewCompany = previewCompanies[idx]
+
+    previewCompanies[idx] = { ...previewCompany, ...companyOveride }
+  })
+
+  return { previewCompanies }
 }
 
 const getPreviewItems = async (objectType, force = false) => {

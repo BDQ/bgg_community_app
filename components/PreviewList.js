@@ -121,6 +121,7 @@ export default class PreviewList extends React.PureComponent {
               return (
                 <PreviewListCompany
                   name={section.name}
+                  publisherId={section.publisherId}
                   thumbnail={section.thumbnail}
                   location={section.location}
                   locationParsed={section.locationParsed}

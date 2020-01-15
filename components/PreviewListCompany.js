@@ -55,6 +55,7 @@ export default class PreviewListCompany extends React.PureComponent {
         // }}
       >
         <Avatar
+          // onPress={() => console.log(this.props.publisherId)}
           size="medium"
           source={{ uri: this.props.thumbnail }}
           activeOpacity={0.7}

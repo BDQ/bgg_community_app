@@ -23,6 +23,11 @@ const applyCompanyFilters = (filters, companies) => {
     )
   }
 
+  // filter only companies with no location - used for doing overrides only
+  // filteredItems = filteredItems.filter(item => {
+  //   return item.location === ''
+  // })
+
   return filteredItems
 }
 
