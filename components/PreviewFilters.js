@@ -194,7 +194,8 @@ export default class PreviewFilters extends React.Component {
               />
             </View>
 
-            <View>
+            {/* change diplay to block when we want to show halls */}
+            <View style={{ display: 'none' }}>
               <TouchableOpacity
                 style={styles.formLabelRow}
                 onPress={() => this.toggleTags('hallTags')}

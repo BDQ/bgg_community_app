@@ -14,6 +14,8 @@ import PreviewListGame from './PreviewListGame'
 
 import sharedStyles from '../shared/styles'
 
+import { PREVIEW_MAP } from 'react-native-dotenv'
+
 export default class PreviewList extends React.PureComponent {
   componentDidUpdate(prevProps) {
     const { gameCount } = this.props
@@ -41,6 +43,15 @@ export default class PreviewList extends React.PureComponent {
             clearIcon
           />
         </View>
+        {this._renderSearchIcons()}
+      </View>
+    )
+  }
+
+  _renderSearchIcons = () => {
+    const { navigate } = this.props.navigation
+    if (PREVIEW_MAP === 'yes') {
+      return (
         <View style={styles.searchIcons}>
           <Icon
             name="ios-funnel"
@@ -63,10 +74,23 @@ export default class PreviewList extends React.PureComponent {
             onPress={() => navigate('Map', { companies: sections })}
           />
         </View>
-      </View>
-    )
+      )
+    } else {
+      return (
+        <View style={styles.searchIcons}>
+          <Icon
+            name="ios-funnel"
+            color="#ffffff"
+            iconStyle={styles.icon}
+            containerStyle={styles.icon}
+            type="ionicon"
+            size={24}
+            onPress={() => navigate('Filter')}
+          />
+        </View>
+      )
+    }
   }
-
   _renderItem = ({ item }) => {
     return (
       <PreviewListGame
@@ -170,12 +194,12 @@ export default class PreviewList extends React.PureComponent {
 
 const styles = StyleSheet.create({
   searchMain: {
-    width: '83%'
+    width: PREVIEW_MAP === 'yes' ? '83%' : '92%'
   },
   searchIcons: {
     justifyContent: 'flex-start',
     alignItems: 'flex-start',
-    width: '17%',
+    width: PREVIEW_MAP === 'yes' ? '17%' : '8%',
     backgroundColor: '#393e42',
     flex: 1,
     flexDirection: 'row',
