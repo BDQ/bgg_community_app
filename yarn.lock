@@ -6727,7 +6727,7 @@ react@16.8.3:
     prop-types "^15.6.2"
     scheduler "^0.13.3"
 
-reactn@^2.2.4:
+reactn@^2.2.6:
   version "2.2.6"
   resolved "https://registry.yarnpkg.com/reactn/-/reactn-2.2.6.tgz#73128a8a95845e0bf6478674be5c7e9193d46a0f"
   integrity sha512-xYE6agye3WVetZdYY8cUWDLnAIV/z/74lUDc8TPd3UobQGKTvwH3Z6or6+Whart6uwb6ml1MhCHv9e5ipLx3MQ==

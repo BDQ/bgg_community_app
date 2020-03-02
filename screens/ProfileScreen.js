@@ -2,7 +2,7 @@ import React from 'reactn'
 import Sentry from 'sentry-expo'
 import { createAppContainer } from 'react-navigation'
 import { createStackNavigator } from 'react-navigation-stack'
-import { View, Text, StyleSheet, Linking } from 'react-native'
+import { View, Text, StyleSheet, Linking, ScrollView } from 'react-native'
 import { Input, Button } from 'react-native-elements'
 import { showMessage } from 'react-native-flash-message'
 
@@ -172,50 +172,52 @@ export class ProfileEditScreen extends React.PureComponent {
 
   render = () => {
     return (
-      <View style={styles.mainView}>
-        <Text style={styles.formHeader}>
-          Welcome to the BGG Community App! (v0.2)
-        </Text>
-        <Text>
-          This app is an <Text style={customStyles.strong}>unofficial</Text>{' '}
-          <Text
-            style={{ color: 'blue', textDecorationLine: 'underline' }}
-            onPress={() =>
-              Linking.openURL('https://github.com/BDQ/bgg_community_app')
-            }
-          >
-            open source
-          </Text>{' '}
-          community initiative to build and maintain a mobile application for
-          the amazing BoardGameGeek.com site.
-        </Text>
-        {this._renderState()}
-        <View style={{ alignSelf: 'center' }}>
-          <Button
-            id="submitButton"
-            backgroundColor="#03A9F4"
-            style={customStyles.bottomText}
-            onPress={
-              this.global.loggedIn ? this.handleLogOut : this.handleLogIn
-            }
-            loading={this.state.loading}
-            title={this.global.loggedIn ? 'Log Out' : 'Log In'}
-          />
-        </View>
-        <View
-          style={{
-            alignItems: 'flex-end',
-            justifyContent: 'flex-end',
-            flexGrow: 1,
-            marginBottom: 20
-          }}
-        >
-          <Text>
-            Geekdo, BoardGameGeek, the Geekdo logo, and the BoardGameGeek logo
-            are trademarks of BoardGameGeek, LLC.
+      <ScrollView>
+        <View style={styles.mainView}>
+          <Text style={styles.formHeader}>
+            Welcome to the BGG Community App! (v0.2)
           </Text>
+          <Text>
+            This app is an <Text style={customStyles.strong}>unofficial</Text>{' '}
+            <Text
+              style={{ color: 'blue', textDecorationLine: 'underline' }}
+              onPress={() =>
+                Linking.openURL('https://github.com/BDQ/bgg_community_app')
+              }
+            >
+              open source
+            </Text>{' '}
+            community initiative to build and maintain a mobile application for
+            the amazing BoardGameGeek.com site.
+          </Text>
+          {this._renderState()}
+          <View style={{ alignSelf: 'center' }}>
+            <Button
+              id="submitButton"
+              backgroundColor="#03A9F4"
+              style={customStyles.bottomText}
+              onPress={
+                this.global.loggedIn ? this.handleLogOut : this.handleLogIn
+              }
+              loading={this.state.loading}
+              title={this.global.loggedIn ? 'Log Out' : 'Log In'}
+            />
+          </View>
+          <View
+            style={{
+              alignItems: 'flex-end',
+              justifyContent: 'flex-end',
+              flexGrow: 1,
+              marginBottom: 20
+            }}
+          >
+            <Text>
+              Geekdo, BoardGameGeek, the Geekdo logo, and the BoardGameGeek logo
+              are trademarks of BoardGameGeek, LLC.
+            </Text>
+          </View>
         </View>
-      </View>
+      </ScrollView>
     )
   }
 }

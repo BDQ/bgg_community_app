@@ -39,25 +39,22 @@ export default class App extends React.PureComponent {
 
   _renderTabs = () => {
     const { username } = this.global.bggCredentials
+    const { loggedIn } = this.global
+
     let AppNavigator
 
-    if (betaUsers.includes(username)) {
-      AppNavigator = createBottomTabNavigator({
-        Owned,
-        Wishlist,
-        Preview,
-        Scan,
-        Subscriptions,
-        Profile
-      })
+    let tabsToRender = { Profile }
+
+    if (!loggedIn) {
     } else {
-      AppNavigator = createBottomTabNavigator({
-        Owned,
-        Wishlist,
-        Preview,
-        Profile
-      })
+      tabsToRender = { Owned, Wishlist, Preview, ...tabsToRender }
+
+      if (betaUsers.includes(username)) {
+        tabsToRender = { ...tabsToRender, Scan, Subscriptions }
+      }
     }
+
+    AppNavigator = createBottomTabNavigator(tabsToRender)
 
     const App = createAppContainer(AppNavigator)
 
@@ -65,8 +62,6 @@ export default class App extends React.PureComponent {
   }
 
   render() {
-    const { loggedIn } = this.global
-
     if (!this.state.isReady) {
       return (
         <AppLoading
@@ -76,21 +71,12 @@ export default class App extends React.PureComponent {
         />
       )
     } else {
-      if (!loggedIn) {
-        return (
-          <View style={{ flex: 1 }}>
-            <ProfileScreen title="BGG Community App" />
-            <FlashMessage position="top" />
-          </View>
-        )
-      } else {
-        return (
-          <View style={{ flex: 1 }}>
-            {this._renderTabs()}
-            <FlashMessage position="top" />
-          </View>
-        )
-      }
+      return (
+        <View style={{ flex: 1 }}>
+          {this._renderTabs()}
+          <FlashMessage position="top" />
+        </View>
+      )
     }
   }
 }
