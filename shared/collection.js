@@ -1,8 +1,12 @@
-import Sentry from 'sentry-expo'
-import parse from 'xml-parser'
-import { AsyncStorage } from 'react-native'
+import * as Sentry from 'sentry-expo'
+const XMLParser = require('react-xml-parser')
+
+import { AsyncStorage, InteractionManager } from 'react-native'
+
+import nextFrame from 'next-frame'
 
 import { logger } from './debug'
+import { getElementValue } from './xml.js'
 
 const timeout = ms => new Promise(res => setTimeout(res, ms))
 
@@ -29,25 +33,30 @@ export const fetchCollectionFromBGG = async username => {
       return fetchCollectionFromBGG(username)
     } else if (response.status == 200) {
       // yay! we have a collection response
+      await nextFrame()
       const xml = await response.text()
 
-      const doc = await parseXML(xml)
+      await nextFrame()
+      // const doc = await parseXML(xml)
+      var doc = new XMLParser().parseFromString(xml)
 
-      let collection = doc.root.children.map(item => {
+      let collection = []
+      for (item of doc.getElementsByTagName('item')) {
+        await nextFrame()
+
         const objectId = item.attributes.objectid
-        const name = item.children.find(e => e.name == 'name').content
-        const yearpublished = (
-          item.children.find(e => e.name == 'yearpublished') || {}
-        ).content
-        const image = (item.children.find(e => e.name == 'image') || {}).content
-        const thumbnail = (item.children.find(e => e.name == 'thumbnail') || {})
-          .content
 
-        let statusElement = item.children.find(e => e.name == 'status') || {}
+        const name = getElementValue(item, 'name')
+
+        const yearpublished = getElementValue(item, 'yearpublished')
+
+        const image = getElementValue(item, 'image')
+        const thumbnail = getElementValue(item, 'thumbnail')
+        let statusElement = item.getElementsByTagName('status')[0] || {}
 
         let subtitle = `Year: ${yearpublished}`
 
-        return {
+        collection.push({
           objectId,
           name,
           subtitle,
@@ -55,8 +64,8 @@ export const fetchCollectionFromBGG = async username => {
           image,
           thumbnail,
           status: statusElement.attributes
-        }
-      })
+        })
+      }
 
       // not really duplicates, just multiple copies, need to figure out how that should be handled? HELP???
       collection = removeDuplicates(collection, 'objectId')
@@ -65,9 +74,7 @@ export const fetchCollectionFromBGG = async username => {
     } else {
       Sentry.captureMessage(
         'Non 200/202 Response from BGG when loading collection.',
-        {
-          extra: { url: url, stauts: response.status }
-        }
+        'error'
       )
     }
   } catch (error) {
@@ -91,5 +98,3 @@ export const loadCollection = async updatedAt => {
     }
   }
 }
-
-const parseXML = async xml => new Promise(resolve => resolve(parse(xml)))

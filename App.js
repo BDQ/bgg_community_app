@@ -2,7 +2,7 @@ import { SENTRY_CONFIG } from 'react-native-dotenv'
 import * as Sentry from 'sentry-expo'
 Sentry.init({
   dsn: SENTRY_CONFIG,
-  enableInExpoDevelopment: true,
+  enableInExpoDevelopment: false,
   debug: true
 })
 
@@ -52,6 +52,8 @@ export default class App extends React.PureComponent {
       })
     } else {
       AppNavigator = createBottomTabNavigator({
+        Owned,
+        Wishlist,
         Preview,
         Profile
       })

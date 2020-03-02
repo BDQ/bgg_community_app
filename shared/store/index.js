@@ -17,7 +17,7 @@ addReducers(previewReducers)
 export const setupStore = async () => {
   // now we load the data from Async store
   const persistedAccount = await getPersisted('account')
-  const persistedCollection = await getPersisted('collection')
+  const persistedCollection = {} //await getPersisted('collection')
 
   // update global store with stuff from async and initial
   await setGlobal({

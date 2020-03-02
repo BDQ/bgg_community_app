@@ -9,9 +9,10 @@ import {
 import { SearchBar } from 'react-native-elements'
 import PropTypes from 'prop-types'
 import { debounce } from 'throttle-debounce'
-import parse from 'xml-parser'
+const XMLParser = require('react-xml-parser')
 
 import { fetchJSON } from '../shared/HTTP'
+import { getElementValue } from '../shared/xml.js'
 import GameListItem from './../components/GameListItem'
 
 export default class GameSearch extends React.PureComponent {
@@ -102,17 +103,15 @@ export default class GameSearch extends React.PureComponent {
       let response = await fetch(url)
 
       if (response.status == 200) {
-        let xml = await response.text()
-        let doc = parse(xml)
+        const xml = await response.text()
+        const doc = new XMLParser().parseFromString(xml)
 
         let moreDataOnGames = doc.root.children.map(item => {
           let objectId = item.attributes.id
-          let image = (item.children.find(e => e.name == 'image') || {}).content
-          let thumbnail = (item.children.find(e => e.name == 'thumbnail') || {})
-            .content
-          let description = (
-            item.children.find(e => e.name == 'description') || {}
-          ).content
+          let image = getElementValue(item, 'image')
+
+          let thumbnail = getElementValue(item, 'thumbnail')
+          let description = getElementValue(item, 'description')
 
           return { objectId, image, thumbnail, description }
         })
