@@ -159,6 +159,7 @@ export class ProfileEditScreen extends React.PureComponent {
           <Input
             id="passwordInput"
             label="BGG Password"
+            autoCapitalize="none"
             containerStyle={{ marginTop: 25 }}
             onChangeText={this.passwordChange}
             secureTextEntry={true}
