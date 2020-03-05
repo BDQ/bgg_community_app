@@ -33,11 +33,11 @@ export default class ImageList extends React.Component {
     }
   }
 
-  hideImageModal() {
+  hideImageModal = () => {
     this.setState({ imageModalIndex: null })
   }
 
-  showImageModal(imageModalIndex) {
+  showImageModal = imageModalIndex => {
     this.setState({ imageModalIndex })
   }
 
@@ -94,17 +94,13 @@ export default class ImageList extends React.Component {
             }}
             renderHeader={() => (
               <SafeAreaView>
-                <TouchableHighlight
-                  onPress={() => {
-                    this.hideImageModal()
-                  }}
-                >
+                <TouchableHighlight onPress={this.hideImageModal}>
                   <Text style={{ padding: 10, color: 'white' }}>Close</Text>
                 </TouchableHighlight>
               </SafeAreaView>
             )}
             imageUrls={this.state.images}
-            onCancel={() => this.hideImageModal()}
+            onCancel={this.hideImageModal}
             index={this.state.imageModalIndex}
             enableSwipeDown={true}
           />
