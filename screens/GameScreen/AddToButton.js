@@ -1,8 +1,10 @@
 import React from 'reactn'
 import { Button } from 'react-native-elements'
 import PropTypes from 'prop-types'
-
+import Octicon from 'react-native-vector-icons/Octicons'
+import FontAwesome from 'react-native-vector-icons/FontAwesome'
 import { fetchJSON } from '../../shared/HTTP'
+import styles from './styles'
 
 export default class AddToButton extends React.Component {
   state = {
@@ -53,32 +55,18 @@ export default class AddToButton extends React.Component {
 
     const inCollection = Object.keys(collectionStatus).length > 0
 
-    const icon = inCollection
-      ? {
-          name: 'check',
-          type: 'Octicons',
-          color: 'green',
-          size: 18
-        }
-      : {
-          name: 'list',
-          type: 'FontAwesome',
-          color: '#ffffff',
-          size: 18
-        }
+    const icon = inCollection ? (
+      <Octicon name="check" color="green" size={18} />
+    ) : (
+      <FontAwesome name="list" color="#000" size={16} />
+    )
 
     return (
       <Button
-        backgroundColor={inCollection ? '#ffffff' : '#03A9F4'}
-        color={inCollection ? '#000000' : '#ffffff'}
-        textStyle={{
-          fontFamily: 'lato-bold',
-          fontSize: 14
-        }}
-        leftIcon={icon}
-        containerViewStyle={{
-          marginVertical: 5
-        }}
+        buttonStyle={styles.headerButton}
+        titleStyle={styles.headerButtonText}
+        containerStyle={styles.headerButtonContainer}
+        icon={icon}
         onPress={() =>
           navigate('AddTo', {
             game,
@@ -87,7 +75,7 @@ export default class AddToButton extends React.Component {
             wishlistPriority
           })
         }
-        title={inCollection ? 'In Collection' : 'Add To ...'}
+        title={inCollection ? ' In Collection' : ' Add To ...'}
       />
     )
   }

@@ -45,5 +45,11 @@ export default StyleSheet.create({
   link: {
     color: 'blue',
     textDecorationLine: 'underline'
+  },
+  textInput: {
+    borderColor: '#aaa',
+    borderWidth: 1,
+    padding: 5,
+    height: 40
   }
 })

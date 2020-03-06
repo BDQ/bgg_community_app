@@ -29,20 +29,18 @@
       "bundleIdentifier": "io.bdq.bggca"
     },
     "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#3F3A60",
+        "backgroundImage": "./assets/BGG-Logo.png"
+      },
       "package": "io.bdq.bggca.droid",
-      "permissions": [
-        "ACCESS_FINE_LOCATION",
-        "CAMERA"
-      ],
+      "permissions": ["ACCESS_FINE_LOCATION", "CAMERA"],
       "config": {
         "googleMaps": {
           "apiKey": "tbd"
         }
       }
     },
-    "platforms": [
-      "ios",
-      "android"
-    ]
+    "platforms": ["ios", "android"]
   }
 }

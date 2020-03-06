@@ -6,6 +6,7 @@ import { Icon } from 'react-native-elements'
 import ProgressBar from 'react-native-progress/Circle'
 
 import GameScreen from './GameScreen'
+import LogPlay from './Plays/Log'
 import GameSearch from './GameSearch'
 import GameAddTo from './GameAddTo'
 import GameList from './../components/GameList'
@@ -96,5 +97,6 @@ export default createStackNavigator({
   List: { screen: OwnedListScreen },
   Game: { screen: GameScreen },
   Search: { screen: GameSearch },
-  AddTo: { screen: GameAddTo }
+  AddTo: { screen: GameAddTo },
+  LogPlay: { screen: LogPlay }
 })

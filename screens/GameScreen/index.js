@@ -6,13 +6,14 @@ import {
   ScrollView,
   InteractionManager
 } from 'react-native'
-import { Icon } from 'react-native-elements'
+import { Icon, Button } from 'react-native-elements'
 import HTMLView from 'react-native-htmlview'
 import ImageProgress from 'react-native-image-progress'
 import ProgressBar from 'react-native-progress/Circle'
 
 import ImageList from './ImageList'
 import AddToButton from './AddToButton'
+import LogPlayButton from './LogPlayButton'
 import { fetchJSON } from '../../shared/HTTP'
 
 export default class GameScreen extends React.Component {
@@ -347,7 +348,19 @@ export default class GameScreen extends React.Component {
           <View style={{ padding: 10, backgroundColor: '#E7ECF1' }}>
             {this._renderGameStats(details)}
             {this._renderCredits(details)}
+          </View>
+          <View
+            style={{
+              flexDirection: 'row',
+              backgroundColor: '#E7ECF1',
+              paddingBottom: 8,
+              paddingLeft: 8,
+              paddingRight: 8,
+              justifyContent: 'center'
+            }}
+          >
             <AddToButton navigation={navigation} game={game} />
+            <LogPlayButton navigation={navigation} game={game} />
           </View>
           <View style={{ padding: 10, backgroundColor: '#ffffff' }}>
             <ImageList objectId={game ? game.objectId : null} />

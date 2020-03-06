@@ -1,4 +1,11 @@
-import Sentry from 'sentry-expo'
+// import { SENTRY_CONFIG } from 'react-native-dotenv'
+// import * as Sentry from 'sentry-expo'
+// Sentry.init({
+//   dsn: SENTRY_CONFIG,
+//   enableInExpoDevelopment: false,
+//   debug: true
+// })
+
 import { getDispatch } from 'reactn'
 import { showMessage } from 'react-native-flash-message'
 
@@ -19,6 +26,9 @@ export const fetchRaw = async (path, args = {}, headers = {}) => {
   const url = path.startsWith('http') ? path : `${baseURL}${path}`
   return fetch(url, { credentials: 'include', ...args, headers })
 }
+
+export const asyncFetch = async ({ path, args = {}, headers = {} }) =>
+  fetchJSON(path, args, headers)
 
 export const fetchJSON = async (path, args = {}, headers = {}) => {
   try {
@@ -46,7 +56,8 @@ export const fetchJSON = async (path, args = {}, headers = {}) => {
       })
     }
   } catch (error) {
-    logger(`Error fetching: ${path}`)
-    Sentry.captureException(error)
+    console.error(`Error fetching: ${path}`)
+    console.error(error)
+    // Sentry.captureException(error)
   }
 }
