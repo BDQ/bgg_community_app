@@ -21,7 +21,9 @@ export default class GameList extends React.PureComponent {
 
   static getDerivedStateFromProps(props, state) {
     if (props.games.map(g => g.objectId) !== state.games.map(g => g.objectId)) {
-      return { games: applyFilter(state.filterString, props.games) }
+      return {
+        games: applyFilter(state.filterString, props.games)
+      }
     } else {
       return null
     }
@@ -63,6 +65,8 @@ export default class GameList extends React.PureComponent {
     })
   }
 
+  goToSearch = () => this.props.navigation.navigate('Search')
+
   clearFilter = () => this.filter('')
 
   _renderEmpty = () => {
@@ -75,6 +79,19 @@ export default class GameList extends React.PureComponent {
               clear search
             </Text>
             <Text>.</Text>
+          </View>
+        </View>
+      )
+    } else {
+      console.log(this.props.navigation)
+      return (
+        <View style={styles.emptyView}>
+          <View style={{ flexDirection: 'row' }}>
+            <Text>Your {this.props.listName} is empty, why not </Text>
+            <Text style={styles.link} onPress={this.goToSearch}>
+              add one
+            </Text>
+            <Text>?</Text>
           </View>
         </View>
       )
@@ -94,8 +111,6 @@ export default class GameList extends React.PureComponent {
   }
 
   render() {
-    // logger('GameList render', this.state.games.length)
-
     return (
       <FlatList
         ListHeaderComponent={this._renderHeader}
@@ -118,6 +133,7 @@ GameList.propTypes = {
     navigate: PropTypes.func.isRequired
   }).isRequired,
   games: PropTypes.array.isRequired,
+  listName: PropTypes.string.isRequired,
   refreshing: PropTypes.bool,
   onRefresh: PropTypes.func.isRequired
 }

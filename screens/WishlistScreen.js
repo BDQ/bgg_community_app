@@ -43,9 +43,10 @@ class WishlistListScreen extends React.PureComponent {
       return (
         <GameList
           navigation={{ navigate }}
+          listName="wishlist"
           refreshing={false}
           games={games}
-          onRefresh={this.global.fetchCollection}
+          onRefresh={this.handleRefresh}
         />
       )
     } else {

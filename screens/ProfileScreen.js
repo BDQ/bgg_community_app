@@ -16,8 +16,23 @@ const customStyles = StyleSheet.create({
     paddingVertical: 10
   },
 
-  bottomText: {
+  stateText: {
     paddingVertical: 20
+  },
+
+  bottomText: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    marginBottom: 20
+  },
+
+  buttonContainer: {
+    paddingVertical: 30
+  },
+
+  button: {
+    alignSelf: 'center',
+    width: '100%'
   },
 
   strong: {
@@ -128,15 +143,18 @@ export class ProfileEditScreen extends React.PureComponent {
     }
 
     return (
-      <Text style={[customStyles.bottomText, customStyles.strong]}>{msg}</Text>
+      <Text style={[customStyles.stateText, customStyles.strong]}>{msg}</Text>
     )
   }
 
   _renderState = () => {
     if (this.global.loggedIn) {
       return (
-        <Text style={[customStyles.bottomText, customStyles.strong]}>
-          You are logged in!
+        <Text style={customStyles.stateText}>
+          You are logged in as{' '}
+          <Text style={customStyles.strong}>
+            '{this.global.bggCredentials.username}'
+          </Text>
         </Text>
       )
     } else {
@@ -176,7 +194,7 @@ export class ProfileEditScreen extends React.PureComponent {
       <ScrollView>
         <View style={styles.mainView}>
           <Text style={styles.formHeader}>
-            Welcome to the BGG Community App! (v0.2)
+            Welcome to the BGG Community App! (v0.4)
           </Text>
           <Text>
             This app is an <Text style={customStyles.strong}>unofficial</Text>{' '}
@@ -192,26 +210,20 @@ export class ProfileEditScreen extends React.PureComponent {
             the amazing BoardGameGeek.com site.
           </Text>
           {this._renderState()}
-          <View style={{ alignSelf: 'center' }}>
+          <View style={customStyles.buttonContainer}>
             <Button
               id="submitButton"
               backgroundColor="#03A9F4"
-              style={customStyles.bottomText}
+              style={customStyles.button}
               onPress={
                 this.global.loggedIn ? this.handleLogOut : this.handleLogIn
               }
               loading={this.state.loading}
-              title={this.global.loggedIn ? 'Log Out' : 'Log In'}
+              title={this.global.loggedIn ? 'Sign Out' : 'Sign In'}
             />
           </View>
-          <View
-            style={{
-              alignItems: 'flex-end',
-              justifyContent: 'flex-end',
-              flexGrow: 1,
-              marginBottom: 20
-            }}
-          >
+
+          <View style={customStyles.bottomText}>
             <Text>
               Geekdo, BoardGameGeek, the Geekdo logo, and the BoardGameGeek logo
               are trademarks of BoardGameGeek, LLC.

@@ -90,7 +90,7 @@ export default ({ navigation }) => {
               dateInput: {
                 ...styles.textInput,
                 flex: 1,
-                alignItems: 'left',
+
                 justifyContent: 'center'
               }
             }}

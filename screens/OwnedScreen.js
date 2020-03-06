@@ -67,6 +67,7 @@ class OwnedListScreen extends React.PureComponent {
       return (
         <GameList
           navigation={{ navigate }}
+          listName="collection"
           games={games}
           refreshing={this.state.refreshing}
           onRefresh={this.handleRefresh}
