@@ -83,7 +83,6 @@ export default class GameList extends React.PureComponent {
         </View>
       )
     } else {
-      console.log(this.props.navigation)
       return (
         <View style={styles.emptyView}>
           <View style={{ flexDirection: 'row' }}>

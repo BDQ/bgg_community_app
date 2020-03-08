@@ -12,7 +12,7 @@ import { asyncFetch } from '../../../shared/HTTP'
 
 const colorScheme = Appearance.getColorScheme()
 
-export default ({ navigation }) => {
+export default ({ navigation, route }) => {
   const now = new Date(),
     month = '' + (now.getMonth() + 1),
     day = '' + now.getDate(),
@@ -23,10 +23,8 @@ export default ({ navigation }) => {
   const [location, setLocation] = useState('')
 
   const {
-    state: {
-      params: { game }
-    }
-  } = navigation
+    params: { game }
+  } = route
 
   const save = async () => {
     const body = {
@@ -53,7 +51,7 @@ export default ({ navigation }) => {
 
   useEffect(() => {
     if (data?.playid) {
-      navigation.goBack(null)
+      navigation.goBack()
 
       showMessage({
         message: `You've now played ${game.name} ${data.numplays} time(s).`,

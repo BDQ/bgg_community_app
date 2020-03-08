@@ -1,11 +1,10 @@
 import React from 'reactn'
 import Sentry from 'sentry-expo'
-import { createAppContainer } from 'react-navigation'
-import { createStackNavigator } from 'react-navigation-stack'
 import { View, Text, StyleSheet, Linking, ScrollView } from 'react-native'
 import { Input, Button } from 'react-native-elements'
 import { showMessage } from 'react-native-flash-message'
-
+import SafeAreaView from 'react-native-safe-area-view'
+import { createStackNavigator } from '@react-navigation/stack'
 import { logIn, getUserId } from '../shared/auth'
 
 import styles from '../shared/styles'
@@ -40,7 +39,7 @@ const customStyles = StyleSheet.create({
   }
 })
 
-export class ProfileEditScreen extends React.PureComponent {
+class ProfileScreen extends React.PureComponent {
   state = {
     username: '',
     password: '',
@@ -191,54 +190,55 @@ export class ProfileEditScreen extends React.PureComponent {
 
   render = () => {
     return (
-      <ScrollView>
-        <View style={styles.mainView}>
-          <Text style={styles.formHeader}>
-            Welcome to the BGG Community App! (v0.4)
-          </Text>
-          <Text>
-            This app is an <Text style={customStyles.strong}>unofficial</Text>{' '}
-            <Text
-              style={{ color: 'blue', textDecorationLine: 'underline' }}
-              onPress={() =>
-                Linking.openURL('https://github.com/BDQ/bgg_community_app')
-              }
-            >
-              open source
-            </Text>{' '}
-            community initiative to build and maintain a mobile application for
-            the amazing BoardGameGeek.com site.
-          </Text>
-          {this._renderState()}
-          <View style={customStyles.buttonContainer}>
-            <Button
-              id="submitButton"
-              backgroundColor="#03A9F4"
-              style={customStyles.button}
-              onPress={
-                this.global.loggedIn ? this.handleLogOut : this.handleLogIn
-              }
-              loading={this.state.loading}
-              title={this.global.loggedIn ? 'Sign Out' : 'Sign In'}
-            />
-          </View>
-
-          <View style={customStyles.bottomText}>
-            <Text>
-              Geekdo, BoardGameGeek, the Geekdo logo, and the BoardGameGeek logo
-              are trademarks of BoardGameGeek, LLC.
+      <SafeAreaView style={{ flex: 1, backgroundColor: '#ffffff' }}>
+        <ScrollView>
+          <View style={styles.mainView}>
+            <Text style={styles.formHeader}>
+              Welcome to the BGG Community App! (v0.4)
             </Text>
+            <Text>
+              This app is an <Text style={customStyles.strong}>unofficial</Text>{' '}
+              <Text
+                style={{ color: 'blue', textDecorationLine: 'underline' }}
+                onPress={() =>
+                  Linking.openURL('https://github.com/BDQ/bgg_community_app')
+                }
+              >
+                open source
+              </Text>{' '}
+              community initiative to build and maintain a mobile application
+              for the amazing BoardGameGeek.com site.
+            </Text>
+            {this._renderState()}
+            <View style={customStyles.buttonContainer}>
+              <Button
+                id="submitButton"
+                backgroundColor="#03A9F4"
+                style={customStyles.button}
+                onPress={
+                  this.global.loggedIn ? this.handleLogOut : this.handleLogIn
+                }
+                loading={this.state.loading}
+                title={this.global.loggedIn ? 'Sign Out' : 'Sign In'}
+              />
+            </View>
+
+            <View style={customStyles.bottomText}>
+              <Text>
+                Geekdo, BoardGameGeek, the Geekdo logo, and the BoardGameGeek
+                logo are trademarks of BoardGameGeek, LLC.
+              </Text>
+            </View>
           </View>
-        </View>
-      </ScrollView>
+        </ScrollView>
+      </SafeAreaView>
     )
   }
 }
+const Stack = createStackNavigator()
 
-export default createAppContainer(
-  createStackNavigator({
-    Edit: {
-      screen: ProfileEditScreen
-    }
-  })
+export default () => (
+  <Stack.Navigator>
+    <Stack.Screen name="Account" component={ProfileScreen} />
+  </Stack.Navigator>
 )

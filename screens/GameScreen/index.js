@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   StyleSheet,
   View,
@@ -16,60 +16,54 @@ import AddToButton from './AddToButton'
 import LogPlayButton from './LogPlayButton'
 import { fetchJSON } from '../../shared/HTTP'
 
-export default class GameScreen extends React.Component {
-  state = {
-    game: {},
-    details: null,
-    stats: { item: { rankinfo: [] } },
-    imageModalIndex: null
-  }
+import styles from './styles'
 
-  static navigationOptions = ({ navigation }) => ({
-    title: navigation.state.params.game.name
-  })
+const GameScreen = ({ navigation, route }) => {
+  const { game } = route.params
 
-  static getDerivedStateFromProps(props, state) {
-    const { game } = props.navigation.state.params
+  const [details, setDetails] = useState(null)
+  const [itemStats, setItemStates] = useState({ item: { rankinfo: [] } })
 
-    if (game && game !== state.game) {
-      return { game }
-    }
+  // export default class GameScreen extends React.Component {
+  // state = {
+  //   game: {},
+  //   details: null,
+  //   stats: { item: { rankinfo: [] } },
+  //   imageModalIndex: null
+  // }
 
-    // Return null to indicate no change to state.
-    return null
-  }
+  // static navigationOptions = ({ route }) => ({
+  //   title: route.params.game.name
+  // })
 
-  componentDidMount() {
-    const { game, details } = this.state
+  useEffect(() => {
     const objectId = game.objectId
-
     if (details === null) {
       InteractionManager.runAfterInteractions(async () => {
-        this.getGameStats(objectId)
-        this.getGameDetails(objectId)
+        getGameStats(objectId)
+        getGameDetails(objectId)
       })
     }
-  }
+  }, [game])
 
   getGameDetails = async objectId => {
     const url = `https://api.geekdo.com/api/geekitems?objectid=${objectId}&showcount=10&nosession=1&ajax=1&objecttype=thing`
-    const { item: details } = await fetchJSON(url)
+    const { item } = await fetchJSON(url)
 
-    this.setState({ details })
+    setDetails(item)
   }
 
   getGameStats = async objectId => {
     const url = `https://api.geekdo.com/api/dynamicinfo?objectid=${objectId}&showcount=10&nosession=1&ajax=1&objecttype=thing`
-    const stats = await fetchJSON(url)
-    this.setState({ stats })
+    const newItemStats = await fetchJSON(url)
+
+    setItemStates(newItemStats)
   }
 
   _renderHeaderRank = () => {
     let {
-      stats: {
-        item: { rankinfo: rankInfo }
-      }
-    } = this.state
+      item: { rankinfo: rankInfo }
+    } = itemStats
 
     if (rankInfo && rankInfo.length > 0) {
       return (
@@ -122,12 +116,8 @@ export default class GameScreen extends React.Component {
 
   _renderHeaderName = () => {
     const {
-      game,
-      details,
-      stats: {
-        item: { stats: stats = { average: '0' } }
-      }
-    } = this.state
+      item: { stats: stats = { average: '0' } }
+    } = itemStats
 
     let ratingBGColor, ratingText
 
@@ -136,7 +126,7 @@ export default class GameScreen extends React.Component {
       ratingText = '--'
     } else {
       ratingBGColor = '#5369a2'
-      ratingText = this._trimTo(stats.average, 1)
+      ratingText = _trimTo(stats.average, 1)
     }
 
     return (
@@ -199,10 +189,8 @@ export default class GameScreen extends React.Component {
 
   _renderGameStats = details => {
     const {
-      stats: {
-        item: { polls: polls }
-      }
-    } = this.state
+      item: { polls: polls }
+    } = itemStats
 
     if (polls !== undefined && details !== null) {
       return (
@@ -212,14 +200,13 @@ export default class GameScreen extends React.Component {
               {details.minplayers}-{details.maxplayers} Players
             </Text>
             <Text style={styles.statsText}>
-              Community: {this._playerCounts(polls.userplayers.recommended[0])}{' '}
-              -- Best: {this._playerCounts(polls.userplayers.best[0])}
+              Community: {_playerCounts(polls.userplayers.recommended[0])} --
+              Best: {_playerCounts(polls.userplayers.best[0])}
             </Text>
           </View>
           <View style={styles.statsBox}>
             <Text style={styles.statsTitle}>
-              {this._playerCounts([details.minplaytime, details.maxplaytime])}{' '}
-              Min
+              {_playerCounts([details.minplaytime, details.maxplaytime])} Min
             </Text>
             <Text style={styles.statsText}>Playing Time</Text>
           </View>
@@ -231,7 +218,7 @@ export default class GameScreen extends React.Component {
           </View>
           <View style={[styles.statsBox, styles.statsBoxTop]}>
             <Text style={styles.statsTitle}>
-              Weigth: {this._trimTo(polls.boardgameweight.averageweight, 2)} / 5
+              Weigth: {_trimTo(polls.boardgameweight.averageweight, 2)} / 5
             </Text>
             <Text style={styles.statsText}>Complexity Rating</Text>
           </View>
@@ -261,22 +248,10 @@ export default class GameScreen extends React.Component {
     if (details !== null) {
       return (
         <View>
-          {this._renderCreditLine(
-            'Alternative Names',
-            details.alternatenames,
-            1
-          )}
-          {this._renderCreditLine(
-            'Designer',
-            details.links.boardgamedesigner,
-            2
-          )}
-          {this._renderCreditLine('Artist', details.links.boardgameartist, 2)}
-          {this._renderCreditLine(
-            'Publisher',
-            details.links.boardgamepublisher,
-            2
-          )}
+          {_renderCreditLine('Alternative Names', details.alternatenames, 1)}
+          {_renderCreditLine('Designer', details.links.boardgamedesigner, 2)}
+          {_renderCreditLine('Artist', details.links.boardgameartist, 2)}
+          {_renderCreditLine('Publisher', details.links.boardgamepublisher, 2)}
         </View>
       )
     }
@@ -330,133 +305,49 @@ export default class GameScreen extends React.Component {
     }
   }
 
-  render = () => {
-    const { navigation } = this.props
-    const { params } = navigation.state
+  const images = details ? details.images : {}
 
-    const { game, details } = this.state
-    const images = details ? details.images : {}
-
-    return (
-      <ScrollView>
-        <View style={styles.itemContainer}>
-          <View style={styles.gameHeader}>{this._renderMainImage(images)}</View>
-          {this._renderHeaderRank()}
-          <View style={{ padding: 10, backgroundColor: '#000000' }}>
-            {this._renderHeaderName(params)}
-          </View>
-          <View style={{ padding: 10, backgroundColor: '#E7ECF1' }}>
-            {this._renderGameStats(details)}
-            {this._renderCredits(details)}
-          </View>
-          <View
-            style={{
-              flexDirection: 'row',
-              backgroundColor: '#E7ECF1',
-              paddingBottom: 8,
-              paddingLeft: 8,
-              paddingRight: 8,
-              justifyContent: 'center'
-            }}
-          >
-            <AddToButton navigation={navigation} game={game} />
-            <LogPlayButton navigation={navigation} game={game} />
-          </View>
-          <View style={{ padding: 10, backgroundColor: '#ffffff' }}>
-            <ImageList objectId={game ? game.objectId : null} />
-            {this._renderDescription(details)}
-          </View>
+  return (
+    <ScrollView>
+      <View style={styles.itemContainer}>
+        <View style={styles.gameHeader}>{_renderMainImage(images)}</View>
+        {_renderHeaderRank()}
+        <View style={{ padding: 10, backgroundColor: '#000000' }}>
+          {_renderHeaderName(route.params)}
         </View>
-      </ScrollView>
-    )
-  }
+        <View style={{ padding: 10, backgroundColor: '#E7ECF1' }}>
+          {_renderGameStats(details)}
+          {_renderCredits(details)}
+        </View>
+        <View
+          style={{
+            flexDirection: 'row',
+            backgroundColor: '#E7ECF1',
+            paddingBottom: 8,
+            paddingLeft: 8,
+            paddingRight: 8,
+            justifyContent: 'center'
+          }}
+        >
+          <AddToButton navigation={navigation} game={game} />
+          <LogPlayButton navigation={navigation} game={game} />
+        </View>
+        <View style={{ padding: 10, backgroundColor: '#ffffff' }}>
+          <ImageList objectId={game ? game.objectId : null} />
+          {_renderDescription(details)}
+        </View>
+      </View>
+    </ScrollView>
+  )
 }
+
+export default GameScreen
+
 const htmlStyles = StyleSheet.create({
   p: {
     marginTop: 0,
     marginBottom: 8,
     paddingTop: 0,
     paddingBottom: 0
-  }
-})
-
-const styles = StyleSheet.create({
-  itemContainer: {
-    flex: 1,
-    backgroundColor: '#ffffff'
-  },
-  gameHeader: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#000000',
-    height: 300
-  },
-  headerRatings: {
-    backgroundColor: '#000000',
-    paddingHorizontal: 10,
-    flexDirection: 'row',
-    flexWrap: 'wrap'
-  },
-  headerRatingsText: {
-    paddingTop: 2,
-    color: '#ffffff',
-    height: 20
-  },
-  headerImage: {
-    width: '90%',
-    height: '92%'
-  },
-  headerIcon: {
-    width: 50,
-    height: 50,
-    borderRadius: 50,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 10
-  },
-  statsBoxRight: {
-    borderRightWidth: 1
-  },
-  statsBoxTop: {
-    borderTopWidth: 1
-  },
-  statsBox: {
-    borderColor: '#BEBFC0',
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    paddingTop: 12,
-    width: '50%',
-    height: 65
-  },
-  statsTitle: {
-    fontFamily: 'lato-bold',
-    color: '#282D5C',
-    width: '100%',
-    textAlign: 'center',
-    fontSize: 16
-  },
-  statsText: {
-    fontFamily: 'lato',
-    color: '#004FAE',
-    width: '100%',
-    textAlign: 'center',
-    fontSize: 12
-  },
-  creditText: {
-    fontFamily: 'lato'
-  },
-  creditTitle: {
-    fontFamily: 'lato-bold'
-  },
-  descriptionHeader: {
-    borderBottomColor: '#292e62',
-    borderBottomWidth: 1,
-    marginBottom: 10
-  },
-  descriptionHeaderText: {
-    fontFamily: 'lato-bold',
-    fontSize: 18,
-    color: '#292e62',
-    marginBottom: 10
   }
 })

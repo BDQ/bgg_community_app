@@ -1,10 +1,11 @@
 import React from 'reactn'
 import PropTypes from 'prop-types'
-import { createStackNavigator } from 'react-navigation-stack'
+import { createStackNavigator } from '@react-navigation/stack'
 import { InteractionManager } from 'react-native'
 
 import GameScreen from '../GameScreen'
 import GameAddTo from '../GameAddTo'
+import LogPlay from '../Plays/Log'
 import PreviewFilters from '../../components/PreviewFilters'
 import PreviewList from '../../components/PreviewList'
 import PreviewEdit from '../../components/PreviewEdit'
@@ -96,11 +97,29 @@ PreviewListScreen.propTypes = {
   }).isRequired
 }
 
-export default createStackNavigator({
-  List: { screen: PreviewListScreen, headerBackTitle: 'Back' },
-  Game: { screen: GameScreen },
-  Filter: { screen: PreviewFilters },
-  AddTo: { screen: GameAddTo },
-  EditNotes: { screen: PreviewEdit },
-  Map: { screen: PreviewMap }
-})
+// export default createStackNavigator({
+//   List: { screen: PreviewListScreen, headerBackTitle: 'Back' },
+//   Game: { screen: GameScreen },
+//   Filter: { screen: PreviewFilters },
+//   AddTo: { screen: GameAddTo },
+//   EditNotes: { screen: PreviewEdit },
+//   Map: { screen: PreviewMap }
+// })
+
+const Stack = createStackNavigator()
+
+export default () => (
+  <Stack.Navigator>
+    <Stack.Screen name="List" component={PreviewListScreen} />
+    <Stack.Screen
+      name="Game"
+      component={GameScreen}
+      options={({ route }) => ({ title: route.params.game.name })}
+    />
+    <Stack.Screen name="Filter" component={PreviewFilters} />
+    <Stack.Screen name="AddTo" component={GameAddTo} />
+    <Stack.Screen name="EditNotes" component={PreviewEdit} />
+    <Stack.Screen name="Map" component={PreviewMap} />
+    <Stack.Screen name="LogPlay" component={LogPlay} />
+  </Stack.Navigator>
+)

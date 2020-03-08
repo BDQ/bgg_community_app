@@ -106,7 +106,7 @@ export default class GameSearch extends React.PureComponent {
         const xml = await response.text()
         const doc = new XMLParser().parseFromString(xml)
 
-        let moreDataOnGames = doc.root.children.map(item => {
+        let moreDataOnGames = doc.children.map(item => {
           let objectId = item.attributes.id
           let image = getElementValue(item, 'image')
 

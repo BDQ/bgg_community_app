@@ -8,14 +8,24 @@ Sentry.init({
 
 import React from 'reactn'
 import { View } from 'react-native'
-import { createAppContainer } from 'react-navigation'
-import { createBottomTabNavigator } from 'react-navigation-tabs'
+import { NavigationContainer } from '@react-navigation/native'
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
+import { SafeAreaProvider } from 'react-native-safe-area-context'
+
+import { PREVIEW_SHORT_NAME } from 'react-native-dotenv'
+
 import { AppLoading } from 'expo'
 import * as Font from 'expo-font'
 import FlashMessage from 'react-native-flash-message'
 
-import { Owned, Wishlist, Scan, Preview, Profile, Subscriptions } from './tabs'
+// import { Owned, Wishlist, Scan, Preview, Profile, Subscriptions } from './tabs'
+
 import ProfileScreen from './screens/ProfileScreen'
+import OwnedScreen from './screens/OwnedScreen'
+import WishlistScreen from './screens/WishlistScreen'
+import PreviewScreen from './screens/PreviewScreen'
+
+import Ionicons from 'react-native-vector-icons/Ionicons'
 
 import { setupStore } from './shared/store'
 import { BETA_USERS } from 'react-native-dotenv'
@@ -41,24 +51,65 @@ export default class App extends React.PureComponent {
     const { username } = this.global.bggCredentials
     const { loggedIn } = this.global
 
-    let AppNavigator
+    // let tabsToRender = { Profile }
 
-    let tabsToRender = { Profile }
+    // if (!loggedIn) {
+    // } else {
+    //   tabsToRender = { Owned, Wishlist, Preview, ...tabsToRender }
 
-    if (!loggedIn) {
-    } else {
-      tabsToRender = { Owned, Wishlist, Preview, ...tabsToRender }
+    //   if (betaUsers.includes(username)) {
+    //     tabsToRender = { ...tabsToRender, Scan, Subscriptions }
+    //   }
+    // }
 
-      if (betaUsers.includes(username)) {
-        tabsToRender = { ...tabsToRender, Scan, Subscriptions }
-      }
-    }
+    const Tab = createBottomTabNavigator()
 
-    AppNavigator = createBottomTabNavigator(tabsToRender)
-
-    const App = createAppContainer(AppNavigator)
-
-    return <App />
+    return (
+      <NavigationContainer>
+        <Tab.Navigator backBehavior="none">
+          <Tab.Screen
+            name="Owned"
+            component={OwnedScreen}
+            options={{
+              tabBarLabel: 'Collection',
+              tabBarIcon: ({ color, size }) => (
+                <Ionicons name="ios-albums" size={size} color={color} />
+              )
+            }}
+          />
+          <Tab.Screen
+            name="Wishlist"
+            component={WishlistScreen}
+            options={{
+              tabBarLabel: 'Wishlist',
+              tabBarIcon: ({ color, size }) => (
+                <Ionicons name="ios-list-box" size={size} color={color} />
+              )
+            }}
+          />
+          <Tab.Screen
+            name="Preview"
+            component={PreviewScreen}
+            options={{
+              tabBarLabel: PREVIEW_SHORT_NAME,
+              tabBarIcon: ({ color, size }) => (
+                <Ionicons name="ios-eye" size={size} color={color} />
+              )
+            }}
+          />
+          <Tab.Screen
+            name="Profile"
+            component={ProfileScreen}
+            options={{
+              tabBarLabel: 'Account',
+              tabBarIcon: ({ color, size }) => (
+                <Ionicons name="ios-person" size={size} color={color} />
+              )
+            }}
+          />
+        </Tab.Navigator>
+      </NavigationContainer>
+    )
   }
 
   render() {
@@ -72,10 +123,12 @@ export default class App extends React.PureComponent {
       )
     } else {
       return (
-        <View style={{ flex: 1 }}>
-          {this._renderTabs()}
-          <FlashMessage position="top" />
-        </View>
+        <SafeAreaProvider>
+          <View style={{ flex: 1 }}>
+            {this._renderTabs()}
+            <FlashMessage position="top" />
+          </View>
+        </SafeAreaProvider>
       )
     }
   }

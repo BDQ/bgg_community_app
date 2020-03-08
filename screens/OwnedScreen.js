@@ -1,7 +1,8 @@
-import React from 'reactn'
+import React, { useGlobal, useEffect, useState, useDispatch } from 'reactn'
 import PropTypes from 'prop-types'
 import { View, Text, InteractionManager } from 'react-native'
-import { createStackNavigator } from 'react-navigation-stack'
+import { Button } from 'react-native-elements'
+import { createStackNavigator } from '@react-navigation/stack'
 import { Icon } from 'react-native-elements'
 import ProgressBar from 'react-native-progress/Circle'
 
@@ -9,82 +10,81 @@ import GameScreen from './GameScreen'
 import LogPlay from './Plays/Log'
 import GameSearch from './GameSearch'
 import GameAddTo from './GameAddTo'
+
 import GameList from './../components/GameList'
 
-import styles from '../shared/styles'
+import globalStyles from '../shared/styles'
 import { logger } from '../shared/debug'
 
-class OwnedListScreen extends React.PureComponent {
-  state = {
-    collectionFetched: false,
-    refreshing: false
-  }
+const OwnedListScreen = ({ navigation, route }) => {
+  const [refreshing, setRefreshing] = useState(false)
 
-  static navigationOptions = ({ navigation }) => {
-    return {
-      title: 'My Collection',
-      headerRight: (
-        <Icon
-          name="add-to-list"
-          iconStyle={{ marginRight: 10 }}
-          type="entypo"
+  const [collectionFetchedAt, setCollectionFetchedAt] = useGlobal(
+    'collectionFetchedAt'
+  )
+  const [loggedIn] = useGlobal('loggedIn')
+  const [collection] = useGlobal('collection')
+
+  const fetchCollection = useDispatch('fetchCollection')
+
+  React.useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <Button
+          icon={<Icon name="add-to-list" type="entypo" size={20} />}
           onPress={() => navigation.navigate('Search')}
+          buttonStyle={globalStyles.headerIconButton}
         />
       )
-    }
-  }
-
-  componentDidMount = async () => {
-    InteractionManager.runAfterInteractions(() => {
-      // check if we need to update the users collection
-      const { collectionFetchedAt, loggedIn } = this.global
-
-      const aWeekAgo = new Date().getTime() - 1000 * 60 * 60 * 24 * 7
-
-      if (loggedIn && collectionFetchedAt < aWeekAgo) {
-        this.handleRefresh()
-      } else {
-        logger(
-          'Not logged in, or collection fetched less a week ago, so skipping fetch.'
-        )
-      }
     })
-  }
+  }, [navigation])
+
+  useEffect(() => {
+    // InteractionManager.runAfterInteractions(() => {
+    // check if we need to update the users collection
+
+    const aWeekAgo = new Date().getTime() - 1000 * 60 * 60 * 24 * 7
+
+    if (loggedIn && collectionFetchedAt < aWeekAgo) {
+      handleRefresh()
+    } else {
+      logger(
+        'Not logged in, or collection fetched less a week ago, so skipping fetch.'
+      )
+    }
+    // })
+  })
 
   handleRefresh = async () => {
-    this.setState({ refreshing: true })
-    this.dispatch.fetchCollection()
-    this.setState({ refreshing: false })
+    setRefreshing(true)
+    await fetchCollection()
+    setRefreshing(false)
   }
 
-  render() {
-    if (this.global.collectionFetchedAt > 0) {
-      const { navigate } = this.props.navigation
-      const games = this.global.collection.filter(
-        game => game.status.own === '1'
-      )
+  if (collectionFetchedAt > 0) {
+    const { navigate } = navigation
+    const games = collection.filter(game => game.status.own === '1')
 
-      return (
-        <GameList
-          navigation={{ navigate }}
-          listName="collection"
-          games={games}
-          refreshing={this.state.refreshing}
-          onRefresh={this.handleRefresh}
+    return (
+      <GameList
+        navigation={{ navigate }}
+        listName="collection"
+        games={games}
+        refreshing={refreshing}
+        onRefresh={handleRefresh}
+      />
+    )
+  } else {
+    return (
+      <View style={globalStyles.emptyView}>
+        <ProgressBar
+          indeterminate={true}
+          color="#000000"
+          style={{ marginBottom: 10 }}
         />
-      )
-    } else {
-      return (
-        <View style={styles.emptyView}>
-          <ProgressBar
-            indeterminate={true}
-            color="#000000"
-            style={{ marginBottom: 10 }}
-          />
-          <Text>Loading your collection...</Text>
-        </View>
-      )
-    }
+        <Text>Loading your collection...</Text>
+      </View>
+    )
   }
 }
 
@@ -94,10 +94,18 @@ OwnedListScreen.propTypes = {
   }).isRequired
 }
 
-export default createStackNavigator({
-  List: { screen: OwnedListScreen },
-  Game: { screen: GameScreen },
-  Search: { screen: GameSearch },
-  AddTo: { screen: GameAddTo },
-  LogPlay: { screen: LogPlay }
-})
+const Stack = createStackNavigator()
+
+export default () => (
+  <Stack.Navigator>
+    <Stack.Screen name="Collection" component={OwnedListScreen} />
+    <Stack.Screen
+      name="Game"
+      component={GameScreen}
+      options={({ route }) => ({ title: route.params.game.name })}
+    />
+    <Stack.Screen name="Search" component={GameSearch} />
+    <Stack.Screen name="AddTo" component={GameAddTo} />
+    <Stack.Screen name="LogPlay" component={LogPlay} />
+  </Stack.Navigator>
+)

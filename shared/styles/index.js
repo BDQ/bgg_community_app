@@ -51,5 +51,13 @@ export default StyleSheet.create({
     borderWidth: 1,
     padding: 5,
     height: 40
+  },
+  headerButton: {
+    backgroundColor: '#03A9F4',
+    marginRight: 10
+  },
+  headerIconButton: {
+    backgroundColor: 'transparent',
+    marginRight: 10
   }
 })
