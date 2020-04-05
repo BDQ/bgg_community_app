@@ -4,7 +4,7 @@ import {
   View,
   Text,
   ScrollView,
-  InteractionManager
+  InteractionManager,
 } from 'react-native'
 import { Icon, Button } from 'react-native-elements'
 import HTMLView from 'react-native-htmlview'
@@ -46,14 +46,14 @@ const GameScreen = ({ navigation, route }) => {
     }
   }, [game])
 
-  getGameDetails = async objectId => {
+  getGameDetails = async (objectId) => {
     const url = `https://api.geekdo.com/api/geekitems?objectid=${objectId}&showcount=10&nosession=1&ajax=1&objecttype=thing`
     const { item } = await fetchJSON(url)
 
     setDetails(item)
   }
 
-  getGameStats = async objectId => {
+  getGameStats = async (objectId) => {
     const url = `https://api.geekdo.com/api/dynamicinfo?objectid=${objectId}&showcount=10&nosession=1&ajax=1&objecttype=thing`
     const newItemStats = await fetchJSON(url)
 
@@ -62,7 +62,7 @@ const GameScreen = ({ navigation, route }) => {
 
   _renderHeaderRank = () => {
     let {
-      item: { rankinfo: rankInfo }
+      item: { rankinfo: rankInfo },
     } = itemStats
 
     if (rankInfo && rankInfo.length > 0) {
@@ -75,15 +75,15 @@ const GameScreen = ({ navigation, route }) => {
             size={20}
             containerStyle={{
               marginRight: 4,
-              height: 20
+              height: 20,
             }}
           />
           <Text
             style={[
               styles.headerRatingsText,
               {
-                fontFamily: 'lato-bold'
-              }
+                fontFamily: 'lato-bold',
+              },
             ]}
           >
             RANK:{' '}
@@ -95,8 +95,8 @@ const GameScreen = ({ navigation, route }) => {
                 styles.headerRatingsText,
                 {
                   fontFamily: 'lato',
-                  paddingRight: 8
-                }
+                  paddingRight: 8,
+                },
               ]}
             >
               {rank.veryshortprettyname.toUpperCase().trim()}:{' '}
@@ -116,7 +116,7 @@ const GameScreen = ({ navigation, route }) => {
 
   _renderHeaderName = () => {
     const {
-      item: { stats: stats = { average: '0' } }
+      item: { stats: stats = { average: '0' } },
     } = itemStats
 
     let ratingBGColor, ratingText
@@ -146,7 +146,7 @@ const GameScreen = ({ navigation, route }) => {
               width: '100%',
               fontSize: 18,
               fontFamily: 'lato-bold',
-              color: '#ffffff'
+              color: '#ffffff',
             }}
           >
             {game.name}
@@ -163,7 +163,7 @@ const GameScreen = ({ navigation, route }) => {
               fontSize: 14,
               paddingTop: 2,
               fontFamily: 'lato',
-              color: '#ffffff'
+              color: '#ffffff',
             }}
           >
             {stats.usersrated} Ratings & {stats.numcomments} Comments
@@ -187,9 +187,9 @@ const GameScreen = ({ navigation, route }) => {
     }
   }
 
-  _renderGameStats = details => {
+  _renderGameStats = (details) => {
     const {
-      item: { polls: polls }
+      item: { polls: polls },
     } = itemStats
 
     if (polls !== undefined && details !== null) {
@@ -235,7 +235,7 @@ const GameScreen = ({ navigation, route }) => {
           <View style={{ flex: 1, flexDirection: 'row', flexWrap: 'wrap' }}>
             <Text style={styles.creditText}>
               <Text style={styles.creditTitle}>{name}: </Text>
-              {to_show.map(item => item.name).join(', ')}
+              {to_show.map((item) => item.name).join(', ')}
               {list.length > show ? ` + ${list.length - show} more` : ''}
             </Text>
           </View>
@@ -244,7 +244,7 @@ const GameScreen = ({ navigation, route }) => {
     }
   }
 
-  _renderCredits = details => {
+  _renderCredits = (details) => {
     if (details !== null) {
       return (
         <View>
@@ -257,7 +257,7 @@ const GameScreen = ({ navigation, route }) => {
     }
   }
 
-  _renderDescription = details => {
+  _renderDescription = (details) => {
     if (details !== null) {
       const description = details.description.replace(/\n/g, '')
       return (
@@ -277,14 +277,14 @@ const GameScreen = ({ navigation, route }) => {
     }
   }
 
-  _renderMainImage = images => {
+  _renderMainImage = (images) => {
     if (images.previewthumb) {
       return (
         <ImageProgress
           source={{ uri: images.previewthumb }}
           indicator={ProgressBar}
           indicatorProps={{
-            color: '#ffffff'
+            color: '#ffffff',
           }}
           resizeMode="contain"
           style={styles.headerImage}
@@ -319,16 +319,7 @@ const GameScreen = ({ navigation, route }) => {
           {_renderGameStats(details)}
           {_renderCredits(details)}
         </View>
-        <View
-          style={{
-            flexDirection: 'row',
-            backgroundColor: '#E7ECF1',
-            paddingBottom: 8,
-            paddingLeft: 8,
-            paddingRight: 8,
-            justifyContent: 'center'
-          }}
-        >
+        <View style={styles.headerBottonRow}>
           <AddToButton navigation={navigation} game={game} />
           <LogPlayButton navigation={navigation} game={game} />
         </View>
@@ -348,6 +339,6 @@ const htmlStyles = StyleSheet.create({
     marginTop: 0,
     marginBottom: 8,
     paddingTop: 0,
-    paddingBottom: 0
-  }
+    paddingBottom: 0,
+  },
 })

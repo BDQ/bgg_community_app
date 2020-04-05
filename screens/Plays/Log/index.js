@@ -1,30 +1,41 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useLayoutEffect } from 'react'
 import { useAsync } from 'react-async'
 import { ScrollView, View, Text, TextInput } from 'react-native'
 import { Button } from 'react-native-elements'
 import { showMessage } from 'react-native-flash-message'
-import { Appearance } from 'react-native-appearance'
+// import { Appearance } from 'react-native-appearance'
 import DatePicker from 'react-native-datepicker'
-import styles from '../../../shared/styles'
 
-import LocationPicker from './LocationPicker'
+import styles from '../../../shared/styles'
 import { asyncFetch } from '../../../shared/HTTP'
 
-const colorScheme = Appearance.getColorScheme()
+import LocationPicker from './LocationPicker'
 
-export default ({ navigation, route }) => {
+// const colorScheme = Appearance.getColorScheme()
+
+const nowInYYYYMMDD = () => {
   const now = new Date(),
     month = '' + (now.getMonth() + 1),
     day = '' + now.getDate(),
     year = now.getFullYear()
 
-  const [playDate, setDate] = useState(`${year}-${month}-${day}`)
-  const [quantity, setQty] = useState(1)
-  const [location, setLocation] = useState('')
+  return `${year}-${month}-${day}`
+}
 
+export default ({ navigation, route }) => {
   const {
-    params: { game }
+    params: { game, play },
   } = route
+
+  const [playDate, setDate] = useState(play ? play.playdate : nowInYYYYMMDD())
+  const [quantity, setQty] = useState(play ? play.quantity : 1)
+  const [location, setLocation] = useState(play ? play.location : '')
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      title: play ? 'Edit Play' : 'New Play',
+    })
+  }, [navigation, play])
 
   const save = async () => {
     const body = {
@@ -35,15 +46,18 @@ export default ({ navigation, route }) => {
       objecttype: 'thing',
       objectid: game.objectId,
       action: 'save',
-      ajax: 1 // make sure we json back
+      ajax: 1, // make sure we json back
     }
+
+    // update vs new
+    if (play) body.playid = play.playid
 
     return asyncFetch({
       path: '/geekplay.php',
       args: {
         method: 'POST',
-        body
-      }
+        body,
+      },
     })
   }
 
@@ -51,14 +65,20 @@ export default ({ navigation, route }) => {
 
   useEffect(() => {
     if (data?.playid) {
-      navigation.goBack()
-
-      showMessage({
-        message: `You've now played ${game.name} ${data.numplays} time(s).`,
-        type: 'success',
-        icon: 'auto',
-        duration: 3000
-      })
+      if (play) {
+        navigation.navigate('ListPlays', {
+          game,
+          play: { ...play, location, quantity, playdate: playDate },
+        })
+      } else {
+        navigation.goBack()
+        showMessage({
+          message: `You've now played ${game.name} ${data.numplays} time(s).`,
+          type: 'success',
+          icon: 'auto',
+          duration: 3000,
+        })
+      }
     }
   })
 
@@ -67,7 +87,7 @@ export default ({ navigation, route }) => {
       <View style={styles.mainView}>
         <View
           style={{
-            marginBottom: 15
+            marginBottom: 15,
           }}
         >
           <Text style={styles.formHeader}>When did you play?</Text>
@@ -77,31 +97,31 @@ export default ({ navigation, route }) => {
             confirmBtnText="Confirm"
             cancelBtnText="Cancel"
             showIcon={false}
-            onDateChange={date => setDate(date)}
+            onDateChange={(date) => setDate(date)}
             customStyles={{
-              datePicker: {
-                backgroundColor: colorScheme === 'dark' ? '#222' : 'white'
-              },
-              datePickerCon: {
-                backgroundColor: colorScheme === 'dark' ? '#333' : 'white'
-              },
+              // datePicker: {
+              //   backgroundColor: colorScheme === 'dark' ? '#222' : 'white',
+              //   colorScheme: colorScheme === 'dark' ? 'white' : '#222',
+              // },
+              // datePickerCon: {
+              //   backgroundColor: colorScheme === 'dark' ? '#333' : 'white',
+              // },
               dateInput: {
                 ...styles.textInput,
                 flex: 1,
-
-                justifyContent: 'center'
-              }
+                justifyContent: 'center',
+              },
             }}
           />
         </View>
         <View
           style={{
-            marginBottom: 15
+            marginBottom: 15,
           }}
         >
           <Text style={styles.formHeader}>How many times did you play?</Text>
           <TextInput
-            onChangeText={value => setQty(value)}
+            onChangeText={(value) => setQty(value)}
             value={quantity.toString()}
             keyboardType="numeric"
             style={{ ...styles.textInput, width: 90 }}
@@ -109,16 +129,19 @@ export default ({ navigation, route }) => {
         </View>
         <View
           style={{
-            marginBottom: 15
+            marginBottom: 15,
           }}
         >
           <Text style={styles.formHeader}>Where did you play? [Optional]</Text>
-          <LocationPicker setLocation={setLocation} />
+          <LocationPicker
+            currentLocation={location}
+            setLocation={setLocation}
+          />
         </View>
 
         <View
           style={{
-            marginBottom: 15
+            marginBottom: 15,
           }}
         >
           <Button title="Save" style={styles.formButtons} onPress={run} />

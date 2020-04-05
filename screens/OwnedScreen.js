@@ -8,6 +8,7 @@ import ProgressBar from 'react-native-progress/Circle'
 
 import GameScreen from './GameScreen'
 import LogPlay from './Plays/Log'
+import ListPlays from './Plays/List'
 import GameSearch from './GameSearch'
 import GameAddTo from './GameAddTo'
 
@@ -35,7 +36,7 @@ const OwnedListScreen = ({ navigation, route }) => {
           onPress={() => navigation.navigate('Search')}
           buttonStyle={globalStyles.headerIconButton}
         />
-      )
+      ),
     })
   }, [navigation])
 
@@ -63,7 +64,7 @@ const OwnedListScreen = ({ navigation, route }) => {
 
   if (collectionFetchedAt > 0) {
     const { navigate } = navigation
-    const games = collection.filter(game => game.status.own === '1')
+    const games = collection.filter((game) => game.status.own === '1')
 
     return (
       <GameList
@@ -90,8 +91,8 @@ const OwnedListScreen = ({ navigation, route }) => {
 
 OwnedListScreen.propTypes = {
   navigation: PropTypes.shape({
-    navigate: PropTypes.func.isRequired
-  }).isRequired
+    navigate: PropTypes.func.isRequired,
+  }).isRequired,
 }
 
 const Stack = createStackNavigator()
@@ -107,5 +108,6 @@ export default () => (
     <Stack.Screen name="Search" component={GameSearch} />
     <Stack.Screen name="AddTo" component={GameAddTo} />
     <Stack.Screen name="LogPlay" component={LogPlay} />
+    <Stack.Screen name="ListPlays" component={ListPlays} />
   </Stack.Navigator>
 )

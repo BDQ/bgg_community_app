@@ -6,27 +6,21 @@ import SearchableDropdown from 'react-native-searchable-dropdown'
 import styles from '../../../shared/styles'
 import { asyncFetch } from '../../../shared/HTTP'
 
-export default ({ setLocation }) => {
+export default ({ currentLocation = '', setLocation }) => {
   const { data, error, loading } = useAsync(asyncFetch, {
-    path: '/geekplay.php?action=locations&ajax=1'
+    path: '/geekplay.php?action=locations&ajax=1',
   })
-
-  const [selected, setSelected] = useState()
 
   const locations = data
     ? data.locations.map((loc, i) => ({
-        id: 1,
-        name: loc.location
+        id: i,
+        name: loc.location,
       }))
     : []
 
-  const selectedItems = selected ? [selected] : []
-
   return (
     <SearchableDropdown
-      selectedItems={selectedItems}
-      onItemSelect={item => {
-        setSelected(item) // local state
+      onItemSelect={(item) => {
         setLocation(item.name) // tell parent component
       }}
       itemStyle={{
@@ -35,20 +29,19 @@ export default ({ setLocation }) => {
         backgroundColor: '#ddd',
         borderColor: '#bbb',
         borderWidth: 1,
-        borderRadius: 1
+        borderRadius: 1,
       }}
-      // itemTextStyle={{ color: '#222' }}
       itemsContainerStyle={{ maxHeight: 140 }}
       items={loading ? [] : locations}
       textInputProps={{
-        placeholder: '',
+        value: currentLocation,
         style: {
-          ...styles.textInput
+          ...styles.textInput,
         },
-        onTextChange: text => setLocation(text)
+        onTextChange: (text) => setLocation(text),
       }}
       listProps={{
-        nestedScrollEnabled: true
+        nestedScrollEnabled: true,
       }}
     />
   )

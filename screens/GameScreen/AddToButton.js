@@ -11,7 +11,7 @@ export default class AddToButton extends React.Component {
     objectId: null,
     collectionId: null,
     collectionStatus: {},
-    wishlistPriority: 3
+    wishlistPriority: 3,
   }
 
   componentDidMount = () => {
@@ -20,7 +20,7 @@ export default class AddToButton extends React.Component {
     this.getUserGameDetails(game.objectId)
   }
 
-  getUserGameDetails = async objectId => {
+  getUserGameDetails = async (objectId) => {
     const { userid } = this.global.bggCredentials
 
     const url = `/api/collections?objectid=${objectId}&objecttype=thing&userid=${userid}`
@@ -41,14 +41,14 @@ export default class AddToButton extends React.Component {
       collectionId: collid,
       collectionStatus: status,
       wishlistPriority: wishlistpriority,
-      objectId
+      objectId,
     })
   }
 
   render = () => {
     const {
       game,
-      navigation: { navigate }
+      navigation: { navigate },
     } = this.props
 
     const { collectionId, collectionStatus, wishlistPriority } = this.state
@@ -65,14 +65,16 @@ export default class AddToButton extends React.Component {
       <Button
         buttonStyle={styles.headerButton}
         titleStyle={styles.headerButtonText}
-        containerStyle={styles.headerButtonContainer}
+        containerStyle={{
+          ...styles.headerButtonContainer,
+        }}
         icon={icon}
         onPress={() =>
           navigate('AddTo', {
             game,
             collectionId,
             collectionStatus,
-            wishlistPriority
+            wishlistPriority,
           })
         }
         title={inCollection ? ' In Collection' : ' Add To ...'}
@@ -84,6 +86,6 @@ export default class AddToButton extends React.Component {
 AddToButton.propTypes = {
   game: PropTypes.object.isRequired,
   navigation: PropTypes.shape({
-    navigate: PropTypes.func.isRequired
-  }).isRequired
+    navigate: PropTypes.func.isRequired,
+  }).isRequired,
 }
