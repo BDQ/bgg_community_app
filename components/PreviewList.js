@@ -4,10 +4,9 @@ import {
   SectionList,
   Text,
   RefreshControl,
-  StyleSheet
+  StyleSheet,
 } from 'react-native'
 import { SearchBar, Icon } from 'react-native-elements'
-import ProgressBar from 'react-native-progress/Circle'
 
 import PreviewListCompany from './PreviewListCompany'
 import PreviewListGame from './PreviewListGame'
@@ -15,6 +14,7 @@ import PreviewListGame from './PreviewListGame'
 import sharedStyles from '../shared/styles'
 
 import { PREVIEW_MAP } from 'react-native-dotenv'
+import Spinner from './Spinner'
 
 export default class PreviewList extends React.PureComponent {
   componentDidUpdate(prevProps) {
@@ -24,7 +24,8 @@ export default class PreviewList extends React.PureComponent {
     }
   }
 
-  handleFilterTextChange = str => this.dispatch.previewFiltersSet({ name: str })
+  handleFilterTextChange = (str) =>
+    this.dispatch.previewFiltersSet({ name: str })
 
   _renderHeader = () => {
     const { navigate } = this.props.navigation
@@ -138,7 +139,7 @@ export default class PreviewList extends React.PureComponent {
         <React.Fragment>
           <SectionList
             style={{
-              flex: 1
+              flex: 1,
             }}
             ListHeaderComponent={this._renderHeader}
             renderSectionHeader={({ section }) => {
@@ -155,7 +156,7 @@ export default class PreviewList extends React.PureComponent {
               )
             }}
             sections={sections}
-            keyExtractor={item => item.key || item.objectId}
+            keyExtractor={(item) => item.key || item.objectId}
             renderItem={this._renderItem}
             refreshControl={
               <RefreshControl refreshing={loading} onRefresh={onRefresh} />
@@ -168,7 +169,7 @@ export default class PreviewList extends React.PureComponent {
                 style={{
                   height: 300,
                   alignItems: 'center',
-                  justifyContent: 'center'
+                  justifyContent: 'center',
                 }}
               >
                 {this._renderEmpty()}
@@ -178,23 +179,14 @@ export default class PreviewList extends React.PureComponent {
         </React.Fragment>
       )
     } else {
-      return (
-        <View style={sharedStyles.emptyView}>
-          <ProgressBar
-            indeterminate={true}
-            color="#000000"
-            style={{ marginBottom: 10 }}
-          />
-          {this._renderFirstLoadMessage()}
-        </View>
-      )
+      return <Spinner>{this._renderFirstLoadMessage()}</Spinner>
     }
   }
 }
 
 const styles = StyleSheet.create({
   searchMain: {
-    width: PREVIEW_MAP === 'yes' ? '83%' : '92%'
+    width: PREVIEW_MAP === 'yes' ? '83%' : '92%',
   },
   searchIcons: {
     justifyContent: 'flex-start',
@@ -205,9 +197,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     borderBottomColor: 'black',
     borderBottomWidth: 1,
-    paddingTop: 17
+    paddingTop: 17,
   },
   icon: {
-    backgroundColor: '#393e42'
-  }
+    backgroundColor: '#393e42',
+  },
 })

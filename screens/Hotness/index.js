@@ -2,13 +2,13 @@ import React, { useGlobal, useEffect, useState, useDispatch } from 'reactn'
 import PropTypes from 'prop-types'
 import { View, Text } from 'react-native'
 import { createStackNavigator } from '@react-navigation/stack'
-import ProgressBar from 'react-native-progress/Circle'
 
 import GameScreen from '../GameScreen'
 import GameList from '../../components/GameList'
 
 import globalStyles from '../../shared/styles'
 import FontAwesome from 'react-native-vector-icons/FontAwesome'
+import Spinner from '../../components/Spinner'
 
 const HotnessScreen = ({ navigation }) => {
   const [refreshing, setRefreshing] = useState(false)
@@ -87,14 +87,9 @@ const HotnessScreen = ({ navigation }) => {
     )
   } else {
     return (
-      <View style={globalStyles.emptyView}>
-        <ProgressBar
-          indeterminate={true}
-          color="#000000"
-          style={{ marginBottom: 10 }}
-        />
+      <Spinner>
         <Text>Loading the Hotness...</Text>
-      </View>
+      </Spinner>
     )
   }
 }

@@ -4,17 +4,17 @@ import {
   View,
   Text,
   ScrollView,
+  Image,
   InteractionManager,
 } from 'react-native'
-import { Icon, Button } from 'react-native-elements'
+import { Icon } from 'react-native-elements'
 import HTMLView from 'react-native-htmlview'
-import ImageProgress from 'react-native-image-progress'
-import ProgressBar from 'react-native-progress/Circle'
 
 import ImageList from './ImageList'
 import AddToButton from './AddToButton'
 import LogPlayButton from './LogPlayButton'
 import { fetchJSON } from '../../shared/HTTP'
+import Spinner from '../../components/Spinner'
 
 import styles from './styles'
 
@@ -280,28 +280,14 @@ const GameScreen = ({ navigation, route }) => {
   _renderMainImage = (images) => {
     if (images.previewthumb) {
       return (
-        <ImageProgress
+        <Image
           source={{ uri: images.previewthumb }}
-          indicator={ProgressBar}
-          indicatorProps={{
-            color: '#ffffff',
-          }}
           resizeMode="contain"
           style={styles.headerImage}
         />
       )
     } else {
-      return (
-        <View style={styles.emptyView}>
-          <ProgressBar
-            indeterminate={true}
-            color="#ffffff"
-            style={{ margin: 12 }}
-          />
-
-          <Text style={{ marginTop: 10, color: 'white' }}>Loading...</Text>
-        </View>
-      )
+      return <Spinner />
     }
   }
 

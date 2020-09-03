@@ -1,10 +1,9 @@
 import React, { useGlobal, useEffect, useState, useDispatch } from 'reactn'
 import PropTypes from 'prop-types'
-import { View, Text, InteractionManager } from 'react-native'
+import { View, Text } from 'react-native'
 import { Button } from 'react-native-elements'
 import { createStackNavigator } from '@react-navigation/stack'
 import { Icon } from 'react-native-elements'
-import ProgressBar from 'react-native-progress/Circle'
 
 import GameScreen from './GameScreen'
 import LogPlay from './Plays/Log'
@@ -16,6 +15,7 @@ import GameList from './../components/GameList'
 
 import globalStyles from '../shared/styles'
 import { logger } from '../shared/debug'
+import Spinner from '../components/Spinner'
 
 const OwnedListScreen = ({ navigation, route }) => {
   const [refreshing, setRefreshing] = useState(false)
@@ -56,7 +56,7 @@ const OwnedListScreen = ({ navigation, route }) => {
     // })
   })
 
-  handleRefresh = async () => {
+  const handleRefresh = async () => {
     setRefreshing(true)
     await fetchCollection()
     setRefreshing(false)
@@ -77,14 +77,9 @@ const OwnedListScreen = ({ navigation, route }) => {
     )
   } else {
     return (
-      <View style={globalStyles.emptyView}>
-        <ProgressBar
-          indeterminate={true}
-          color="#000000"
-          style={{ marginBottom: 10 }}
-        />
+      <Spinner>
         <Text>Loading your collection...</Text>
-      </View>
+      </Spinner>
     )
   }
 }

@@ -3,7 +3,6 @@ import PropTypes from 'prop-types'
 import { View, Text } from 'react-native'
 import { createStackNavigator } from '@react-navigation/stack'
 import { Icon } from 'react-native-elements'
-import ProgressBar from 'react-native-progress/Circle'
 
 import GameScreen from './GameScreen'
 import GameSearch from './GameSearch'
@@ -11,7 +10,7 @@ import GameAddTo from './GameAddTo'
 import LogPlay from './Plays/Log'
 import GameList from './../components/GameList'
 
-import styles from '../shared/styles'
+import Spinner from '../components/Spinner'
 
 class WishlistListScreen extends React.PureComponent {
   static navigationOptions = ({ navigation }) => {
@@ -24,7 +23,7 @@ class WishlistListScreen extends React.PureComponent {
           type="entypo"
           onPress={() => navigation.navigate('Search')}
         />
-      )
+      ),
     }
   }
 
@@ -38,7 +37,7 @@ class WishlistListScreen extends React.PureComponent {
     if (this.global.collectionFetchedAt > 0) {
       const { navigate } = this.props.navigation
       const games = this.global.collection.filter(
-        game => game.status.wishlist === '1'
+        (game) => game.status.wishlist === '1'
       )
 
       return (
@@ -52,14 +51,9 @@ class WishlistListScreen extends React.PureComponent {
       )
     } else {
       return (
-        <View style={styles.emptyView}>
-          <ProgressBar
-            indeterminate={true}
-            color="#000000"
-            style={{ marginBottom: 10 }}
-          />
+        <Spinner>
           <Text>Loading your collection...</Text>
-        </View>
+        </Spinner>
       )
     }
   }
@@ -67,8 +61,8 @@ class WishlistListScreen extends React.PureComponent {
 
 WishlistListScreen.propTypes = {
   navigation: PropTypes.shape({
-    navigate: PropTypes.func.isRequired
-  }).isRequired
+    navigate: PropTypes.func.isRequired,
+  }).isRequired,
 }
 
 const Stack = createStackNavigator()
