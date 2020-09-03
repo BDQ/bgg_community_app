@@ -1,6 +1,5 @@
 {
   "expo": {
-    "sdkVersion": "35.0.0",
     "splash": {
       "image": "./assets/splash.png",
       "backgroundColor": "#3F3A60",
@@ -35,13 +34,19 @@
         "backgroundImage": "./assets/BGG-Logo.png"
       },
       "package": "io.bdq.bggca.droid",
-      "permissions": ["ACCESS_FINE_LOCATION", "CAMERA"],
+      "permissions": [
+        "ACCESS_FINE_LOCATION",
+        "CAMERA"
+      ],
       "config": {
         "googleMaps": {
           "apiKey": "tbd"
         }
       }
     },
-    "platforms": ["ios", "android"]
+    "platforms": [
+      "ios",
+      "android"
+    ]
   }
 }
