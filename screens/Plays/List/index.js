@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useLayoutEffect } from 'react'
 import {
-  ScrollView,
   Button,
   View,
   Text,
@@ -13,7 +12,7 @@ import { Icon } from 'react-native-elements'
 import styles from '../../../shared/styles'
 import { asyncFetch } from '../../../shared/HTTP'
 
-renderItem = (item, game, navigate) => {
+const renderItem = (item, game, navigate) => {
   const locationTextStyle = {
     ...playStyles.cellText,
   }
@@ -53,7 +52,7 @@ renderItem = (item, game, navigate) => {
   )
 }
 
-renderFooter = (count, total, page, setPage) => {
+const renderFooter = (count, total, page, setPage) => {
   if (count >= total) return null
 
   return (

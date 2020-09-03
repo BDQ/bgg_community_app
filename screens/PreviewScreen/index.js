@@ -18,12 +18,12 @@ import { points } from '../../shared/points'
 
 class PreviewListScreen extends React.Component {
   state = {
-    userSelections: []
+    userSelections: [],
   }
 
   static navigationOptions = ({ navigation }) => {
     return {
-      title: `${PREVIEW_FULL_NAME} (${navigation.getParam('gameCount', '0')})`
+      title: `${PREVIEW_FULL_NAME} (${navigation.getParam('gameCount', '0')})`,
     }
   }
 
@@ -89,26 +89,17 @@ PreviewListScreen.propTypes = {
     state: PropTypes.shape({
       params: PropTypes.shape({
         reload: PropTypes.func,
-        next: PropTypes.func
-      })
+        next: PropTypes.func,
+      }),
     }),
     navigate: PropTypes.func.isRequired,
-    setParams: PropTypes.func.isRequired
-  }).isRequired
+    setParams: PropTypes.func.isRequired,
+  }).isRequired,
 }
-
-// export default createStackNavigator({
-//   List: { screen: PreviewListScreen, headerBackTitle: 'Back' },
-//   Game: { screen: GameScreen },
-//   Filter: { screen: PreviewFilters },
-//   AddTo: { screen: GameAddTo },
-//   EditNotes: { screen: PreviewEdit },
-//   Map: { screen: PreviewMap }
-// })
 
 const Stack = createStackNavigator()
 
-export default () => (
+const PreviewStack = () => (
   <Stack.Navigator>
     <Stack.Screen name="List" component={PreviewListScreen} />
     <Stack.Screen
@@ -123,3 +114,5 @@ export default () => (
     <Stack.Screen name="LogPlay" component={LogPlay} />
   </Stack.Navigator>
 )
+
+export default PreviewStack

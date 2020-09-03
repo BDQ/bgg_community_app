@@ -9,34 +9,36 @@ import styles from '../shared/styles'
 
 const applyFilter = (str, items) => {
   let re = new RegExp(str, 'gi')
-  return items.filter(item => item.name.match(re))
+  return items.filter((item) => item.name.match(re))
 }
 
 export default class GameList extends React.PureComponent {
   state = {
     games: [],
     loading: false,
-    filterString: ''
+    filterString: '',
   }
 
   static getDerivedStateFromProps(props, state) {
-    if (props.games.map(g => g.objectId) !== state.games.map(g => g.objectId)) {
+    if (
+      props.games.map((g) => g.objectId) !== state.games.map((g) => g.objectId)
+    ) {
       return {
-        games: applyFilter(state.filterString, props.games)
+        games: applyFilter(state.filterString, props.games),
       }
     } else {
       return null
     }
   }
 
-  keyExtractor = item => item.key || item.objectId
+  keyExtractor = (item) => item.key || item.objectId
 
   getItemLayout = (_, index) => {
     const itemHeight = 100
     return {
       length: itemHeight,
       offset: itemHeight * index,
-      index
+      index,
     }
   }
 
@@ -50,18 +52,20 @@ export default class GameList extends React.PureComponent {
         }}
       >
         <GameListItem
+          game={item}
           name={item.name}
           thumbnail={item.thumbnail}
           subtitle={item.subtitle}
+          renderGameListItemDetails={this.props.renderGameListItemDetails}
         />
       </TouchableOpacity>
     )
   }
 
-  filter = str => {
+  filter = (str) => {
     this.setState({
       filterString: str,
-      games: applyFilter(str, this.props.games)
+      games: applyFilter(str, this.props.games),
     })
   }
 
@@ -129,10 +133,11 @@ export default class GameList extends React.PureComponent {
 
 GameList.propTypes = {
   navigation: PropTypes.shape({
-    navigate: PropTypes.func.isRequired
+    navigate: PropTypes.func.isRequired,
   }).isRequired,
   games: PropTypes.array.isRequired,
   listName: PropTypes.string.isRequired,
+  renderGameListItemDetails: PropTypes.func,
   refreshing: PropTypes.bool,
-  onRefresh: PropTypes.func.isRequired
+  onRefresh: PropTypes.func.isRequired,
 }

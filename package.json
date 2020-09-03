@@ -47,7 +47,7 @@
   },
   "scripts": {
     "start": "expo start",
-    "debug": "open \"rndebugger://set-debugger-loc?host=localhost&port=19001\"",
+    "debug": "open \"rndebugger://set-debugger-loc?host=localhost&port=19005\"",
     "test": "npx jest --coverage",
     "watch": "npx jest --watch",
     "buildTestEnv": "npx ./buildEnv.js > .env"

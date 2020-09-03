@@ -8,15 +8,15 @@ import nextFrame from 'next-frame'
 import { logger } from './debug'
 import { getElementValue } from './xml.js'
 
-const timeout = ms => new Promise(res => setTimeout(res, ms))
+const timeout = (ms) => new Promise((res) => setTimeout(res, ms))
 
 export const removeDuplicates = (myArr, prop) => {
   return myArr.filter((obj, pos, arr) => {
-    return arr.map(mapObj => mapObj[prop]).indexOf(obj[prop]) === pos
+    return arr.map((mapObj) => mapObj[prop]).indexOf(obj[prop]) === pos
   })
 }
 
-export const fetchCollectionFromBGG = async username => {
+export const fetchCollectionFromBGG = async (username) => {
   if (!username) {
     return []
   }
@@ -41,7 +41,7 @@ export const fetchCollectionFromBGG = async username => {
       var doc = new XMLParser().parseFromString(xml)
 
       let collection = []
-      for (item of doc.getElementsByTagName('item')) {
+      for (let item of doc.getElementsByTagName('item')) {
         await nextFrame()
 
         const objectId = item.attributes.objectid
@@ -63,7 +63,7 @@ export const fetchCollectionFromBGG = async username => {
           yearpublished,
           image,
           thumbnail,
-          status: statusElement.attributes
+          status: statusElement.attributes,
         })
       }
 
@@ -83,7 +83,7 @@ export const fetchCollectionFromBGG = async username => {
   return []
 }
 
-export const loadCollection = async updatedAt => {
+export const loadCollection = async (updatedAt) => {
   if (!updatedAt) {
     try {
       const value = await AsyncStorage.getItem('@BGGApp:collection')

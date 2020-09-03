@@ -6,6 +6,7 @@ import { getPersisted } from './helpers/persistence'
 import * as collectionReducers from './reducers/collection'
 import * as authReducers from './reducers/authorization'
 import * as previewReducers from './reducers/preview'
+import * as hotnessReducers from './reducers/hotness'
 
 // collection
 addReducers(collectionReducers)
@@ -13,6 +14,8 @@ addReducers(collectionReducers)
 addReducers(authReducers)
 // preview
 addReducers(previewReducers)
+// hotness
+addReducers(hotnessReducers)
 
 export const setupStore = async () => {
   // now we load the data from Async store
@@ -23,6 +26,6 @@ export const setupStore = async () => {
   await setGlobal({
     ...initialState,
     ...persistedAccount,
-    ...persistedCollection
+    ...persistedCollection,
   })
 }

@@ -4,6 +4,16 @@ import { StyleSheet, View, Text } from 'react-native'
 import { Avatar } from 'react-native-elements'
 
 export default class GameListItem extends React.PureComponent {
+  _renderSubTitle() {
+    const { renderGameListItemDetails, game, subtitle } = this.props
+    if (renderGameListItemDetails) {
+      return renderGameListItemDetails(game)
+    }
+
+    if (subtitle) {
+      return <Text style={{ fontFamily: 'lato-bold' }}>{subtitle}</Text>
+    }
+  }
   render() {
     return (
       <View style={styles.itemContainer}>
@@ -16,7 +26,7 @@ export default class GameListItem extends React.PureComponent {
           <Text numberOfLines={1} style={styles.gameName}>
             {this.props.name}
           </Text>
-          <Text style={{ fontFamily: 'lato-bold' }}>{this.props.subtitle}</Text>
+          {this._renderSubTitle()}
         </View>
       </View>
     )
@@ -24,9 +34,11 @@ export default class GameListItem extends React.PureComponent {
 }
 
 GameListItem.propTypes = {
+  game: PropTypes.any,
   thumbnail: PropTypes.string.isRequired,
   name: PropTypes.string.isRequired,
-  subtitle: PropTypes.string.isRequired
+  subtitle: PropTypes.string,
+  renderGameListItemDetails: PropTypes.func,
 }
 
 const styles = StyleSheet.create({
@@ -36,18 +48,18 @@ const styles = StyleSheet.create({
     borderTopWidth: 2,
     borderColor: '#dde4eb',
     flexDirection: 'row',
-    backgroundColor: '#ffffff'
+    backgroundColor: '#ffffff',
   },
   gameDetails: {
     paddingLeft: 10,
     flex: 1,
-    flexDirection: 'column'
+    flexDirection: 'column',
   },
   gameName: {
     fontFamily: 'lato-bold',
-    fontSize: 20
+    fontSize: 20,
   },
   text: {
-    color: '#132d3d'
-  }
+    color: '#132d3d',
+  },
 })

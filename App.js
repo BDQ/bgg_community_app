@@ -3,7 +3,7 @@ import * as Sentry from 'sentry-expo'
 Sentry.init({
   dsn: SENTRY_CONFIG,
   enableInExpoDevelopment: false,
-  debug: true
+  debug: true,
 })
 
 import React from 'reactn'
@@ -12,38 +12,36 @@ import { NavigationContainer } from '@react-navigation/native'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 
-import { PREVIEW_SHORT_NAME } from 'react-native-dotenv'
+import { PREVIEW_SHORT_NAME, BETA_USERS } from 'react-native-dotenv'
+const betaUsers = BETA_USERS.split(',')
 
 import { AppLoading } from 'expo'
 import * as Font from 'expo-font'
 import FlashMessage from 'react-native-flash-message'
 
-// import { Owned, Wishlist, Scan, Preview, Profile, Subscriptions } from './tabs'
-
 import ProfileScreen from './screens/ProfileScreen'
 import OwnedScreen from './screens/OwnedScreen'
 import WishlistScreen from './screens/WishlistScreen'
 import PreviewScreen from './screens/PreviewScreen'
+import HotnessScreen from './screens/Hotness'
 
 import Ionicons from 'react-native-vector-icons/Ionicons'
 
 import { setupStore } from './shared/store'
-import { BETA_USERS } from 'react-native-dotenv'
 
-const betaUsers = BETA_USERS.split(',')
 //bootstraps ReactN global store
 setupStore()
 
 export default class App extends React.PureComponent {
   state = {
-    isReady: false
+    isReady: false,
   }
 
   _cacheResourcesAsync = async () => {
     // load fonts, so they are ready for rendering
     await Font.loadAsync({
       lato: require('./assets/Lato-Regular.ttf'),
-      'lato-bold': require('./assets/Lato-Bold.ttf')
+      'lato-bold': require('./assets/Lato-Bold.ttf'),
     })
   }
 
@@ -51,22 +49,21 @@ export default class App extends React.PureComponent {
     const { username } = this.global.bggCredentials
     const { loggedIn } = this.global
 
-    // let tabsToRender = { Profile }
-
-    // if (!loggedIn) {
-    // } else {
-    //   tabsToRender = { Owned, Wishlist, Preview, ...tabsToRender }
-
-    //   if (betaUsers.includes(username)) {
-    //     tabsToRender = { ...tabsToRender, Scan, Subscriptions }
-    //   }
-    // }
-
     const Tab = createBottomTabNavigator()
 
     return (
       <NavigationContainer>
         <Tab.Navigator backBehavior="none">
+          <Tab.Screen
+            name="Hotness"
+            component={HotnessScreen}
+            options={{
+              tabBarLabel: 'Hotness',
+              tabBarIcon: ({ color, size }) => (
+                <Ionicons name="ios-flame" size={size} color={color} />
+              ),
+            }}
+          />
           <Tab.Screen
             name="Owned"
             component={OwnedScreen}
@@ -74,7 +71,7 @@ export default class App extends React.PureComponent {
               tabBarLabel: 'Collection',
               tabBarIcon: ({ color, size }) => (
                 <Ionicons name="ios-albums" size={size} color={color} />
-              )
+              ),
             }}
           />
           <Tab.Screen
@@ -84,17 +81,17 @@ export default class App extends React.PureComponent {
               tabBarLabel: 'Wishlist',
               tabBarIcon: ({ color, size }) => (
                 <Ionicons name="ios-list-box" size={size} color={color} />
-              )
+              ),
             }}
           />
           <Tab.Screen
             name="Preview"
             component={PreviewScreen}
             options={{
-              tabBarLabel: PREVIEW_SHORT_NAME,
+              tabBarLabel: PREVIEW_SHORT_NAME.toString(),
               tabBarIcon: ({ color, size }) => (
                 <Ionicons name="ios-eye" size={size} color={color} />
-              )
+              ),
             }}
           />
           <Tab.Screen
@@ -104,7 +101,7 @@ export default class App extends React.PureComponent {
               tabBarLabel: 'Account',
               tabBarIcon: ({ color, size }) => (
                 <Ionicons name="ios-person" size={size} color={color} />
-              )
+              ),
             }}
           />
         </Tab.Navigator>
