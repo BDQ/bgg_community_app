@@ -27,7 +27,6 @@ const LogPlay = ({ navigation, route }) => {
   const [playDate, setDate] = useState(
     play ? new Date(play.playdate) : new Date()
   )
-  console.log(playDate, play)
   const [quantity, setQty] = useState(play ? play.quantity : 1)
   const [location, setLocation] = useState(play ? play.location : '')
 
@@ -48,8 +47,6 @@ const LogPlay = ({ navigation, route }) => {
       action: 'save',
       ajax: 1, // make sure we json back
     }
-
-    console.log(body)
 
     // update vs new
     if (play) body.playid = play.playid
