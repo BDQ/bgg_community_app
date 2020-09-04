@@ -1,6 +1,6 @@
 import React, { useGlobal, useEffect, useState, useDispatch } from 'reactn'
 import PropTypes from 'prop-types'
-import { View, Text } from 'react-native'
+import { Text } from 'react-native'
 import { Button } from 'react-native-elements'
 import { createStackNavigator } from '@react-navigation/stack'
 import { Icon } from 'react-native-elements'
@@ -17,12 +17,10 @@ import globalStyles from '../shared/styles'
 import { logger } from '../shared/debug'
 import Spinner from '../components/Spinner'
 
-const OwnedListScreen = ({ navigation, route }) => {
+const OwnedListScreen = ({ navigation }) => {
   const [refreshing, setRefreshing] = useState(false)
 
-  const [collectionFetchedAt, setCollectionFetchedAt] = useGlobal(
-    'collectionFetchedAt'
-  )
+  const [collectionFetchedAt] = useGlobal('collectionFetchedAt')
   const [loggedIn] = useGlobal('loggedIn')
   const [collection] = useGlobal('collection')
 

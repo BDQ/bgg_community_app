@@ -3,31 +3,31 @@ import { useAsync } from 'react-async'
 import { ScrollView, View, Text, TextInput } from 'react-native'
 import { Button } from 'react-native-elements'
 import { showMessage } from 'react-native-flash-message'
-// import { Appearance } from 'react-native-appearance'
-import DatePicker from 'react-native-datepicker'
+import DateTimePicker from '@react-native-community/datetimepicker'
 
 import styles from '../../../shared/styles'
 import { asyncFetch } from '../../../shared/HTTP'
 
 import LocationPicker from './LocationPicker'
+import { navigationType } from '../../../shared/propTypes'
 
-// const colorScheme = Appearance.getColorScheme()
-
-const nowInYYYYMMDD = () => {
-  const now = new Date(),
-    month = '' + (now.getMonth() + 1),
-    day = '' + now.getDate(),
-    year = now.getFullYear()
+const dateInYYYYMMDD = (date) => {
+  const month = ('0' + (date.getMonth() + 1)).slice(-2),
+    day = ('0' + date.getDate()).slice(-2),
+    year = date.getFullYear()
 
   return `${year}-${month}-${day}`
 }
 
-export default ({ navigation, route }) => {
+const LogPlay = ({ navigation, route }) => {
   const {
     params: { game, play },
   } = route
 
-  const [playDate, setDate] = useState(play ? play.playdate : nowInYYYYMMDD())
+  const [playDate, setDate] = useState(
+    play ? new Date(play.playdate) : new Date()
+  )
+  console.log(playDate, play)
   const [quantity, setQty] = useState(play ? play.quantity : 1)
   const [location, setLocation] = useState(play ? play.location : '')
 
@@ -41,13 +41,15 @@ export default ({ navigation, route }) => {
     const body = {
       quantity,
       location,
-      playdate: playDate,
+      playdate: dateInYYYYMMDD(playDate),
       date: new Date(),
       objecttype: 'thing',
       objectid: game.objectId,
       action: 'save',
       ajax: 1, // make sure we json back
     }
+
+    console.log(body)
 
     // update vs new
     if (play) body.playid = play.playid
@@ -61,14 +63,19 @@ export default ({ navigation, route }) => {
     })
   }
 
-  const { isPending, error, run, data } = useAsync({ deferFn: save })
+  const { error, run, data } = useAsync({ deferFn: save })
 
   useEffect(() => {
     if (data?.playid) {
       if (play) {
         navigation.navigate('ListPlays', {
           game,
-          play: { ...play, location, quantity, playdate: playDate },
+          play: {
+            ...play,
+            location,
+            quantity,
+            playdate: dateInYYYYMMDD(playDate),
+          },
         })
       } else {
         navigation.goBack()
@@ -91,27 +98,24 @@ export default ({ navigation, route }) => {
           }}
         >
           <Text style={styles.formHeader}>When did you play?</Text>
-          <DatePicker
-            date={playDate}
+          <DateTimePicker
+            value={playDate}
             mode="date"
-            confirmBtnText="Confirm"
-            cancelBtnText="Cancel"
-            showIcon={false}
-            onDateChange={(date) => setDate(date)}
-            customStyles={{
-              // datePicker: {
-              //   backgroundColor: colorScheme === 'dark' ? '#222' : 'white',
-              //   colorScheme: colorScheme === 'dark' ? 'white' : '#222',
-              // },
-              // datePickerCon: {
-              //   backgroundColor: colorScheme === 'dark' ? '#333' : 'white',
-              // },
-              dateInput: {
-                ...styles.textInput,
-                flex: 1,
-                justifyContent: 'center',
-              },
+            maximumDate={new Date()}
+            onChange={(_, date) => {
+              setDate(date)
             }}
+          />
+        </View>
+        <View
+          style={{
+            marginBottom: 15,
+          }}
+        >
+          <Text style={styles.formHeader}>Where did you play? [Optional]</Text>
+          <LocationPicker
+            currentLocation={location}
+            setLocation={setLocation}
           />
         </View>
         <View
@@ -132,18 +136,6 @@ export default ({ navigation, route }) => {
             marginBottom: 15,
           }}
         >
-          <Text style={styles.formHeader}>Where did you play? [Optional]</Text>
-          <LocationPicker
-            currentLocation={location}
-            setLocation={setLocation}
-          />
-        </View>
-
-        <View
-          style={{
-            marginBottom: 15,
-          }}
-        >
           <Button title="Save" style={styles.formButtons} onPress={run} />
 
           {error && <Text>{error.message}</Text>}
@@ -152,3 +144,9 @@ export default ({ navigation, route }) => {
     </ScrollView>
   )
 }
+
+LogPlay.propTypes = {
+  ...navigationType,
+}
+
+export default LogPlay

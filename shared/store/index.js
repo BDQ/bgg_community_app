@@ -5,6 +5,7 @@ import { getPersisted } from './helpers/persistence'
 
 import * as collectionReducers from './reducers/collection'
 import * as authReducers from './reducers/authorization'
+import * as gameReducers from './reducers/game'
 import * as previewReducers from './reducers/preview'
 import * as hotnessReducers from './reducers/hotness'
 
@@ -12,6 +13,8 @@ import * as hotnessReducers from './reducers/hotness'
 addReducers(collectionReducers)
 // auth
 addReducers(authReducers)
+// game
+addReducers(gameReducers)
 // preview
 addReducers(previewReducers)
 // hotness

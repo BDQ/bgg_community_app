@@ -2,12 +2,12 @@ import React, { useGlobal, useEffect, useState, useDispatch } from 'reactn'
 import PropTypes from 'prop-types'
 import { View, Text } from 'react-native'
 import { createStackNavigator } from '@react-navigation/stack'
+import FontAwesome from 'react-native-vector-icons/FontAwesome'
 
 import GameScreen from '../GameScreen'
+import LogPlay from '../Plays/Log'
+import ListPlays from '../Plays/List'
 import GameList from '../../components/GameList'
-
-import globalStyles from '../../shared/styles'
-import FontAwesome from 'react-native-vector-icons/FontAwesome'
 import Spinner from '../../components/Spinner'
 
 const HotnessScreen = ({ navigation }) => {
@@ -110,6 +110,8 @@ const HotnessStack = () => (
       component={GameScreen}
       options={({ route }) => ({ title: route.params.game.name })}
     />
+    <Stack.Screen name="LogPlay" component={LogPlay} />
+    <Stack.Screen name="ListPlays" component={ListPlays} />
   </Stack.Navigator>
 )
 

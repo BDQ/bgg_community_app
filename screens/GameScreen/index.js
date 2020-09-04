@@ -1,65 +1,34 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useGlobal, useDispatch } from 'reactn'
 import PropTypes from 'prop-types'
-import {
-  StyleSheet,
-  View,
-  Text,
-  ScrollView,
-  Image,
-  InteractionManager,
-} from 'react-native'
+import { StyleSheet, View, Text, ScrollView, Image } from 'react-native'
 import { Icon } from 'react-native-elements'
 import HTMLView from 'react-native-htmlview'
 
 import ImageList from './ImageList'
 import AddToButton from './AddToButton'
 import LogPlayButton from './LogPlayButton'
-import { fetchJSON } from '../../shared/HTTP'
 import Spinner from '../../components/Spinner'
 
 import styles from './styles'
+import { navigationType, routeType } from '../../shared/propTypes'
 
 const GameScreen = ({ navigation, route }) => {
   const { game } = route.params
 
-  const [details, setDetails] = useState(null)
-  const [itemStats, setItemStates] = useState({ item: { rankinfo: [] } })
+  const objectId = game.objectId
+  const [
+    { details, itemStats, images } = {
+      details: null,
+      images: null,
+      itemStats: { item: { rankinfo: [] } },
+    },
+  ] = useGlobal(`game/${objectId}`)
 
-  // export default class GameScreen extends React.Component {
-  // state = {
-  //   game: {},
-  //   details: null,
-  //   stats: { item: { rankinfo: [] } },
-  //   imageModalIndex: null
-  // }
-
-  // static navigationOptions = ({ route }) => ({
-  //   title: route.params.game.name
-  // })
+  const getGameDetails = useDispatch('getGameDetails')
 
   useEffect(() => {
-    const objectId = game.objectId
-    if (details === null) {
-      InteractionManager.runAfterInteractions(async () => {
-        getGameStats(objectId)
-        getGameDetails(objectId)
-      })
-    }
+    if (details === null) getGameDetails(objectId)
   }, [game])
-
-  const getGameDetails = async (objectId) => {
-    const url = `https://api.geekdo.com/api/geekitems?objectid=${objectId}&showcount=10&nosession=1&ajax=1&objecttype=thing`
-    const { item } = await fetchJSON(url)
-
-    setDetails(item)
-  }
-
-  const getGameStats = async (objectId) => {
-    const url = `https://api.geekdo.com/api/dynamicinfo?objectid=${objectId}&showcount=10&nosession=1&ajax=1&objecttype=thing`
-    const newItemStats = await fetchJSON(url)
-
-    setItemStates(newItemStats)
-  }
 
   const _renderHeaderRank = () => {
     let {
@@ -293,12 +262,12 @@ const GameScreen = ({ navigation, route }) => {
     }
   }
 
-  const images = details ? details.images : {}
+  const coverImages = details ? details.images : {}
 
   return (
     <ScrollView>
       <View style={styles.itemContainer}>
-        <View style={styles.gameHeader}>{_renderMainImage(images)}</View>
+        <View style={styles.gameHeader}>{_renderMainImage(coverImages)}</View>
         {_renderHeaderRank()}
         <View style={{ padding: 10, backgroundColor: '#000000' }}>
           {_renderHeaderName(route.params)}
@@ -312,7 +281,7 @@ const GameScreen = ({ navigation, route }) => {
           <LogPlayButton navigation={navigation} game={game} />
         </View>
         <View style={{ padding: 10, backgroundColor: '#ffffff' }}>
-          <ImageList objectId={game ? game.objectId : null} />
+          <ImageList images={images} />
           {_renderDescription(details)}
         </View>
       </View>
@@ -323,17 +292,12 @@ const GameScreen = ({ navigation, route }) => {
 export default GameScreen
 
 GameScreen.propTypes = {
-  navigation: PropTypes.shape({
-    setParams: PropTypes.func.isRequired,
-    navigate: PropTypes.func.isRequired,
-  }).isRequired,
-  route: PropTypes.shape({
-    params: PropTypes.shape({
-      game: PropTypes.object.isRequired,
-      collectionId: PropTypes.string,
-      collectionStatus: PropTypes.any,
-      wishlistPriority: PropTypes.number,
-    }),
+  ...navigationType,
+  ...routeType({
+    game: PropTypes.object.isRequired,
+    collectionId: PropTypes.string,
+    collectionStatus: PropTypes.any,
+    wishlistPriority: PropTypes.number,
   }),
 }
 
