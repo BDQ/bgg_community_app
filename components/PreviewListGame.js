@@ -21,7 +21,7 @@ export default class PreviewListGame extends React.PureComponent {
       } catch (e) {
         // parse failed, so user must have a string note - convert to our format
         notes = {
-          text: userSelection.notes
+          text: userSelection.notes,
         }
       }
     }
@@ -30,25 +30,25 @@ export default class PreviewListGame extends React.PureComponent {
       thumbed: false,
       userSelection: {
         notes,
-        priority: userSelection.priority
-      }
+        priority: userSelection.priority,
+      },
     }
   }
 
-  persistUserSelection = async changedAttrs => {
+  persistUserSelection = async (changedAttrs) => {
     const { itemId } = this.props
     const { userSelection } = this.state
 
     // merge state and changes together
 
     this.setState({
-      userSelection: { ...userSelection, ...changedAttrs }
+      userSelection: { ...userSelection, ...changedAttrs },
     })
 
     const data = {
       ...userSelection,
       ...changedAttrs,
-      itemid: itemId
+      itemid: itemId,
     }
     // convert notes to json so we can store extra stuff in there
     const { notes } = data
@@ -57,7 +57,7 @@ export default class PreviewListGame extends React.PureComponent {
     // update the user selection on BGG for this item
     const { message } = await fetchJSON('/api/geekpreviewitems/userinfo', {
       method: 'POST',
-      body: { data }
+      body: { data },
     })
 
     // check for success
@@ -70,12 +70,12 @@ export default class PreviewListGame extends React.PureComponent {
   handleSwipeSeen = () => {
     const { userSelection } = this.state
     const {
-      notes: { seen: oldSeen }
+      notes: { seen: oldSeen },
     } = userSelection
 
     const seen = !oldSeen
     const notes = Object.assign({}, userSelection.notes, {
-      seen
+      seen,
     })
 
     this.persistUserSelection({ notes })
@@ -89,16 +89,16 @@ export default class PreviewListGame extends React.PureComponent {
   //   this.persistUserSelection({ seen })
   // }
 
-  handleSwipePriority = async priority => {
+  handleSwipePriority = async (priority) => {
     this.persistUserSelection({ priority })
   }
 
   _renderPriority = () => {
     const {
-      userSelection: { priority }
+      userSelection: { priority },
     } = this.state
 
-    const { name, color } = priorities.find(p => p.id === priority) || {}
+    const { name, color } = priorities.find((p) => p.id === priority) || {}
 
     return color ? (
       <Badge
@@ -108,7 +108,7 @@ export default class PreviewListGame extends React.PureComponent {
             style={{
               paddingHorizontal: 10,
               color: '#ffffff',
-              fontSize: 9
+              fontSize: 9,
             }}
           >
             {name}
@@ -122,7 +122,7 @@ export default class PreviewListGame extends React.PureComponent {
 
   _renderPurchase = () => {
     const {
-      game: { purchase }
+      game: { purchase },
     } = this.props
 
     return purchase ? (
@@ -133,7 +133,7 @@ export default class PreviewListGame extends React.PureComponent {
             style={{
               paddingHorizontal: 10,
               color: '#ffffff',
-              fontSize: 9
+              fontSize: 9,
             }}
           >
             Preordered
@@ -158,18 +158,18 @@ export default class PreviewListGame extends React.PureComponent {
     )
   }
 
-  _renderSwipeButton = text => (
+  _renderSwipeButton = (text) => (
     <View
       style={{
         flex: 1,
-        justifyContent: 'center'
+        justifyContent: 'center',
       }}
     >
       <Text
         style={{
           textAlign: 'center',
           color: '#ffffff',
-          fontSize: 13
+          fontSize: 13,
         }}
       >
         {text}
@@ -188,7 +188,7 @@ export default class PreviewListGame extends React.PureComponent {
     ) : null
   }
 
-  _renderExpandedNotes = notes => {
+  _renderExpandedNotes = (notes) => {
     return notes ? (
       <View>
         <Text style={styles.minorLabel}>Notes</Text>
@@ -202,15 +202,15 @@ export default class PreviewListGame extends React.PureComponent {
   _renderExpanded = () => {
     const {
       userSelection: {
-        notes: { text }
-      }
+        notes: { text },
+      },
     } = this.state
 
     const {
       game: {
         preorder: [firstPreorder],
-        purchase
-      }
+        purchase,
+      },
     } = this.props
 
     let maxHeight = 0
@@ -229,17 +229,17 @@ export default class PreviewListGame extends React.PureComponent {
   render() {
     const { navigate } = this.props.navigation
     const {
-      userSelection: { priority, notes }
+      userSelection: { priority, notes },
     } = this.state
     const { seen } = notes
 
     // Right swipe buttons (Priority - Must Have, Not Interested, etc)
     const swipeoutRight = priorities
-      .filter(p => ![-1, priority].includes(p.id))
+      .filter((p) => ![-1, priority].includes(p.id))
       .map(({ id, color, name }) => ({
         component: this._renderSwipeButton(name.replace(' ', '\n')),
         backgroundColor: color,
-        onPress: () => this.handleSwipePriority(id)
+        onPress: () => this.handleSwipePriority(id),
       }))
 
     // Left swipe buttons (Seen, Thumbs Up, Notes)
@@ -249,8 +249,8 @@ export default class PreviewListGame extends React.PureComponent {
         onPress: () =>
           navigate('EditNotes', {
             notes,
-            persistUserSelection: this.persistUserSelection
-          })
+            persistUserSelection: this.persistUserSelection,
+          }),
       },
       // {
       //   component: this._renderSwipeButton('Thumbs Up'),
@@ -260,8 +260,8 @@ export default class PreviewListGame extends React.PureComponent {
       {
         component: this._renderSwipeButton(seen ? 'Not\nSeen' : 'Seen'),
         type: 'primary',
-        onPress: this.handleSwipeSeen
-      }
+        onPress: this.handleSwipeSeen,
+      },
     ]
 
     return (
@@ -314,11 +314,11 @@ export default class PreviewListGame extends React.PureComponent {
 
 PreviewListGame.propTypes = {
   navigation: PropTypes.shape({
-    navigate: PropTypes.func.isRequired
+    navigate: PropTypes.func.isRequired,
   }).isRequired,
   userSelection: PropTypes.shape({
     notes: PropTypes.string.isRequired,
-    priority: PropTypes.number.isRequired
+    priority: PropTypes.number,
   }),
   thumbnail: PropTypes.string.isRequired,
   name: PropTypes.string.isRequired,
@@ -326,7 +326,7 @@ PreviewListGame.propTypes = {
   status: PropTypes.string.isRequired,
   game: PropTypes.any.isRequired,
   price: PropTypes.number,
-  priceCurrency: PropTypes.string
+  priceCurrency: PropTypes.string,
 }
 
 const styles = StyleSheet.create({
@@ -334,34 +334,34 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderColor: '#dde4eb',
     backgroundColor: '#ffffff',
-    padding: 10
+    padding: 10,
   },
   mainContainer: {
     height: 80,
-    flexDirection: 'row'
+    flexDirection: 'row',
   },
   gameDetails: {
     paddingLeft: 10,
     flex: 1,
-    flexDirection: 'column'
+    flexDirection: 'column',
   },
   gameName: {
     fontFamily: 'lato-bold',
-    fontSize: 20
+    fontSize: 20,
   },
   minor: {
     flex: 1,
-    flexDirection: 'column'
+    flexDirection: 'column',
   },
   minorLabel: {
     marginTop: 5,
     color: '#646465',
-    fontSize: 12
+    fontSize: 12,
   },
   minorValue: {
-    fontSize: 14
+    fontSize: 14,
   },
   priority: {
-    paddingTop: 5
-  }
+    paddingTop: 5,
+  },
 })

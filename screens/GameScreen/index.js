@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import PropTypes from 'prop-types'
 import {
   StyleSheet,
   View,
@@ -46,21 +47,21 @@ const GameScreen = ({ navigation, route }) => {
     }
   }, [game])
 
-  getGameDetails = async (objectId) => {
+  const getGameDetails = async (objectId) => {
     const url = `https://api.geekdo.com/api/geekitems?objectid=${objectId}&showcount=10&nosession=1&ajax=1&objecttype=thing`
     const { item } = await fetchJSON(url)
 
     setDetails(item)
   }
 
-  getGameStats = async (objectId) => {
+  const getGameStats = async (objectId) => {
     const url = `https://api.geekdo.com/api/dynamicinfo?objectid=${objectId}&showcount=10&nosession=1&ajax=1&objecttype=thing`
     const newItemStats = await fetchJSON(url)
 
     setItemStates(newItemStats)
   }
 
-  _renderHeaderRank = () => {
+  const _renderHeaderRank = () => {
     let {
       item: { rankinfo: rankInfo },
     } = itemStats
@@ -114,7 +115,7 @@ const GameScreen = ({ navigation, route }) => {
     }
   }
 
-  _renderHeaderName = () => {
+  const _renderHeaderName = () => {
     const {
       item: { stats: stats = { average: '0' } },
     } = itemStats
@@ -173,9 +174,10 @@ const GameScreen = ({ navigation, route }) => {
     )
   }
 
-  _trimTo = (decimal, places) => (Math.round(decimal * 10) / 10).toFixed(places)
+  const _trimTo = (decimal, places) =>
+    (Math.round(decimal * 10) / 10).toFixed(places)
 
-  _playerCounts = (cnts = {}) => {
+  const _playerCounts = (cnts = {}) => {
     if (cnts.min !== undefined) {
       cnts = [cnts.min, cnts.max]
     }
@@ -187,7 +189,7 @@ const GameScreen = ({ navigation, route }) => {
     }
   }
 
-  _renderGameStats = (details) => {
+  const _renderGameStats = (details) => {
     const {
       item: { polls: polls },
     } = itemStats
@@ -227,7 +229,7 @@ const GameScreen = ({ navigation, route }) => {
     }
   }
 
-  _renderCreditLine = (name, list, show) => {
+  const _renderCreditLine = (name, list, show) => {
     if (list.length > 0) {
       let to_show = list.slice(0, show)
       return (
@@ -244,7 +246,7 @@ const GameScreen = ({ navigation, route }) => {
     }
   }
 
-  _renderCredits = (details) => {
+  const _renderCredits = (details) => {
     if (details !== null) {
       return (
         <View>
@@ -257,7 +259,7 @@ const GameScreen = ({ navigation, route }) => {
     }
   }
 
-  _renderDescription = (details) => {
+  const _renderDescription = (details) => {
     if (details !== null) {
       const description = details.description.replace(/\n/g, '')
       return (
@@ -277,7 +279,7 @@ const GameScreen = ({ navigation, route }) => {
     }
   }
 
-  _renderMainImage = (images) => {
+  const _renderMainImage = (images) => {
     if (images.previewthumb) {
       return (
         <Image
@@ -319,6 +321,21 @@ const GameScreen = ({ navigation, route }) => {
 }
 
 export default GameScreen
+
+GameScreen.propTypes = {
+  navigation: PropTypes.shape({
+    setParams: PropTypes.func.isRequired,
+    navigate: PropTypes.func.isRequired,
+  }).isRequired,
+  route: PropTypes.shape({
+    params: PropTypes.shape({
+      game: PropTypes.object.isRequired,
+      collectionId: PropTypes.string,
+      collectionStatus: PropTypes.any,
+      wishlistPriority: PropTypes.number,
+    }),
+  }),
+}
 
 const htmlStyles = StyleSheet.create({
   p: {
