@@ -4,6 +4,7 @@ export const navigationType = {
   navigation: PropTypes.shape({
     setParams: PropTypes.func.isRequired,
     navigate: PropTypes.func.isRequired,
+    setOptions: PropTypes.func,
   }).isRequired,
 }
 

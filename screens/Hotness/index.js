@@ -8,6 +8,7 @@ import GameScreen from '../GameScreen'
 import LogPlay from '../Plays/Log'
 import ListPlays from '../Plays/List'
 import GameList from '../../components/GameList'
+import GameAddTo from '../GameAddTo'
 import Spinner from '../../components/Spinner'
 
 const HotnessScreen = ({ navigation }) => {
@@ -110,6 +111,7 @@ const HotnessStack = () => (
       component={GameScreen}
       options={({ route }) => ({ title: route.params.game.name })}
     />
+    <Stack.Screen name="AddTo" component={GameAddTo} />
     <Stack.Screen name="LogPlay" component={LogPlay} />
     <Stack.Screen name="ListPlays" component={ListPlays} />
   </Stack.Navigator>

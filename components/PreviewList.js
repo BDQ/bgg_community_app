@@ -152,6 +152,7 @@ export default class PreviewList extends React.PureComponent {
                   locationParsed={section.locationParsed}
                   games={section.games}
                   navigation={navigation}
+                  showMap={PREVIEW_MAP}
                 />
               )
             }}

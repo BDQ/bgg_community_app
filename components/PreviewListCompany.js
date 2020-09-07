@@ -5,20 +5,22 @@ import { Avatar, Icon } from 'react-native-elements'
 
 export default class PreviewListCompany extends React.PureComponent {
   _renderMapButton = () => {
-    const { locationParsed, games } = this.props
+    const { locationParsed, games, showMap } = this.props
     const { navigate } = this.props.navigation
+
+    if (showMap !== 'yes') return null
 
     if (locationParsed) {
       return (
         <Icon
           name="map"
           iconStyle={{
-            backgroundColor: 'transparent'
+            backgroundColor: 'transparent',
           }}
           containerStyle={{
             marginRight: 10,
             marginTop: 10,
-            backgroundColor: 'transparent'
+            backgroundColor: 'transparent',
           }}
           type="entypo"
           onPress={() =>
@@ -28,9 +30,9 @@ export default class PreviewListCompany extends React.PureComponent {
                   name: this.props.name,
                   key: Math.random(),
                   locationParsed,
-                  games
-                }
-              ]
+                  games,
+                },
+              ],
             })
           }
         />
@@ -78,9 +80,10 @@ PreviewListCompany.propTypes = {
   location: PropTypes.string,
   locationParsed: PropTypes.string,
   games: PropTypes.any,
+  showMap: PropTypes.string.isRequired,
   navigation: PropTypes.shape({
-    navigate: PropTypes.func.isRequired
-  }).isRequired
+    navigate: PropTypes.func.isRequired,
+  }).isRequired,
 }
 
 const styles = StyleSheet.create({
@@ -91,23 +94,23 @@ const styles = StyleSheet.create({
     borderBottomWidth: 2,
     borderColor: '#e8ad4b',
     flexDirection: 'row',
-    backgroundColor: '#f3f3f4'
+    backgroundColor: '#f3f3f4',
   },
   companyDetails: {
     paddingLeft: 10,
     flex: 1,
-    flexDirection: 'column'
+    flexDirection: 'column',
   },
   companyName: {
     fontFamily: 'lato-bold',
     fontSize: 20,
-    color: '#292e62'
+    color: '#292e62',
   },
   location: {
     fontFamily: 'lato-bold',
-    color: '#161616'
+    color: '#161616',
   },
   text: {
-    color: '#132d3d'
-  }
+    color: '#132d3d',
+  },
 })

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import { View, Text, TouchableOpacity, ScrollView } from 'react-native'
 import { TagSelect } from 'react-native-tag-select'
 import { Button } from 'react-native-elements'
-import { Dropdown } from 'react-native-material-dropdown'
+import { Picker } from '@react-native-community/picker'
 
 import styles from '../shared/styles'
 import {
@@ -11,30 +11,30 @@ import {
   halls,
   seen,
   availability,
-  preorders
+  preorders,
 } from '../shared/data'
 
 const sortingOptions = [
   {
     label: 'Publisher, Game',
-    value: 'publisherGame'
+    value: 'publisherGame',
   },
   {
     label: 'Location, Publisher, Game',
-    value: 'locationPublisherGame'
-  }
+    value: 'locationPublisherGame',
+  },
 ]
 const filterTextOnOptions = [
   { label: 'Game Name', value: 'game' },
   {
     label: 'Publisher Name',
-    value: 'publisher'
+    value: 'publisher',
   },
-  { label: 'Notes', value: 'note' }
+  { label: 'Notes', value: 'note' },
 ]
 
 export default class PreviewFilters extends React.Component {
-  toggleTags = name => {
+  toggleTags = (name) => {
     const select = this[name]
 
     const value = select.props.data.reduce((ids, item) => {
@@ -60,16 +60,16 @@ export default class PreviewFilters extends React.Component {
             title="Apply"
             buttonStyle={{
               marginRight: 10,
-              backgroundColor: '#03A9F4'
+              backgroundColor: '#03A9F4',
             }}
           />
-        )
+        ),
       }
   }
 
   componentDidMount() {
     this.props.navigation.setParams({
-      applyFilters: this.applyFilters
+      applyFilters: this.applyFilters,
     })
   }
 
@@ -78,16 +78,16 @@ export default class PreviewFilters extends React.Component {
 
     const filterValues = {
       priorities: this.priorityTags.itemsSelected.map(
-        priority => priority.id || priority
+        (priority) => priority.id || priority
       ),
-      halls: this.hallTags.itemsSelected.map(hall => hall.id || hall),
-      seen: this.seenTags.itemsSelected.map(seen => seen.id || seen),
+      halls: this.hallTags.itemsSelected.map((hall) => hall.id || hall),
+      seen: this.seenTags.itemsSelected.map((seen) => seen.id || seen),
       availability: this.availabilityTags.itemsSelected.map(
-        avail => avail.id || avail
+        (avail) => avail.id || avail
       ),
-      preorders: this.preorderTags.itemsSelected.map(t => t.id || t),
+      preorders: this.preorderTags.itemsSelected.map((t) => t.id || t),
       filterTextOn: this.filterTextOnRef.value(),
-      sortBy: this.sortByRef.value()
+      sortBy: this.sortByRef.value(),
     }
 
     // update main filters
@@ -98,19 +98,19 @@ export default class PreviewFilters extends React.Component {
 
   reset = () => {
     this.priorityTags.setState({
-      value: []
+      value: [],
     })
     this.hallTags.setState({
-      value: []
+      value: [],
     })
     this.seenTags.setState({
-      value: []
+      value: [],
     })
     this.availabilityTags.setState({
-      value: []
+      value: [],
     })
     this.preorderTags.setState({
-      value: []
+      value: [],
     })
 
     this.filterTextOnRef.setState({ value: filterTextOnOptions[0].value })
@@ -127,22 +127,22 @@ export default class PreviewFilters extends React.Component {
           <View
             style={{
               marginLeft: 5,
-              marginBottom: 15
+              marginBottom: 15,
             }}
           >
-            <Dropdown
+            {/* <Dropdown
               dropdownOffset={{
                 top: 8,
-                left: 0
+                left: 0,
               }}
               itemCount={sortingOptions.length}
-              ref={ref => {
+              ref={(ref) => {
                 this.sortByRef = ref
               }}
               data={sortingOptions}
               value={filters.sortBy || ''} //use local state if set, otherwise global
-              onChangeText={sortBy => this.setState({ sortBy })}
-            />
+              onChangeText={(sortBy) => this.setState({ sortBy })}
+            /> */}
           </View>
 
           <Text style={styles.formHeader}>Filters</Text>
@@ -151,22 +151,22 @@ export default class PreviewFilters extends React.Component {
             <View
               style={{
                 marginLeft: 5,
-                marginBottom: 15
+                marginBottom: 15,
               }}
             >
-              <Dropdown
+              {/* <Dropdown
                 dropdownOffset={{
                   top: 8,
-                  left: 0
+                  left: 0,
                 }}
                 itemCount={filterTextOnOptions.length}
-                ref={ref => {
+                ref={(ref) => {
                   this.filterTextOnRef = ref
                 }}
                 data={filterTextOnOptions}
                 value={filters.filterTextOn || ''} //use local state if set, otherwise global
-                onChangeText={filterTextOn => this.setState({ filterTextOn })}
-              />
+                onChangeText={(filterTextOn) => this.setState({ filterTextOn })}
+              /> */}
             </View>
 
             <TouchableOpacity
@@ -180,13 +180,13 @@ export default class PreviewFilters extends React.Component {
             <View
               style={{
                 marginLeft: 5,
-                marginBottom: 15
+                marginBottom: 15,
               }}
             >
               <TagSelect
                 labelAttr="name"
                 value={filters.priorities}
-                ref={tag => {
+                ref={(tag) => {
                   this.priorityTags = tag
                 }}
                 data={priorities}
@@ -207,13 +207,13 @@ export default class PreviewFilters extends React.Component {
               <View
                 style={{
                   marginLeft: 5,
-                  marginBottom: 15
+                  marginBottom: 15,
                 }}
               >
                 <TagSelect
                   labelAttr="name"
                   value={filters.halls}
-                  ref={tag => {
+                  ref={(tag) => {
                     this.hallTags = tag
                   }}
                   data={halls}
@@ -233,13 +233,13 @@ export default class PreviewFilters extends React.Component {
             <View
               style={{
                 marginLeft: 5,
-                marginBottom: 15
+                marginBottom: 15,
               }}
             >
               <TagSelect
                 labelAttr="name"
                 value={filters.seen}
-                ref={tag => {
+                ref={(tag) => {
                   this.seenTags = tag
                 }}
                 data={seen}
@@ -259,7 +259,7 @@ export default class PreviewFilters extends React.Component {
               <TagSelect
                 labelAttr="name"
                 value={filters.availability}
-                ref={tag => {
+                ref={(tag) => {
                   this.availabilityTags = tag
                 }}
                 data={availability}
@@ -278,7 +278,7 @@ export default class PreviewFilters extends React.Component {
               <TagSelect
                 labelAttr="name"
                 value={filters.preorders}
-                ref={tag => {
+                ref={(tag) => {
                   this.preorderTags = tag
                 }}
                 data={preorders}
@@ -293,7 +293,7 @@ export default class PreviewFilters extends React.Component {
                 title="Apply Filters"
                 onPress={this.applyFilters}
                 containerStyle={{
-                  marginHorizontal: 10
+                  marginHorizontal: 10,
                 }}
               />
               <Button style={{ flex: 1 }} title="Reset" onPress={this.reset} />
@@ -309,6 +309,6 @@ PreviewFilters.propTypes = {
   navigation: PropTypes.shape({
     pop: PropTypes.func.isRequired,
     setParams: PropTypes.func.isRequired,
-    navigate: PropTypes.func.isRequired
-  }).isRequired
+    navigate: PropTypes.func.isRequired,
+  }).isRequired,
 }
