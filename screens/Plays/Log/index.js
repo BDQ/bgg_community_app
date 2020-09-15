@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useLayoutEffect } from 'react'
 import { useAsync } from 'react-async'
-import { ScrollView, View, Text, TextInput } from 'react-native'
+import { ScrollView, View, Text, TextInput, Platform } from 'react-native'
 import { Button } from 'react-native-elements'
 import { showMessage } from 'react-native-flash-message'
 import DateTimePicker from '@react-native-community/datetimepicker'
@@ -27,6 +27,7 @@ const LogPlay = ({ navigation, route }) => {
   const [playDate, setDate] = useState(
     play ? new Date(play.playdate) : new Date()
   )
+  const [showDatePicker, setShowDatePicker] = useState(false)
   const [quantity, setQty] = useState(play ? play.quantity : 1)
   const [location, setLocation] = useState(play ? play.location : '')
 
@@ -86,6 +87,22 @@ const LogPlay = ({ navigation, route }) => {
     }
   })
 
+  const _renderDatePicker = () => {
+    if (showDatePicker)
+      return (
+        <DateTimePicker
+          value={playDate}
+          mode="date"
+          maximumDate={new Date()}
+          display={'calendar'}
+          onChange={(_, date) => {
+            if (Platform.OS === 'android') setShowDatePicker(false)
+            if (date) setDate(date)
+          }}
+        />
+      )
+  }
+
   return (
     <ScrollView keyboardShouldPersistTaps="handled">
       <View style={styles.mainView}>
@@ -95,14 +112,14 @@ const LogPlay = ({ navigation, route }) => {
           }}
         >
           <Text style={styles.formHeader}>When did you play?</Text>
-          <DateTimePicker
-            value={playDate}
-            mode="date"
-            maximumDate={new Date()}
-            onChange={(_, date) => {
-              setDate(date)
-            }}
-          />
+          <Text
+            style={{ ...styles.textInput, paddingTop: 10 }}
+            onPress={() => setShowDatePicker(!showDatePicker)}
+            numberOfLines={1}
+          >
+            {dateInYYYYMMDD(playDate)}
+          </Text>
+          {_renderDatePicker()}
         </View>
         <View
           style={{

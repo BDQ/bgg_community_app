@@ -26,22 +26,21 @@ const OwnedListScreen = ({ navigation }) => {
 
   const fetchCollection = useDispatch('fetchCollection')
 
+  const headerRight = () => (
+    <Button
+      icon={<Icon name="add-to-list" type="entypo" size={20} />}
+      onPress={() => navigation.navigate('Search')}
+      buttonStyle={globalStyles.headerIconButton}
+    />
+  )
+
   React.useLayoutEffect(() => {
     navigation.setOptions({
-      headerRight: () => (
-        <Button
-          icon={<Icon name="add-to-list" type="entypo" size={20} />}
-          onPress={() => navigation.navigate('Search')}
-          buttonStyle={globalStyles.headerIconButton}
-        />
-      ),
+      headerRight,
     })
   }, [navigation])
 
   useEffect(() => {
-    // InteractionManager.runAfterInteractions(() => {
-    // check if we need to update the users collection
-
     const aWeekAgo = new Date().getTime() - 1000 * 60 * 60 * 24 * 7
 
     if (loggedIn && collectionFetchedAt < aWeekAgo) {
@@ -51,7 +50,6 @@ const OwnedListScreen = ({ navigation }) => {
         'Not logged in, or collection fetched less a week ago, so skipping fetch.'
       )
     }
-    // })
   })
 
   const handleRefresh = async () => {

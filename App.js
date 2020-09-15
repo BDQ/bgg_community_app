@@ -46,10 +46,16 @@ export default class App extends React.PureComponent {
   }
 
   _renderTabs = () => {
-    const { username } = this.global.bggCredentials
     const { loggedIn } = this.global
 
     const Tab = createBottomTabNavigator()
+
+    if (!loggedIn)
+      return (
+        <NavigationContainer>
+          <ProfileScreen />
+        </NavigationContainer>
+      )
 
     return (
       <NavigationContainer>

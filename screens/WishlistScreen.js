@@ -1,6 +1,6 @@
-import React from 'reactn'
+import React, { useEffect, useState, useGlobal, useDispatch } from 'reactn'
 import PropTypes from 'prop-types'
-import { View, Text } from 'react-native'
+import { Text } from 'react-native'
 import { createStackNavigator } from '@react-navigation/stack'
 import { Icon } from 'react-native-elements'
 
@@ -11,51 +11,68 @@ import LogPlay from './Plays/Log'
 import GameList from './../components/GameList'
 
 import Spinner from '../components/Spinner'
+import { logger } from '../shared/debug'
 
-class WishlistListScreen extends React.PureComponent {
-  static navigationOptions = ({ navigation }) => {
-    return {
-      title: 'My Wishlist',
-      headerRight: (
-        <Icon
-          name="add-to-list"
-          iconStyle={{ marginRight: 10 }}
-          type="entypo"
-          onPress={() => navigation.navigate('Search')}
-        />
-      ),
-    }
-  }
+const WishlistListScreen = ({ navigation }) => {
+  const [refreshing, setRefreshing] = useState(false)
 
-  handleRefresh = async () => {
-    this.setState({ refreshing: true })
-    this.dispatch.fetchCollection()
-    this.setState({ refreshing: false })
-  }
+  const [collectionFetchedAt] = useGlobal('collectionFetchedAt')
+  const [loggedIn] = useGlobal('loggedIn')
+  const [collection] = useGlobal('collection')
 
-  render = () => {
-    if (this.global.collectionFetchedAt > 0) {
-      const { navigate } = this.props.navigation
-      const games = this.global.collection.filter(
-        (game) => game.status.wishlist === '1'
-      )
+  const fetchCollection = useDispatch('fetchCollection')
 
-      return (
-        <GameList
-          navigation={{ navigate }}
-          listName="wishlist"
-          refreshing={false}
-          games={games}
-          onRefresh={this.handleRefresh}
-        />
-      )
+  const headerRight = () => (
+    <Icon
+      name="add-to-list"
+      iconStyle={{ marginRight: 10 }}
+      type="entypo"
+      onPress={() => navigation.navigate('Search')}
+    />
+  )
+
+  React.useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight,
+    })
+  }, [navigation])
+
+  useEffect(() => {
+    const aWeekAgo = new Date().getTime() - 1000 * 60 * 60 * 24 * 7
+
+    if (loggedIn && collectionFetchedAt < aWeekAgo) {
+      handleRefresh()
     } else {
-      return (
-        <Spinner>
-          <Text>Loading your collection...</Text>
-        </Spinner>
+      logger(
+        'Not logged in, or collection fetched less a week ago, so skipping fetch.'
       )
     }
+  })
+
+  const handleRefresh = async () => {
+    setRefreshing(true)
+    await fetchCollection()
+    setRefreshing(false)
+  }
+  if (collectionFetchedAt > 0) {
+    const { navigate } = navigation
+    const games = collection.filter((game) => game.status.wishlist === '1')
+
+    return (
+      <GameList
+        navigation={{ navigate }}
+        listName="wishlist"
+        games={games}
+        refreshing={refreshing}
+        onRefresh={handleRefresh}
+      />
+    )
+  } else {
+    return (
+      <Spinner>
+        <Text>Loading your collection...</Text>
+      </Spinner>
+    )
   }
 }
 

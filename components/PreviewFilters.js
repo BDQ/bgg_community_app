@@ -2,10 +2,10 @@ import React from 'reactn'
 import PropTypes from 'prop-types'
 import { View, Text, TouchableOpacity, ScrollView } from 'react-native'
 import { TagSelect } from 'react-native-tag-select'
-import { Button } from 'react-native-elements'
-import { Picker } from '@react-native-community/picker'
+import { CheckBox, Button } from 'react-native-elements'
 
-import styles from '../shared/styles'
+import globalStyles from '../shared/styles'
+
 import {
   priorities,
   halls,
@@ -34,6 +34,11 @@ const filterTextOnOptions = [
 ]
 
 export default class PreviewFilters extends React.Component {
+  state = {
+    sortBy: 'publisherGame',
+    filterTextOn: 'game',
+  }
+
   toggleTags = (name) => {
     const select = this[name]
 
@@ -86,8 +91,8 @@ export default class PreviewFilters extends React.Component {
         (avail) => avail.id || avail
       ),
       preorders: this.preorderTags.itemsSelected.map((t) => t.id || t),
-      filterTextOn: this.filterTextOnRef.value(),
-      sortBy: this.sortByRef.value(),
+      filterTextOn: this.state.filterTextOn,
+      sortBy: this.state.sortBy,
     }
 
     // update main filters
@@ -113,8 +118,10 @@ export default class PreviewFilters extends React.Component {
       value: [],
     })
 
-    this.filterTextOnRef.setState({ value: filterTextOnOptions[0].value })
-    this.sortByRef.setState({ value: sortingOptions[0].value })
+    this.setState({
+      filterTextOn: filterTextOnOptions[0].value,
+      sortBy: sortingOptions[0].value,
+    })
   }
 
   render = () => {
@@ -122,59 +129,78 @@ export default class PreviewFilters extends React.Component {
 
     return (
       <ScrollView>
-        <View style={styles.mainView}>
-          <Text style={styles.formHeader}>Sorting</Text>
+        <View style={globalStyles.mainView}>
+          <View
+            style={{
+              borderBottomWidth: 1,
+              borderBottomColor: '#666666',
+            }}
+          >
+            <Text style={{ ...globalStyles.formHeader, paddingBottom: 5 }}>
+              Sorting
+            </Text>
+          </View>
+
           <View
             style={{
               marginLeft: 5,
               marginBottom: 15,
             }}
           >
-            {/* <Dropdown
-              dropdownOffset={{
-                top: 8,
-                left: 0,
-              }}
-              itemCount={sortingOptions.length}
-              ref={(ref) => {
-                this.sortByRef = ref
-              }}
-              data={sortingOptions}
-              value={filters.sortBy || ''} //use local state if set, otherwise global
-              onChangeText={(sortBy) => this.setState({ sortBy })}
-            /> */}
+            {sortingOptions.map(({ label, value }) => {
+              return (
+                <CheckBox
+                  key={value}
+                  containerStyle={globalStyles.checkboxContainer}
+                  title={label}
+                  checkedIcon="dot-circle-o"
+                  uncheckedIcon="circle-o"
+                  onPress={() => this.setState({ sortBy: value })}
+                  checked={this.state.sortBy === value}
+                />
+              )
+            })}
+          </View>
+          <View
+            style={{
+              borderBottomWidth: 1,
+              borderBottomColor: '#666666',
+            }}
+          >
+            <Text style={{ ...globalStyles.formHeader, paddingBottom: 5 }}>
+              Filters
+            </Text>
           </View>
 
-          <Text style={styles.formHeader}>Filters</Text>
           <View style={{ padding: 5 }}>
-            <Text style={styles.formLabel}>Text Filter on:</Text>
+            <Text style={globalStyles.formLabel}>Text Filter on:</Text>
             <View
               style={{
                 marginLeft: 5,
                 marginBottom: 15,
               }}
             >
-              {/* <Dropdown
-                dropdownOffset={{
-                  top: 8,
-                  left: 0,
-                }}
-                itemCount={filterTextOnOptions.length}
-                ref={(ref) => {
-                  this.filterTextOnRef = ref
-                }}
-                data={filterTextOnOptions}
-                value={filters.filterTextOn || ''} //use local state if set, otherwise global
-                onChangeText={(filterTextOn) => this.setState({ filterTextOn })}
-              /> */}
+              {filterTextOnOptions.map(({ label, value }) => {
+                return (
+                  <CheckBox
+                    key={value}
+                    containerStyle={globalStyles.checkboxContainer}
+                    title={label}
+                    checkedIcon="dot-circle-o"
+                    uncheckedIcon="circle-o"
+                    onPress={() => this.setState({ filterTextOn: value })}
+                    checked={this.state.filterTextOn === value}
+                  />
+                )
+              })}
             </View>
 
             <TouchableOpacity
-              style={styles.formLabelRow}
+              style={globalStyles.formLabelRow}
               onPress={() => this.toggleTags('priorityTags')}
             >
-              <Text style={styles.formLabel}>Priority</Text>
-              <Text style={styles.toggleText}>(Toggle All)</Text>
+              <Text style={globalStyles.formLabel}>Priority</Text>
+              <Text style={globalStyles.toggleText}>(Toggle All)</Text>
             </TouchableOpacity>
 
             <View
@@ -197,11 +223,11 @@ export default class PreviewFilters extends React.Component {
             {/* change diplay to block when we want to show halls */}
             <View style={{ display: 'none' }}>
               <TouchableOpacity
-                style={styles.formLabelRow}
+                style={globalStyles.formLabelRow}
                 onPress={() => this.toggleTags('hallTags')}
               >
-                <Text style={styles.formLabel}>Halls</Text>
-                <Text style={styles.toggleText}>(Toggle All)</Text>
+                <Text style={globalStyles.formLabel}>Halls</Text>
+                <Text style={globalStyles.toggleText}>(Toggle All)</Text>
               </TouchableOpacity>
 
               <View
@@ -223,11 +249,11 @@ export default class PreviewFilters extends React.Component {
             </View>
 
             <TouchableOpacity
-              style={styles.formLabelRow}
+              style={globalStyles.formLabelRow}
               onPress={() => this.toggleTags('seenTags')}
             >
-              <Text style={styles.formLabel}>Viewed</Text>
-              <Text style={styles.toggleText}>(Toggle All)</Text>
+              <Text style={globalStyles.formLabel}>Viewed</Text>
+              <Text style={globalStyles.toggleText}>(Toggle All)</Text>
             </TouchableOpacity>
 
             <View
@@ -248,11 +274,11 @@ export default class PreviewFilters extends React.Component {
             </View>
 
             <TouchableOpacity
-              style={styles.formLabelRow}
+              style={globalStyles.formLabelRow}
               onPress={() => this.toggleTags('availabilityTags')}
             >
-              <Text style={styles.formLabel}>Availability</Text>
-              <Text style={styles.toggleText}>(Toggle All)</Text>
+              <Text style={globalStyles.formLabel}>Availability</Text>
+              <Text style={globalStyles.toggleText}>(Toggle All)</Text>
             </TouchableOpacity>
 
             <View style={{ marginLeft: 5 }}>
@@ -268,10 +294,10 @@ export default class PreviewFilters extends React.Component {
             </View>
 
             <TouchableOpacity
-              style={styles.formLabelRow}
+              style={globalStyles.formLabelRow}
               onPress={() => this.toggleTags('preorderTags')}
             >
-              <Text style={styles.formLabel}>Preordered</Text>
+              <Text style={globalStyles.formLabel}>Preordered</Text>
             </TouchableOpacity>
 
             <View style={{ marginLeft: 5 }}>
@@ -286,7 +312,7 @@ export default class PreviewFilters extends React.Component {
               />
             </View>
 
-            <View style={styles.formButtons}>
+            <View style={globalStyles.formButtons}>
               <Button
                 style={{ flex: 1 }}
                 backgroundColor="#03A9F4"

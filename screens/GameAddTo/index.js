@@ -73,17 +73,16 @@ const GameAddTo = ({ navigation, route }) => {
     }
   }
 
+  const headerRight = () => (
+    <Button
+      small
+      onPress={save}
+      title="Save"
+      buttonStyle={globalStyles.headerButton}
+    />
+  )
   React.useLayoutEffect(() => {
-    navigation.setOptions({
-      headerRight: () => (
-        <Button
-          small
-          onPress={save}
-          title="Save"
-          buttonStyle={globalStyles.headerButton}
-        />
-      ),
-    })
+    navigation.setOptions({ headerRight })
   }, [navigation, save])
 
   const collectionStates = [

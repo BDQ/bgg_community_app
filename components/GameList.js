@@ -74,6 +74,8 @@ export default class GameList extends React.PureComponent {
   clearFilter = () => this.filter('')
 
   _renderEmpty = () => {
+    const { renderEmptyView } = this.props
+
     if (this.state.filterString !== '') {
       return (
         <View style={styles.emptyView}>
@@ -87,17 +89,21 @@ export default class GameList extends React.PureComponent {
         </View>
       )
     } else {
-      return (
-        <View style={styles.emptyView}>
-          <View style={{ flexDirection: 'row' }}>
-            <Text>Your {this.props.listName} is empty, why not </Text>
-            <Text style={styles.link} onPress={this.goToSearch}>
-              add one
-            </Text>
-            <Text>?</Text>
+      if (renderEmptyView) {
+        return renderEmptyView()
+      } else {
+        return (
+          <View style={styles.emptyView}>
+            <View style={{ flexDirection: 'row' }}>
+              <Text>Your {this.props.listName} is empty, why not </Text>
+              <Text style={styles.link} onPress={this.goToSearch}>
+                add one
+              </Text>
+              <Text>?</Text>
+            </View>
           </View>
-        </View>
-      )
+        )
+      }
     }
   }
 
@@ -138,6 +144,7 @@ GameList.propTypes = {
   games: PropTypes.array.isRequired,
   listName: PropTypes.string.isRequired,
   renderGameListItemDetails: PropTypes.func,
+  renderEmptyView: PropTypes.func,
   refreshing: PropTypes.bool,
   onRefresh: PropTypes.func.isRequired,
 }

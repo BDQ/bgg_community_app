@@ -12,31 +12,31 @@ import styles from '../shared/styles'
 const customStyles = StyleSheet.create({
   text: {
     paddingHorizontal: 20,
-    paddingVertical: 10
+    paddingVertical: 10,
   },
 
   stateText: {
-    paddingVertical: 20
+    paddingVertical: 20,
   },
 
   bottomText: {
     flex: 1,
     justifyContent: 'flex-end',
-    marginBottom: 20
+    marginBottom: 20,
   },
 
   buttonContainer: {
-    paddingVertical: 30
+    paddingVertical: 30,
   },
 
   button: {
     alignSelf: 'center',
-    width: '100%'
+    width: '100%',
   },
 
   strong: {
-    fontWeight: 'bold'
-  }
+    fontWeight: 'bold',
+  },
 })
 
 class ProfileScreen extends React.PureComponent {
@@ -44,20 +44,20 @@ class ProfileScreen extends React.PureComponent {
     username: '',
     password: '',
     loading: false,
-    message: null
+    message: null,
   }
 
   static navigationOptions = () => {
     return {
-      title: 'BGG Account'
+      title: 'BGG Account',
     }
   }
 
-  usernameChange = username => {
+  usernameChange = (username) => {
     this.setState({ username: username })
   }
 
-  passwordChange = password => {
+  passwordChange = (password) => {
     this.setState({ password: password })
   }
 
@@ -71,7 +71,7 @@ class ProfileScreen extends React.PureComponent {
       password: '',
       passwordError: '',
       loading: false,
-      message: null
+      message: null,
     })
 
     //tells global store we've logged in
@@ -113,7 +113,7 @@ class ProfileScreen extends React.PureComponent {
             username,
             userid,
             firstname,
-            lastname
+            lastname,
           }
 
           this.dispatch.setCredentials(bggCredentials)
@@ -194,7 +194,7 @@ class ProfileScreen extends React.PureComponent {
         <ScrollView>
           <View style={styles.mainView}>
             <Text style={styles.formHeader}>
-              Welcome to the BGG Community App! (v0.4)
+              Welcome to the BGG Community App! (v0.5)
             </Text>
             <Text>
               This app is an <Text style={customStyles.strong}>unofficial</Text>{' '}

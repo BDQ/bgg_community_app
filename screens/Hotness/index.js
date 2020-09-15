@@ -11,6 +11,8 @@ import GameList from '../../components/GameList'
 import GameAddTo from '../GameAddTo'
 import Spinner from '../../components/Spinner'
 
+import globalStyles from '../../shared/styles'
+
 const HotnessScreen = ({ navigation }) => {
   const [refreshing, setRefreshing] = useState(false)
 
@@ -67,6 +69,14 @@ const HotnessScreen = ({ navigation }) => {
     )
   }
 
+  const renderEmptyView = () => {
+    return (
+      <View style={globalStyles.emptyView}>
+        <Text>Whoops, didn't except this to be empty...</Text>
+      </View>
+    )
+  }
+
   useEffect(() => {
     const aDayAgo = new Date().getTime() - 1000 * 60 * 60 * 24
 
@@ -84,6 +94,7 @@ const HotnessScreen = ({ navigation }) => {
         refreshing={refreshing}
         onRefresh={handleRefresh}
         renderGameListItemDetails={renderGameItemDetails}
+        renderEmptyView={renderEmptyView}
       />
     )
   } else {

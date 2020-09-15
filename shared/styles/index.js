@@ -66,4 +66,11 @@ export default StyleSheet.create({
     backgroundColor: '#ffffff',
     padding: 10,
   },
+  checkboxContainer: {
+    backgroundColor: '#ffffff',
+    borderWidth: 0,
+    paddingLeft: 15,
+    paddingBottom: 0,
+    paddingTop: 0,
+  },
 })

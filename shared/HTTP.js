@@ -18,7 +18,7 @@ export const fetchRaw = async (path, args = {}, headers = {}) => {
     Object.assign(
       {
         Accept: 'application/json',
-        'Content-Type': 'application/json;charset=UTF-8'
+        'Content-Type': 'application/json;charset=UTF-8',
       },
       headers
     )
@@ -45,14 +45,14 @@ export const fetchJSON = async (path, args = {}, headers = {}) => {
         message: 'Your session has expired, please log in again to continue.',
         type: 'danger',
         icon: 'auto',
-        duration: 3000
+        duration: 3000,
       })
     } else {
       logger(
         `Got status code: ${response.status} instead when fetching: ${path}`
       )
       Sentry.captureMessage('Non 200 Response for HTTP request.', {
-        extra: { url: path, stauts: response.status }
+        extra: { url: path, stauts: response.status },
       })
     }
   } catch (error) {
