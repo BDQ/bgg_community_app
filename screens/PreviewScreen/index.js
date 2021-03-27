@@ -46,7 +46,7 @@ class PreviewListScreen extends React.Component {
       previewLoading = false
 
     if (previewFetchedAt > 0) {
-      ;({ previewGames, previewCompanies, previewLoading } = this.global)
+      ; ({ previewGames, previewCompanies, previewLoading } = this.global)
     }
 
     const { sections, gameCount } = buildSections(

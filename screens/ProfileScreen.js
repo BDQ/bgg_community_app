@@ -131,7 +131,7 @@ class ProfileScreen extends React.PureComponent {
     } catch (error) {
       this.showFlash('Unexpected error logging in, please try again.')
       console.warn(error)
-      Sentry.captureException(error)
+      //Sentry.captureException(error)
     }
   }
 
@@ -238,7 +238,15 @@ class ProfileScreen extends React.PureComponent {
 const Stack = createStackNavigator()
 
 export default () => (
-  <Stack.Navigator>
+  <Stack.Navigator screenOptions={{
+    headerStyle: {
+      backgroundColor: '#403c64',
+    },
+    headerTintColor: '#fff',
+    headerTitleStyle: {
+      fontWeight: 'bold',
+    },
+  }}>
     <Stack.Screen name="Account" component={ProfileScreen} />
   </Stack.Navigator>
 )

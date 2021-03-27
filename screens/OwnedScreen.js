@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import { View, Text, InteractionManager } from 'react-native'
 import { Button } from 'react-native-elements'
 import { createStackNavigator } from '@react-navigation/stack'
+
 import { Icon } from 'react-native-elements'
 import ProgressBar from 'react-native-progress/Circle'
 
@@ -97,8 +98,21 @@ OwnedListScreen.propTypes = {
 
 const Stack = createStackNavigator()
 
+
+
 export default () => (
-  <Stack.Navigator>
+
+  <Stack.Navigator
+    screenOptions={{
+      headerStyle: {
+        backgroundColor: '#403c64',
+      },
+      headerTintColor: '#fff',
+      headerTitleStyle: {
+        fontWeight: 'bold',
+      },
+    }}>
+
     <Stack.Screen name="Collection" component={OwnedListScreen} />
     <Stack.Screen
       name="Game"

@@ -74,7 +74,16 @@ WishlistListScreen.propTypes = {
 const Stack = createStackNavigator()
 
 export default () => (
-  <Stack.Navigator>
+  <Stack.Navigator
+    screenOptions={{
+      headerStyle: {
+        backgroundColor: '#403c64',
+      },
+      headerTintColor: '#fff',
+      headerTitleStyle: {
+        fontWeight: 'bold',
+      },
+    }}>
     <Stack.Screen name="Wishlist" component={WishlistListScreen} />
     <Stack.Screen
       name="Game"

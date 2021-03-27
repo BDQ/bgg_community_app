@@ -1,14 +1,16 @@
 import { SENTRY_CONFIG } from 'react-native-dotenv'
 import * as Sentry from 'sentry-expo'
+/*
 Sentry.init({
   dsn: SENTRY_CONFIG,
   enableInExpoDevelopment: false,
   debug: true
 })
+*/
 
 import React from 'reactn'
 import { View } from 'react-native'
-import { NavigationContainer } from '@react-navigation/native'
+import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 
@@ -22,6 +24,7 @@ import FlashMessage from 'react-native-flash-message'
 
 import ProfileScreen from './screens/ProfileScreen'
 import OwnedScreen from './screens/OwnedScreen'
+import CollectionScreen from './screens/CollectionScreen'
 import WishlistScreen from './screens/WishlistScreen'
 import PreviewScreen from './screens/PreviewScreen'
 
@@ -64,12 +67,24 @@ export default class App extends React.PureComponent {
 
     const Tab = createBottomTabNavigator()
 
+
+
     return (
-      <NavigationContainer>
+      <NavigationContainer >
         <Tab.Navigator backBehavior="none">
           <Tab.Screen
-            name="Owned"
+            name="Meetup"
             component={OwnedScreen}
+            options={{
+              tabBarLabel: 'Meetup',
+              tabBarIcon: ({ color, size }) => (
+                <Ionicons name="md-share" size={size} color={color} />
+              )
+            }}
+          />
+          <Tab.Screen
+            name="Collection"
+            component={CollectionScreen}
             options={{
               tabBarLabel: 'Collection',
               tabBarIcon: ({ color, size }) => (
@@ -87,6 +102,7 @@ export default class App extends React.PureComponent {
               )
             }}
           />
+          {/*
           <Tab.Screen
             name="Preview"
             component={PreviewScreen}
@@ -97,6 +113,7 @@ export default class App extends React.PureComponent {
               )
             }}
           />
+          */}
           <Tab.Screen
             name="Profile"
             component={ProfileScreen}
