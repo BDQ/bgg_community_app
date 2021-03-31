@@ -71,27 +71,5 @@ WishlistListScreen.propTypes = {
   }).isRequired
 }
 
-const Stack = createStackNavigator()
 
-export default () => (
-  <Stack.Navigator
-    screenOptions={{
-      headerStyle: {
-        backgroundColor: '#403c64',
-      },
-      headerTintColor: '#fff',
-      headerTitleStyle: {
-        fontWeight: 'bold',
-      },
-    }}>
-    <Stack.Screen name="Wishlist" component={WishlistListScreen} />
-    <Stack.Screen
-      name="Game"
-      component={GameScreen}
-      options={({ route }) => ({ title: route.params.game.name })}
-    />
-    <Stack.Screen name="Search" component={GameSearch} />
-    <Stack.Screen name="AddTo" component={GameAddTo} />
-    <Stack.Screen name="LogPlay" component={LogPlay} />
-  </Stack.Navigator>
-)
+export default WishlistListScreen

@@ -25,6 +25,7 @@ import FlashMessage from 'react-native-flash-message'
 import ProfileScreen from './screens/ProfileScreen'
 import OwnedScreen from './screens/OwnedScreen'
 import CollectionScreen from './screens/CollectionScreen'
+import MeetScreen from './screens/MeetScreen'
 import WishlistScreen from './screens/WishlistScreen'
 import PreviewScreen from './screens/PreviewScreen'
 
@@ -32,6 +33,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons'
 
 import { setupStore } from './shared/store'
 import { BETA_USERS } from 'react-native-dotenv'
+import styleconstants from './shared/styles/styleconstants'
 
 const betaUsers = BETA_USERS.split(',')
 //bootstraps ReactN global store
@@ -70,13 +72,13 @@ export default class App extends React.PureComponent {
 
 
     return (
-      <NavigationContainer >
+      <NavigationContainer>
         <Tab.Navigator backBehavior="none">
           <Tab.Screen
-            name="Meetup"
-            component={OwnedScreen}
+            name="Share"
+            component={MeetScreen}
             options={{
-              tabBarLabel: 'Meetup',
+              tabBarLabel: 'Share',
               tabBarIcon: ({ color, size }) => (
                 <Ionicons name="md-share" size={size} color={color} />
               )
@@ -92,6 +94,7 @@ export default class App extends React.PureComponent {
               )
             }}
           />
+          {/*
           <Tab.Screen
             name="Wishlist"
             component={WishlistScreen}
@@ -102,7 +105,7 @@ export default class App extends React.PureComponent {
               )
             }}
           />
-          {/*
+       
           <Tab.Screen
             name="Preview"
             component={PreviewScreen}

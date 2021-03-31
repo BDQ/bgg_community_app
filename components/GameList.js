@@ -2,8 +2,9 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { FlatList, TouchableOpacity, View, Text } from 'react-native'
 import { SearchBar } from 'react-native-elements'
-
+import styleconstants from '../shared/styles/styleconstants'
 import GameListItem from './GameListItem'
+import GameListItemHorizontal from './GameListItemHorizontal'
 
 import styles from '../shared/styles'
 
@@ -46,7 +47,7 @@ export default class GameList extends React.PureComponent {
     return (
       <TouchableOpacity
         onPress={() => {
-          navigate('Game', { game: item })
+          navigate('GameStack', { screen: 'Game', params: { game: item } })
         }}
       >
         <GameListItem
@@ -104,7 +105,9 @@ export default class GameList extends React.PureComponent {
         onClearText={this.clearFilter}
         placeholder="Type here to filter..."
         value={this.state.filterString}
-        // showLoadingIcon={true}
+        containerStyle={{ backgroundColor: styleconstants.bggpurple }}
+        inputContainerStyle={{ backgroundColor: 'white' }}
+      // showLoadingIcon={true}
       />
     )
   }

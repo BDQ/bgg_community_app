@@ -5,64 +5,70 @@ import { Button } from 'react-native-elements'
 import { createStackNavigator } from '@react-navigation/stack'
 import OwnedScreen from './OwnedScreen'
 import WishlistScreen from './WishlistScreen'
+import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 
 import { Icon } from 'react-native-elements'
 
-
+import GameStack from './GameStack'
 
 import globalStyles from '../shared/styles'
 import { logger } from '../shared/debug'
 
-
-const CollectionScreen = ({ navigation, route }) => {
-    const layout = useWindowDimensions();
-
-    let [index, setIndex] = useState(0);
-    const [routes] = useState([
-        { key: 'first', title: 'First' },
-        { key: 'second', title: 'Second' },
-    ]);
-    /*
-    const renderScene = SceneMap({
-        first: OwnedScreen,
-        second: WishlistScreen,
-    });
-    */
-
-    return (
-        <View>
-
-        </View>
-
-
-    );
-
-}
-
-CollectionScreen.propTypes = {
-    navigation: PropTypes.shape({
-        navigate: PropTypes.func.isRequired,
-    }).isRequired,
-}
-
+const Tab = createMaterialTopTabNavigator();
+const StackTabWrapper = createStackNavigator()
 const Stack = createStackNavigator()
+import styleconstants from '../shared/styles/styleconstants'
 
+const tabNav = props => {
+    return <Tab.Navigator
+        tabBarOptions={{
+            indicatorStyle: {
+                backgroundColor: styleconstants.bggpurple
+            }
+        }}>
+        <Tab.Screen name="Owned" component={OwnedScreen} />
+        <Tab.Screen name="Wishlist" component={WishlistScreen} />
+    </Tab.Navigator>
+}
+
+const tabNavWrapped = props => {
+    return <StackTabWrapper.Navigator screenOptions={{
+        headerStyle: {
+            backgroundColor: styleconstants.bggpurple,
+        },
+        headerTintColor: '#fff',
+        headerTitleStyle: {
+            fontWeight: 'bold',
+        },
+        headerRight: () => (
+            <Button
+                icon={<Icon name="add-to-list" type="entypo" size={20} color={'white'} />}
+                onPress={() => props.navigation.navigate('GameStack', { screen: 'Search' })}
+                buttonStyle={globalStyles.headerIconButton}
+            />
+        ),
+
+
+    }}>
+
+        <StackTabWrapper.Screen name="My collection" component={tabNav} />
+
+    </StackTabWrapper.Navigator>
+
+
+}
 
 
 export default () => (
 
-    <Stack.Navigator
-        screenOptions={{
-            headerStyle: {
-                backgroundColor: '#403c64',
-            },
-            headerTintColor: '#fff',
-            headerTitleStyle: {
-                fontWeight: 'bold',
-            },
-        }}>
 
-        <Stack.Screen name="Collection" component={CollectionScreen} />
+    <Stack.Navigator >
+
+
+        <Stack.Screen options={{ headerShown: false }} name="Collection" component={tabNavWrapped} />
+        <Stack.Screen options={{ headerShown: false }} name="GameStack" component={GameStack} />
 
     </Stack.Navigator>
+
+
 )
