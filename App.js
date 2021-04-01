@@ -16,7 +16,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context'
 import { PREVIEW_SHORT_NAME, BETA_USERS } from 'react-native-dotenv'
 const betaUsers = BETA_USERS.split(',')
 
-import { AppLoading } from 'expo'
+import AppLoading from 'expo-app-loading'
 import * as Font from 'expo-font'
 import FlashMessage from 'react-native-flash-message'
 
@@ -87,7 +87,7 @@ export default class App extends React.PureComponent {
             options={{
               tabBarLabel: 'Wishlist',
               tabBarIcon: ({ color, size }) => (
-                <Ionicons name="ios-list-box" size={size} color={color} />
+                <Ionicons name="ios-list" size={size} color={color} />
               ),
             }}
           />

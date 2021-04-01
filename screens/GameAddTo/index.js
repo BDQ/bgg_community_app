@@ -2,7 +2,7 @@ import React, { useDispatch } from 'reactn'
 import { View, Text } from 'react-native'
 import { CheckBox, Button } from 'react-native-elements'
 import { showMessage } from 'react-native-flash-message'
-import { Picker } from '@react-native-community/picker'
+import { Picker } from '@react-native-picker/picker'
 import PropTypes from 'prop-types'
 
 import { fetchJSON } from '../../shared/HTTP'
