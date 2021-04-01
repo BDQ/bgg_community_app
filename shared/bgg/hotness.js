@@ -7,7 +7,13 @@ export const fetchHotnessFromBGG = async () => {
     const { items: hotness } = await fetchJSON(path)
 
     return hotness.map((item) => {
-      const { name, yearpublished: yearPublished } = item
+      const { name, yearpublished: yearPublished, images } = item
+
+      let thumbnail = ''
+      if (images.square100) {
+        thumbnail = images.square100.src
+      }
+
       return {
         objectId: item.objectid,
         name,
@@ -15,7 +21,7 @@ export const fetchHotnessFromBGG = async () => {
         image: item.imageurl,
         delta: item.delta,
         rank: item.rank,
-        thumbnail: item.squareimg.src,
+        thumbnail,
       }
     })
   } catch (error) {

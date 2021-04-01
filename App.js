@@ -3,6 +3,7 @@ import * as Sentry from 'sentry-expo'
 Sentry.init({
   dsn: SENTRY_CONFIG,
   enableInExpoDevelopment: false,
+  enableNative: false,
   debug: true,
 })
 
