@@ -81,22 +81,38 @@ _Android_: You can scan the QR code using the Expo app on your device.
 expo publish --release-channel=dev
 ```
 
-#### Publishing new iOS app
+#### Publishing new Native app
 
-Expo SDK version bumps, and other major changes require that we submit an iOS build to Apple. That can be generated as follows.
+Expo SDK version bumps, and other major changes require that we submit an native builds for iOS + Android. That can be generated as follows.
 
-1. Ensure the `version` key has been bumped.
+1. Ensure the `version` key has been bumped in `app.json`
 
 2. Ensure logging is disabled in `shared/debug.js` - the `enable()` call should be commented out.
 
-3. Start the build, this takes a while.
+##### iOS app
+
+1. Start the build, this takes a while.
 
 ```bash
 expo build:ios
 ```
 
-4. Once the build is finished, you need to upload the resulting file to Apple.
+2. Once the build is finished, you need to upload the resulting file to Apple.
 
 ```bash
 expo upload:ios --apple-id <PRIVATE> --apple-id-password <EVEN MORE PRIVATEapp>
 ```
+
+##### Android app
+
+1. Ensure the `android.versionCode` key has been incremented in `app.json`
+
+2. Start the build, this takes a while.
+
+```bash
+expo build:ios
+```
+
+3. Once the build is finished, you need to create a new release (open testing) on Play store and upload the artefact:
+
+https://play.google.com/console/

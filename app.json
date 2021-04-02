@@ -22,31 +22,26 @@
     },
     "name": "BGG",
     "slug": "bggca",
-    "version": "0.4.0",
+    "version": "0.4.1",
     "description": "Board Game Geek community app",
     "ios": {
       "bundleIdentifier": "io.bdq.bggca",
       "userInterfaceStyle": "light"
     },
     "android": {
+      "versionCode": 2,
       "adaptiveIcon": {
         "backgroundColor": "#3F3A60",
         "backgroundImage": "./assets/BGG-Logo.png"
       },
       "package": "io.bdq.bggca.droid",
-      "permissions": [
-        "ACCESS_FINE_LOCATION",
-        "CAMERA"
-      ],
+      "permissions": ["ACCESS_FINE_LOCATION", "CAMERA"],
       "config": {
         "googleMaps": {
           "apiKey": "tbd"
         }
       }
     },
-    "platforms": [
-      "ios",
-      "android"
-    ]
+    "platforms": ["ios", "android"]
   }
 }
