@@ -5,12 +5,9 @@ import { logger } from '../../../debug'
 import { processGames } from '../../helpers/preview/games'
 import { processCompanies } from '../../helpers/preview/companies'
 
-import { PREVIEW_ID } from 'react-native-dotenv'
 import { companiesOverride } from '../../../previewOverride'
-
-const previewKey = `preview:${PREVIEW_ID}`
-const previewKeyUserSelections = `${previewKey}:userSelections`
-const previewKeyGames = `${previewKey}:games`
+import { PREVIEW_ID } from 'react-native-dotenv'
+import { previewKey, previewKeyGames, previewKeyUserSelections } from './keys'
 
 export const loadPreview = async (state, dispatch, force = false) => {
   await dispatch.startPreviewLoading()
@@ -48,23 +45,6 @@ export const getPreviewUserItems = async (state, dispatch, force) => {
   return { previewUserSelections }
 }
 
-export const setUserSelection = async (state, dispatch, itemId, selection) => {
-  const { previewUserSelections, previewGames } = state
-
-  // add decision to current userSelections
-  previewUserSelections[itemId] = selection
-
-  // update the games to include the selection
-  const game = previewGames.find(g => g.itemId === selection.itemid)
-  if (game) game.userSelection = selection
-
-  // persist ain
-  await persistGlobal(previewKeyUserSelections, { previewUserSelections })
-  await persistGlobal(previewKeyGames, { previewGames })
-
-  return { previewUserSelections, previewGames }
-}
-
 export const getPreviewGames = async (state, dispatch, force) => {
   let { previewGames = [] } = await getPersisted(previewKeyGames)
 
@@ -97,15 +77,17 @@ export const getPreviewCompanys = async (state, dispatch, force) => {
 
 // injects userSelections & purchases into the game data
 //
-export const enrichGames = async state => {
+export const enrichGames = async (state) => {
   const { previewGames, previewUserSelections, previewPurchases } = state
-  const enrichedGames = previewGames.map(game => {
+  const enrichedGames = previewGames.map((game) => {
     game.userSelection = previewUserSelections[game.itemId]
 
     const purchase = previewPurchases[game.objectId]
     if (
       purchase &&
-      game.preorder.some(preorder => preorder.productId === purchase.productId)
+      game.preorder.some(
+        (preorder) => preorder.productId === purchase.productId
+      )
     ) {
       game.purchase = purchase
     }
@@ -116,14 +98,14 @@ export const enrichGames = async state => {
   return { previewGames: enrichedGames }
 }
 
-export const applyOverrides = async state => {
+export const applyOverrides = async (state) => {
   const { previewCompanies } = state
 
-  companiesOverride.forEach(companyOveride => {
+  companiesOverride.forEach((companyOveride) => {
     if (!companyOveride.publisherId) return
 
     const idx = previewCompanies.findIndex(
-      company => company.publisherId === companyOveride.publisherId
+      (company) => company.publisherId === companyOveride.publisherId
     )
 
     const previewCompany = previewCompanies[idx]
@@ -173,7 +155,7 @@ const getPreviewItems = async (objectType, force = false) => {
   }
 
   loadStatus = trimEmptyPages(loadStatus)
-  return [].concat(...Object.values(loadStatus).map(c => c.items))
+  return [].concat(...Object.values(loadStatus).map((c) => c.items))
 }
 
 const buildItemURL = (pageId, objectType) => {
@@ -190,9 +172,9 @@ const processItems = (fetches, loadStatus, objectType) =>
     ? processGames(fetches, loadStatus, objectType)
     : processCompanies(fetches, loadStatus, objectType)
 
-const pageLimit = objectType => (objectType === 'thing' ? 10 : 50)
+const pageLimit = (objectType) => (objectType === 'thing' ? 10 : 50)
 
-const trimEmptyPages = loadStatus => {
+const trimEmptyPages = (loadStatus) => {
   // trim any empty pages at the end
   for (let pageId of Object.keys(loadStatus).reverse()) {
     let pageCount = loadStatus[pageId].items.length

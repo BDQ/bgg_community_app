@@ -1,103 +1,33 @@
-import React from 'reactn'
+import React, { useDispatch } from 'reactn'
 import PropTypes from 'prop-types'
 import { TouchableOpacity, StyleSheet, View, Text } from 'react-native'
 import { Avatar, Badge } from 'react-native-elements'
 import Swipeout from 'react-native-swipeout'
-
+import { navigationType } from '../shared/propTypes'
 import { priorities } from '../shared/data'
-import { fetchJSON } from '../shared/HTTP'
-// import { logger } from '../shared/debug'
 
-export default class PreviewListGame extends React.PureComponent {
-  constructor(props) {
-    super(props)
+const PreviewListGame = ({ navigation, itemId, ...props }) => {
+  const userSelection = props.userSelection || {}
 
-    let userSelection = props.userSelection || {}
-
-    let notes = {}
-    if (userSelection.notes !== '') {
-      try {
-        notes = JSON.parse(userSelection.notes)
-      } catch (e) {
-        // parse failed, so user must have a string note - convert to our format
-        notes = {
-          text: userSelection.notes,
-        }
+  let notes = { seen: false }
+  if (userSelection.notes !== '') {
+    try {
+      notes = JSON.parse(userSelection.notes)
+    } catch (e) {
+      // parse failed, so user must have a string note - convert to our format
+      notes = {
+        text: userSelection.notes,
+        seen: false,
       }
     }
-
-    this.state = {
-      thumbed: false,
-      userSelection: {
-        notes,
-        priority: userSelection.priority,
-      },
-    }
   }
+  const { priority } = userSelection
+  const { seen } = notes
 
-  persistUserSelection = async (changedAttrs) => {
-    const { itemId } = this.props
-    const { userSelection } = this.state
+  const handleSwipeSeen = useDispatch('savePreviewSeen')
+  const handleSwipePriority = useDispatch('savePreviewPriority')
 
-    // merge state and changes together
-
-    this.setState({
-      userSelection: { ...userSelection, ...changedAttrs },
-    })
-
-    const data = {
-      ...userSelection,
-      ...changedAttrs,
-      itemid: itemId,
-    }
-    // convert notes to json so we can store extra stuff in there
-    const { notes } = data
-    data.notes = Object.keys(notes).length === 0 ? '' : JSON.stringify(notes)
-
-    // update the user selection on BGG for this item
-    const { message } = await fetchJSON('/api/geekpreviewitems/userinfo', {
-      method: 'POST',
-      body: { data },
-    })
-
-    // check for success
-    if (message === 'Info saved') {
-      // update store (to save a reload from BGG)
-      this.dispatch.setUserSelection(itemId, data)
-    }
-  }
-
-  handleSwipeSeen = () => {
-    const { userSelection } = this.state
-    const {
-      notes: { seen: oldSeen },
-    } = userSelection
-
-    const seen = !oldSeen
-    const notes = Object.assign({}, userSelection.notes, {
-      seen,
-    })
-
-    this.persistUserSelection({ notes })
-  }
-
-  // todo: move to "reactions" not userSelections
-  // handleSwipeThumbs = () => {
-  //   const { userSelection } = this.state
-  //   const seen = !userSelection.state
-  //   this.setState({ userSelection: { ...userSelection, seen } })
-  //   this.persistUserSelection({ seen })
-  // }
-
-  handleSwipePriority = async (priority) => {
-    this.persistUserSelection({ priority })
-  }
-
-  _renderPriority = () => {
-    const {
-      userSelection: { priority },
-    } = this.state
-
+  const _renderPriority = () => {
     const { name, color } = priorities.find((p) => p.id === priority) || {}
 
     return color ? (
@@ -120,10 +50,10 @@ export default class PreviewListGame extends React.PureComponent {
     ) : null
   }
 
-  _renderPurchase = () => {
+  const _renderPurchase = () => {
     const {
       game: { purchase },
-    } = this.props
+    } = props
 
     return purchase ? (
       <Badge
@@ -145,12 +75,12 @@ export default class PreviewListGame extends React.PureComponent {
     ) : null
   }
 
-  _renderPrice = () => {
-    return this.props.price !== 0 ? (
+  const _renderPrice = () => {
+    return props.price !== 0 ? (
       <View style={styles.minor}>
         <Text style={styles.minorLabel}>MSRP</Text>
         <Text style={styles.minorValue}>
-          {this.props.priceCurrency} {this.props.price}
+          {props.priceCurrency} {props.price}
         </Text>
       </View>
     ) : (
@@ -158,7 +88,7 @@ export default class PreviewListGame extends React.PureComponent {
     )
   }
 
-  _renderSwipeButton = (text) => (
+  const _renderSwipeButton = (text) => (
     <View
       style={{
         flex: 1,
@@ -177,7 +107,7 @@ export default class PreviewListGame extends React.PureComponent {
     </View>
   )
 
-  _renderExpandedPreorder = (preorder, purchase) => {
+  const _renderExpandedPreorder = (preorder, purchase) => {
     return purchase && preorder ? (
       <View>
         <Text style={styles.minorLabel}>Preorder</Text>
@@ -188,7 +118,7 @@ export default class PreviewListGame extends React.PureComponent {
     ) : null
   }
 
-  _renderExpandedNotes = (notes) => {
+  const _renderExpandedNotes = (notes) => {
     return notes ? (
       <View>
         <Text style={styles.minorLabel}>Notes</Text>
@@ -199,123 +129,104 @@ export default class PreviewListGame extends React.PureComponent {
     ) : null
   }
 
-  _renderExpanded = () => {
-    const {
-      userSelection: {
-        notes: { text },
-      },
-    } = this.state
-
+  const _renderExpanded = () => {
     const {
       game: {
         preorder: [firstPreorder],
         purchase,
       },
-    } = this.props
+    } = props
 
     let maxHeight = 0
 
-    if (text) maxHeight += 70
+    if (notes.text) maxHeight += 70
     if (purchase) maxHeight += 70
 
-    return text || purchase ? (
+    return notes.text || purchase ? (
       <View style={{ maxHeight }}>
-        {this._renderExpandedPreorder(firstPreorder, purchase)}
-        {this._renderExpandedNotes(text)}
+        {_renderExpandedPreorder(firstPreorder, purchase)}
+        {_renderExpandedNotes(notes.text)}
       </View>
     ) : null
   }
 
-  render() {
-    const { navigate } = this.props.navigation
-    const {
-      userSelection: { priority, notes },
-    } = this.state
-    const { seen } = notes
+  const { navigate } = navigation
 
-    // Right swipe buttons (Priority - Must Have, Not Interested, etc)
-    const swipeoutRight = priorities
-      .filter((p) => ![-1, priority].includes(p.id))
-      .map(({ id, color, name }) => ({
-        component: this._renderSwipeButton(name.replace(' ', '\n')),
-        backgroundColor: color,
-        onPress: () => this.handleSwipePriority(id),
-      }))
+  // Right swipe buttons (Priority - Must Have, Not Interested, etc)
+  const swipeoutRight = priorities
+    .filter((p) => ![-1, priority].includes(p.id))
+    .map(({ id, color, name }) => ({
+      component: _renderSwipeButton(name.replace(' ', '\n')),
+      backgroundColor: color,
+      onPress: () => handleSwipePriority(itemId, id),
+    }))
 
-    // Left swipe buttons (Seen, Thumbs Up, Notes)
-    const swipeoutLeft = [
-      {
-        component: this._renderSwipeButton('Edit'),
-        onPress: () =>
-          navigate('EditNotes', {
-            notes,
-            persistUserSelection: this.persistUserSelection,
-          }),
-      },
-      // {
-      //   component: this._renderSwipeButton('Thumbs Up'),
-      //   type: 'secondary',
-      //   onPress: this.handleSwipeThumbs
-      // },
-      {
-        component: this._renderSwipeButton(seen ? 'Not\nSeen' : 'Seen'),
-        type: 'primary',
-        onPress: this.handleSwipeSeen,
-      },
-    ]
+  // Left swipe buttons (Seen, Notes)
+  const swipeoutLeft = [
+    {
+      component: _renderSwipeButton('Edit'),
+      onPress: () =>
+        navigate('EditNotes', {
+          itemId,
+          notes: notes.text,
+        }),
+    },
+    {
+      component: _renderSwipeButton(seen ? 'Not\nSeen' : 'Seen'),
+      type: 'primary',
+      onPress: () => handleSwipeSeen(itemId, !seen),
+    },
+  ]
 
-    return (
-      <Swipeout left={swipeoutLeft} right={swipeoutRight} autoClose={true}>
-        <TouchableOpacity
-          onPress={() => {
-            navigate('Game', { game: this.props.game })
-          }}
+  return (
+    <Swipeout left={swipeoutLeft} right={swipeoutRight} autoClose={true}>
+      <TouchableOpacity
+        onPress={() => {
+          navigate('Game', { game: props.game })
+        }}
+      >
+        <View
+          style={styles.itemContainer}
+          // onLayout={event => {
+          //   var { x, y, width, height } = event.nativeEvent.layout
+          //   logger({ x, y, width, height })
+          // }}
         >
-          <View
-            style={styles.itemContainer}
-            // onLayout={event => {
-            //   var { x, y, width, height } = event.nativeEvent.layout
-            //   logger({ x, y, width, height })
-            // }}
-          >
-            <View style={styles.mainContainer}>
-              <Avatar
-                size="large"
-                source={{ uri: this.props.thumbnail }}
-                activeOpacity={0.7}
-              />
-              <View style={styles.gameDetails}>
-                <Text numberOfLines={1} style={styles.gameName}>
-                  {this.props.name}
-                </Text>
-                <Text style={{ fontFamily: 'lato-bold' }}>
-                  {this.props.versionName}
-                </Text>
-                <View style={{ flexDirection: 'row' }}>
-                  <View style={styles.minor}>
-                    <Text style={styles.minorLabel}>Availability</Text>
-                    <Text style={styles.minorValue}>{this.props.status}</Text>
-                  </View>
-                  {this._renderPrice()}
-                  <View style={[styles.minor, styles.priority]}>
-                    {this._renderPriority()}
-                    {this._renderPurchase()}
-                  </View>
+          <View style={styles.mainContainer}>
+            <Avatar
+              size="large"
+              source={{ uri: props.thumbnail }}
+              activeOpacity={0.7}
+            />
+            <View style={styles.gameDetails}>
+              <Text numberOfLines={1} style={styles.gameName}>
+                {props.name}
+              </Text>
+              <Text style={{ fontFamily: 'lato-bold' }}>
+                {props.versionName}
+              </Text>
+              <View style={{ flexDirection: 'row' }}>
+                <View style={styles.minor}>
+                  <Text style={styles.minorLabel}>Availability</Text>
+                  <Text style={styles.minorValue}>{props.status}</Text>
+                </View>
+                {_renderPrice()}
+                <View style={[styles.minor, styles.priority]}>
+                  {_renderPriority()}
+                  {_renderPurchase()}
                 </View>
               </View>
             </View>
-            {this._renderExpanded()}
           </View>
-        </TouchableOpacity>
-      </Swipeout>
-    )
-  }
+          {_renderExpanded()}
+        </View>
+      </TouchableOpacity>
+    </Swipeout>
+  )
 }
 
 PreviewListGame.propTypes = {
-  navigation: PropTypes.shape({
-    navigate: PropTypes.func.isRequired,
-  }).isRequired,
+  ...navigationType,
   userSelection: PropTypes.shape({
     notes: PropTypes.string.isRequired,
     priority: PropTypes.number,
@@ -328,6 +239,8 @@ PreviewListGame.propTypes = {
   price: PropTypes.number,
   priceCurrency: PropTypes.string,
 }
+
+export default PreviewListGame
 
 const styles = StyleSheet.create({
   itemContainer: {

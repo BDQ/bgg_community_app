@@ -8,7 +8,7 @@ import {
   StyleSheet,
 } from 'react-native'
 import { Icon } from 'react-native-elements'
-
+import { navigationType } from '../../../shared/propTypes'
 import styles from '../../../shared/styles'
 import { asyncFetch } from '../../../shared/HTTP'
 
@@ -62,7 +62,7 @@ const renderFooter = (count, total, page, setPage) => {
   )
 }
 
-export default ({ navigation, route }) => {
+const ListPlay = ({ navigation, route }) => {
   const {
     params: { game, play },
   } = route
@@ -134,3 +134,9 @@ const playStyles = StyleSheet.create({
     alignItems: 'center',
   },
 })
+
+ListPlay.propTypes = {
+  ...navigationType,
+}
+
+export default ListPlay

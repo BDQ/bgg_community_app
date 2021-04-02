@@ -17,10 +17,6 @@ import { PREVIEW_FULL_NAME } from 'react-native-dotenv'
 import { points } from '../../shared/points'
 
 class PreviewListScreen extends React.Component {
-  state = {
-    userSelections: [],
-  }
-
   static navigationOptions = ({ navigation }) => {
     return {
       title: `${PREVIEW_FULL_NAME} (${navigation.getParam('gameCount', '0')})`,

@@ -1,58 +1,53 @@
-import React from 'react'
+import React, { useState, useDispatch } from 'reactn'
 import { View, Text, ScrollView, TextInput } from 'react-native'
 import { Button } from 'react-native-elements'
-
+import { navigationType } from '../shared/propTypes'
 import styles from '../shared/styles'
 
-export default class PreviewEdit extends React.Component {
-  state = {
-    text: this.props.navigation.state.params.notes.text || ''
-  }
+const PreviewEdit = ({ navigation, route }) => {
+  const [notes, setNotes] = useState(route.params?.notes || '')
 
-  handleSave = () => {
-    const { pop } = this.props.navigation
-    const {
-      notes: oldNotes,
-      persistUserSelection
-    } = this.props.navigation.state.params
+  const { pop } = navigation
 
-    const notes = Object.assign({}, oldNotes, { text: this.state.text })
+  const saveNotes = useDispatch('savePreviewNotes')
 
-    persistUserSelection({ notes })
-    pop()
-  }
+  return (
+    <ScrollView>
+      <View style={styles.mainView}>
+        <Text style={styles.formLabel}>Notes</Text>
 
-  render = () => {
-    const { pop } = this.props.navigation
-    return (
-      <ScrollView>
-        <View style={styles.mainView}>
-          <Text style={styles.formLabel}>Notes</Text>
+        <TextInput
+          style={{
+            width: '100%',
+            height: 120,
+            borderColor: 'gray',
+            borderWidth: 1,
+            padding: 5,
+          }}
+          multiline={true}
+          onChangeText={(text) => setNotes(text)}
+          value={notes}
+        />
 
-          <TextInput
-            style={{
-              width: '100%',
-              height: 120,
-              borderColor: 'gray',
-              borderWidth: 1,
-              padding: 5
+        <View style={styles.formButtons}>
+          <Button
+            style={{ flex: 1, marginRight: 10 }}
+            backgroundColor="#03A9F4"
+            title="Save"
+            onPress={() => {
+              saveNotes(route.params.itemId, notes)
+              pop()
             }}
-            multiline={true}
-            onChangeText={text => this.setState({ text })}
-            value={this.state.text}
           />
-
-          <View style={styles.formButtons}>
-            <Button
-              style={{ flex: 1, marginRight: 10 }}
-              backgroundColor="#03A9F4"
-              title="Save"
-              onPress={this.handleSave}
-            />
-            <Button style={{ flex: 1 }} title="Cancel" onPress={() => pop()} />
-          </View>
+          <Button style={{ flex: 1 }} title="Cancel" onPress={() => pop()} />
         </View>
-      </ScrollView>
-    )
-  }
+      </View>
+    </ScrollView>
+  )
 }
+
+PreviewEdit.propTypes = {
+  ...navigationType,
+}
+
+export default PreviewEdit
