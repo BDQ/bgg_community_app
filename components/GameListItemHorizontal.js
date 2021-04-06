@@ -6,7 +6,7 @@ import { Avatar } from 'react-native-elements'
 export default class GameListItem extends React.PureComponent {
   render() {
     return (
-      <View style={{ marginLeft: 2, marginBottom: 2 }}>
+      <View>
         <Avatar
           size="large"
           source={{ uri: this.props.thumbnail }}

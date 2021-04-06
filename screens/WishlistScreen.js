@@ -3,7 +3,6 @@ import PropTypes from 'prop-types'
 import { View, Text } from 'react-native'
 import { createStackNavigator } from '@react-navigation/stack'
 import { Icon } from 'react-native-elements'
-import ProgressBar from 'react-native-progress/Circle'
 
 import GameScreen from './GameScreen'
 import GameSearch from './GameSearch'
@@ -38,7 +37,7 @@ class WishlistListScreen extends React.PureComponent {
     if (this.global.collectionFetchedAt > 0) {
       const { navigate } = this.props.navigation
       const games = this.global.collection.filter(
-        game => game.status.wishlist === '1'
+        game => (game.status.wishlist === '1' || game.status.wishlist === '1' || game.status.wishlist === '1')
       )
 
       return (
@@ -53,11 +52,7 @@ class WishlistListScreen extends React.PureComponent {
     } else {
       return (
         <View style={styles.emptyView}>
-          <ProgressBar
-            indeterminate={true}
-            color="#000000"
-            style={{ marginBottom: 10 }}
-          />
+
           <Text>Loading your collection...</Text>
         </View>
       )

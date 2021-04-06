@@ -27,7 +27,7 @@ const tabNav = props => {
             }
         }}>
         <Tab.Screen name="Owned" component={OwnedScreen} />
-        <Tab.Screen name="Wishlist" component={WishlistScreen} />
+        <Tab.Screen name="Wants" component={WishlistScreen} />
     </Tab.Navigator>
 }
 
@@ -51,7 +51,7 @@ const tabNavWrapped = props => {
 
     }}>
 
-        <StackTabWrapper.Screen name="My collection" component={tabNav} />
+        <StackTabWrapper.Screen options={{ headerShown: props.insideScreen ? false : true }} name="Collection" component={tabNav} />
 
     </StackTabWrapper.Navigator>
 
@@ -59,16 +59,17 @@ const tabNavWrapped = props => {
 }
 
 
-export default () => (
+export default props => {
+
+    return (
+
+        <Stack.Navigator >
 
 
-    <Stack.Navigator >
+            <Stack.Screen options={{ headerShown: false }} name="Collection" component={tabNavWrapped} insideScreen={props.insideScreen} />
+            <Stack.Screen options={{ headerShown: false }} name="GameStack" component={GameStack} />
 
+        </Stack.Navigator>
 
-        <Stack.Screen options={{ headerShown: false }} name="Collection" component={tabNavWrapped} />
-        <Stack.Screen options={{ headerShown: false }} name="GameStack" component={GameStack} />
-
-    </Stack.Navigator>
-
-
-)
+    )
+}

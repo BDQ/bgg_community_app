@@ -5,7 +5,6 @@ import { Button } from 'react-native-elements'
 import { createStackNavigator } from '@react-navigation/stack'
 
 import { Icon } from 'react-native-elements'
-import ProgressBar from 'react-native-progress/Circle'
 
 import GameScreen from './GameScreen'
 import LogPlay from './Plays/Log'
@@ -79,11 +78,7 @@ const OwnedListScreen = ({ navigation, route }) => {
   } else {
     return (
       <View style={globalStyles.emptyView}>
-        <ProgressBar
-          indeterminate={true}
-          color="#000000"
-          style={{ marginBottom: 10 }}
-        />
+
         <Text>Loading your collection...</Text>
       </View>
     )

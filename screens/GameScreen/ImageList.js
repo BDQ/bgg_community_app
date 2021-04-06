@@ -10,7 +10,7 @@ import {
 } from 'react-native'
 
 import ImageProgress from 'react-native-image-progress'
-import ProgressBar from 'react-native-progress/Circle'
+//import ProgressBar from 'react-native-progress/Circle'
 import ImageViewer from 'react-native-image-zoom-viewer'
 
 import { fetchJSON } from '../../shared/HTTP'
@@ -62,7 +62,7 @@ export default class ImageList extends React.Component {
               >
                 <ImageProgress
                   source={{ uri: item.url }}
-                  indicator={ProgressBar}
+                  //indicator={ProgressBar}
                   indicatorProps={{
                     color: '#000000'
                   }}

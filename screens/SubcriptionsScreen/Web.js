@@ -1,7 +1,7 @@
 import React from 'reactn'
 import PropTypes from 'prop-types'
 import { createStackNavigator } from 'react-navigation-stack'
-import ProgressBar from 'react-native-progress/Circle'
+//import ProgressBar from 'react-native-progress/Circle'
 import { Icon } from 'react-native-elements'
 
 import { View, WebView } from 'react-native'
@@ -44,7 +44,6 @@ class SubscriptionsWebScreen extends React.Component {
           alignItems: 'center'
         }}
       >
-        <ProgressBar indeterminate={true} color="#000000" />
       </View>
     )
   }

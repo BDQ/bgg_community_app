@@ -5,10 +5,12 @@ import { Button } from 'react-native-elements'
 import { createStackNavigator } from '@react-navigation/stack'
 
 import { Icon } from 'react-native-elements'
-import ProgressBar from 'react-native-progress/Circle'
 import styleconstants from '../shared/styles/styleconstants'
 import { SearchBar } from 'react-native-elements'
 var DomParser = require('react-native-html-parser').DOMParser
+import { fetchCollectionFromBGG } from '../shared/collection'
+import { BarIndicator } from 'react-native-indicators';
+
 
 import GameScreen from './GameScreen'
 import LogPlay from './Plays/Log'
@@ -18,6 +20,7 @@ import GameAddTo from './GameAddTo'
 
 import UserThumbNail from './../components/UserThumbNail'
 import GameStack from './GameStack'
+import ProfileStack from './OtherProfileScreen'
 
 import globalStyles from '../shared/styles'
 import { logger } from '../shared/debug'
@@ -34,18 +37,80 @@ const fetchArgs = {
 }
 
 const MeetScreen = ({ navigation, route }) => {
-    let [country, setCountry] = useState("")
-    let [city, setCity] = useState("")
+    let [country, setCountry] = useState("Netherlands")
+    let [city, setCity] = useState("Utrecht")
 
     let [locals, setLocals] = useState([])
+    let [localUserComponents, setLocalUserComponents] = useState([])
     let [fetchingInProgress, setFetchingInProgress] = useState(false)
-    const [collection] = useGlobal('collection')
+    let [userComponentConstructionInProgress, setUserComponentConstructionInProgress] = useState(false)
 
+    const [collection] = useGlobal('collection')
+    const wishlist = collection.filter(
+        game => game.status.wishlist === '1'
+    )
+
+    function inWishlist(item) {
+        for (var wishItem in wishlist) {
+            if (item.name === wishlist[wishItem].name) {
+                return true
+            }
+        }
+        return false
+    }
+
+    async function getCollectionForUser(userName) {
+        console.log("Fetching for ", userName)
+        var gamesFetched = await fetchCollectionFromBGG(userName)
+        var gamesFiltered = gamesFetched.filter((game) => game.status.own === '1')
+
+        let gl = []
+        let wl = []
+
+        for (var gameInd in gamesFiltered) {
+            if (inWishlist(gamesFiltered[gameInd])) {
+                wl.push(gamesFiltered[gameInd])
+            } else {
+                gl.push(gamesFiltered[gameInd])
+            }
+        }
+
+        return { otherGames: gl, inUserWants: wl }
+    }
+
+    function compare(a, b) {
+        if (a.inWants < b.inWants) {
+            return 1;
+        }
+        if (a.inWants > b.inWants) {
+            return -1;
+        }
+        return 0;
+    }
+
+    const _sortArray = () => {
+        var sorted = localUserComponents.sort(compare)
+        return sorted
+    }
+
+    async function getUserLists() {
+        setUserComponentConstructionInProgress(true)
+        for (var lInd in locals) {
+            let userGameLists = await getCollectionForUser(locals[lInd].name)
+            let userComp = <UserThumbNail otherGames={userGameLists.otherGames} inUserWishlist={userGameLists.inUserWants} userName={locals[lInd].name} navigation={navigation} />
+            console.log("current list", localUserComponents.length)
+            let newComp = { component: userComp, inWants: userGameLists.inUserWants.length }
+
+
+            setLocalUserComponents(oldList => [...oldList, newComp])
+
+        }
+    }
 
 
     async function fetchLocalUsers() {
         setFetchingInProgress(true)
-        let resp = await fetchRaw('https://boardgamegeek.com/users?country=Netherlands&state=&city=utrecht', fetchArgs)
+        let resp = await fetchRaw('https://boardgamegeek.com/users?country=' + country + '&state=&city=' + city, fetchArgs)
         resp.text().then(respText => {
             let doc = new DomParser().parseFromString(respText, 'text/html')
             let loc = doc.getElementsByClassName('username')
@@ -64,7 +129,7 @@ const MeetScreen = ({ navigation, route }) => {
 
             for (var ind in loc) {
                 if (ind % 2) {
-                    locFinal.push({ 'name': loc[ind] })
+                    locFinal.push({ 'name': loc[ind], inWants: 0 })
                 }
             }
 
@@ -80,6 +145,9 @@ const MeetScreen = ({ navigation, route }) => {
         if (locals.length === 0 && !fetchingInProgress) {
             fetchLocalUsers()
         }
+        if (locals.length > 0 && !userComponentConstructionInProgress) {
+            getUserLists()
+        }
 
     })
 
@@ -93,7 +161,7 @@ const MeetScreen = ({ navigation, route }) => {
                         onClearText={(t) => { setCountry("") }}
                         placeholder="Country..."
                         value={country}
-                        containerStyle={{ width: '50%', backgroundColor: styleconstants.bggpurple }}
+                        containerStyle={{ width: '40%', backgroundColor: styleconstants.bggpurple }}
                         inputContainerStyle={{ backgroundColor: 'white' }}
                     // showLoadingIcon={true}
                     />
@@ -102,12 +170,19 @@ const MeetScreen = ({ navigation, route }) => {
                         onClearText={(t) => { setCity("") }}
                         placeholder="City..."
                         value={city}
-                        containerStyle={{ width: '50%', backgroundColor: styleconstants.bggpurple }}
+                        containerStyle={{ width: '40%', backgroundColor: styleconstants.bggpurple }}
                         inputContainerStyle={{ backgroundColor: 'white' }}
 
 
                     // showLoadingIcon={true}
                     />
+                    <View style={{ backgroundColor: styleconstants.bggorange, width: "20%", justifyContent: 'center', alignItems: 'center' }}>
+                        {fetchingInProgress || userComponentConstructionInProgress ?
+                            <BarIndicator size={15} color={"white"} count={5} />
+                            :
+                            <Text>Search</Text>
+                        }
+                    </View>
                 </View>
                 <View>
                     {fetchingInProgress ?
@@ -118,12 +193,9 @@ const MeetScreen = ({ navigation, route }) => {
                         <View>
 
                             <FlatList
-                                data={locals}
+                                data={_sortArray()}
                                 renderItem={({ item }) => {
-                                    return <UserThumbNail
-                                        userName={item.name}
-                                        navigation={navigation}
-                                    />
+                                    return item.component
                                 }}
                             />
 
@@ -156,6 +228,7 @@ export default () => (
 
         <Stack.Screen options={{ headerShown: true }} name="BGG users nearby" component={MeetScreen} />
         <Stack.Screen options={{ headerShown: false }} name="GameStack" component={GameStack} />
+        <Stack.Screen options={{ headerShown: false }} name="ProfileStack" component={ProfileStack} />
 
     </Stack.Navigator>
 

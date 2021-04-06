@@ -5,7 +5,7 @@ import { Button } from 'react-native-elements'
 import { createStackNavigator } from '@react-navigation/stack'
 
 import { Icon } from 'react-native-elements'
-import ProgressBar from 'react-native-progress/Circle'
+//import ProgressBar from 'react-native-progress/Circle'
 
 import GameScreen from './GameScreen'
 import LogPlay from './Plays/Log'

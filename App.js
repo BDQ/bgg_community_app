@@ -13,6 +13,7 @@ import { View } from 'react-native'
 import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
+import { createStackNavigator } from '@react-navigation/stack'
 
 import { PREVIEW_SHORT_NAME } from 'react-native-dotenv'
 
@@ -22,7 +23,8 @@ import FlashMessage from 'react-native-flash-message'
 
 // import { Owned, Wishlist, Scan, Preview, Profile, Subscriptions } from './tabs'
 
-import ProfileScreen from './screens/ProfileScreen'
+import ProfileScreen from './screens/OwnProfileScreen'
+import LoginScreen from './screens/LoginScreen'
 import OwnedScreen from './screens/OwnedScreen'
 import CollectionScreen from './screens/CollectionScreen'
 import MeetScreen from './screens/MeetScreen'
@@ -34,27 +36,75 @@ import Ionicons from 'react-native-vector-icons/Ionicons'
 import { setupStore } from './shared/store'
 import { BETA_USERS } from 'react-native-dotenv'
 import styleconstants from './shared/styles/styleconstants'
+import { logIn, getUserId } from './shared/auth'
+import { fetchXML } from './shared/HTTP'
+var parseString = require('react-native-xml2js').parseString;
 
 const betaUsers = BETA_USERS.split(',')
 //bootstraps ReactN global store
 setupStore()
 
+
 export default class App extends React.PureComponent {
   state = {
-    isReady: false
+    isReady: false,
+    userDetails: null,
+    loggedIn: false
   }
 
-  _cacheResourcesAsync = async () => {
+  async attemptBGGLoginInBackground(username, password) {
+    try {
+      const { success } = await logIn(username, password)
+
+
+      if (success) {
+        const { userid, firstname, lastname } = await getUserId()
+
+        if (userid > 0) {
+
+          const bggCredentials = {
+            username,
+            userid,
+            firstname,
+            lastname
+          }
+
+          this.dispatch.setCredentials(bggCredentials)
+          this.setState({ loggedIn: true })
+          this.global.username = username
+
+          // getting user info
+          const url = "https://boardgamegeek.com/xmlapi2/users?name=" + username
+
+          const userDetails = await fetchXML(url, { method: 'GET' })
+          await parseString(userDetails, function (err, result) {
+            console.log("xml parsed", result)
+            if (result) {
+              this.setState({ userDetails: result })
+            }
+          }.bind(this))
+        }
+      }
+    } catch (error) {
+      console.warn(error)
+      //Sentry.captureException(error)
+    }
+  }
+
+  _fireUp = async () => {
     // load fonts, so they are ready for rendering
     await Font.loadAsync({
       lato: require('./assets/Lato-Regular.ttf'),
       'lato-bold': require('./assets/Lato-Bold.ttf')
     })
+    await this.attemptBGGLoginInBackground("BalintHompot", "Sanyika1-")
+
   }
 
   _renderTabs = () => {
     const { username } = this.global.bggCredentials
     const { loggedIn } = this.global
+
 
     // let tabsToRender = { Profile }
 
@@ -68,33 +118,31 @@ export default class App extends React.PureComponent {
     // }
 
     const Tab = createBottomTabNavigator()
+    const Drawer = createStackNavigator()
 
-
-
-    return (
-      <NavigationContainer>
-        <Tab.Navigator backBehavior="none">
-          <Tab.Screen
-            name="Share"
-            component={MeetScreen}
-            options={{
-              tabBarLabel: 'Share',
-              tabBarIcon: ({ color, size }) => (
-                <Ionicons name="md-share" size={size} color={color} />
-              )
-            }}
-          />
-          <Tab.Screen
-            name="Collection"
-            component={CollectionScreen}
-            options={{
-              tabBarLabel: 'Collection',
-              tabBarIcon: ({ color, size }) => (
-                <Ionicons name="ios-albums" size={size} color={color} />
-              )
-            }}
-          />
-          {/*
+    const mainTabNav = () => {
+      return <Tab.Navigator backBehavior="none" initialRouteName="ProfileStack" >
+        <Tab.Screen
+          name="Share"
+          component={MeetScreen}
+          options={{
+            tabBarLabel: 'Share',
+            tabBarIcon: ({ color, size }) => (
+              <Ionicons name="md-share" size={size} color={color} />
+            )
+          }}
+        />
+        <Tab.Screen
+          name="Collection"
+          component={CollectionScreen}
+          options={{
+            tabBarLabel: 'Collection',
+            tabBarIcon: ({ color, size }) => (
+              <Ionicons name="ios-albums" size={size} color={color} />
+            )
+          }}
+        />
+        {/*
           <Tab.Screen
             name="Wishlist"
             component={WishlistScreen}
@@ -117,18 +165,41 @@ export default class App extends React.PureComponent {
             }}
           />
           */}
-          <Tab.Screen
-            name="Profile"
-            component={ProfileScreen}
-            options={{
-              tabBarLabel: 'Account',
-              tabBarIcon: ({ color, size }) => (
-                <Ionicons name="ios-person" size={size} color={color} />
-              )
-            }}
-          />
-        </Tab.Navigator>
+        <Tab.Screen
+          name="ProfileStack"
+          component={ProfileScreen}
+          options={{
+            tabBarLabel: 'Account',
+            tabBarIcon: ({ color, size }) => (
+              <Ionicons name="ios-person" size={size} color={color} />
+            )
+          }}
+        />
+      </Tab.Navigator>
+    }
+
+    const mainTabWrapperStack = createStackNavigator()
+    const mainTabWrapper = () => {
+
+      return <mainTabWrapperStack.Navigator initialRouteName="mainTab" >
+
+        <mainTabWrapperStack.Screen options={{ headerShown: false }} name="mainTab" component={mainTabNav} />
+
+      </mainTabWrapperStack.Navigator>
+    }
+
+    return (
+      <NavigationContainer>
+
+        <Drawer.Navigator initialRouteName={this.state.userDetails ? "MainTabWrapper" : "Login"} >
+
+          <Drawer.Screen options={{ headerShown: false }} name="Login" component={LoginScreen} />
+          <Drawer.Screen options={{ headerShown: false }} name="MainTabWrapper" component={mainTabWrapper} />
+
+        </Drawer.Navigator>
       </NavigationContainer>
+
+
     )
   }
 
@@ -136,7 +207,7 @@ export default class App extends React.PureComponent {
     if (!this.state.isReady) {
       return (
         <AppLoading
-          startAsync={this._cacheResourcesAsync}
+          startAsync={this._fireUp}
           onFinish={() => this.setState({ isReady: true })}
           onError={console.warn}
         />

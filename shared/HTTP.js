@@ -61,3 +61,38 @@ export const fetchJSON = async (path, args = {}, headers = {}) => {
     // Sentry.captureException(error)
   }
 }
+
+export const fetchXML = async (path, args = {}, headers = {}) => {
+  try {
+    const { body } = args
+    body ? (args.body = JSON.stringify(body)) : null
+
+    let response = await fetchRaw(path, args, headers)
+
+    if (response.status == 200) {
+      const respXML = await response.text()
+      return respXML
+
+
+    } else if (response.status == 403) {
+      getDispatch().logOut()
+      showMessage({
+        message: 'Your session has expired, please log in again to continue.',
+        type: 'danger',
+        icon: 'auto',
+        duration: 3000
+      })
+    } else {
+      logger(
+        `Got status code: ${response.status} instead when fetching: ${path}`
+      )
+      Sentry.captureMessage('Non 200 Response for HTTP request.', {
+        extra: { url: path, stauts: response.status }
+      })
+    }
+  } catch (error) {
+    console.error(`Error fetching: ${path}`)
+    console.error(error)
+    // Sentry.captureException(error)
+  }
+}

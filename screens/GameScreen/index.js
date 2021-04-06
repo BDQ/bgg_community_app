@@ -9,7 +9,7 @@ import {
 import { Icon, Button } from 'react-native-elements'
 import HTMLView from 'react-native-htmlview'
 import ImageProgress from 'react-native-image-progress'
-import ProgressBar from 'react-native-progress/Circle'
+//import ProgressBar from 'react-native-progress/Circle'
 
 import ImageList from './ImageList'
 import AddToButton from './AddToButton'
@@ -282,7 +282,7 @@ const GameScreen = ({ navigation, route }) => {
       return (
         <ImageProgress
           source={{ uri: images.previewthumb }}
-          indicator={ProgressBar}
+          //indicator={ProgressBar}
           indicatorProps={{
             color: '#ffffff',
           }}
@@ -293,11 +293,7 @@ const GameScreen = ({ navigation, route }) => {
     } else {
       return (
         <View style={styles.emptyView}>
-          <ProgressBar
-            indeterminate={true}
-            color="#ffffff"
-            style={{ margin: 12 }}
-          />
+
 
           <Text style={{ marginTop: 10, color: 'white' }}>Loading...</Text>
         </View>

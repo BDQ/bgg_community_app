@@ -4,7 +4,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons'
 import OwnedScreen from './screens/OwnedScreen'
 import WishlistScreen from './screens/WishlistScreen'
 import PreviewScreen from './screens/PreviewScreen'
-import ProfileScreen from './screens/ProfileScreen'
+import ProfileScreen from './screens/OwnProfileScreen'
 import VisualSearchScreen from './screens/VisualSearchScreen'
 import SubscriptionsWebScreen from './screens/SubcriptionsScreen/Web'
 

@@ -1,32 +1,20 @@
 import React, { useState, useDispatch } from 'react'
 import PropTypes from 'prop-types'
 import { FlatList, TouchableOpacity, View, Text, ScrollView } from 'react-native'
-import { SearchBar } from 'react-native-elements'
 import styleconstants from '../shared/styles/styleconstants'
 import GameListItemHorizontal from './GameListItemHorizontal'
+import { SearchBar, Icon } from 'react-native-elements'
 
 import styles from '../shared/styles'
 import { useSafeArea } from 'react-native-safe-area-view'
-import { fetchCollectionFromBGG } from '../shared/collection'
 
-import { BarIndicator } from 'react-native-indicators';
 
 export default UserThumbNail = props => {
+    let games = props.otherGames
+    let inUserWishlist = props.inUserWishlist
 
-    async function getCollection() {
-        gamesFetched = await fetchCollectionFromBGG(props.userName)
-        gamesFiltered = gamesFetched.filter((game) => game.status.own === '1')
-        setGames(gamesFiltered)
-        setGamesFetched(true)
-    }
 
     keyExtractor = item => item.key || item.objectId
-    let [games, setGames] = useState([])
-    let [gamesFetched, setGamesFetched] = useState(false)
-
-    if (!gamesFetched && games.length === 0) {
-        getCollection()
-    }
 
     getItemLayout = (_, index) => {
         const itemHeight = 100
@@ -37,7 +25,8 @@ export default UserThumbNail = props => {
         }
     }
 
-    _renderItem = ({ item }) => {
+
+    const renderItemWithIcon = (item, icon) => {
 
         return (
             <TouchableOpacity
@@ -50,21 +39,77 @@ export default UserThumbNail = props => {
                     thumbnail={item.thumbnail}
                     subtitle={item.subtitle}
                 />
+                <View style={{ position: 'absolute', right: -10, top: -10 }}>
+                    {icon}
+
+                </View>
             </TouchableOpacity>
+
         )
     }
 
-    if (gamesFetched && games.length === 0) {
+
+    _renderItem = ({ item }) => {
+        return renderItemWithIcon(item, null)
+    }
+
+    _renderTarget = ({ item }) => {
+
+        const icon = <Icon
+            name="heart"
+            color={styleconstants.bggorange}
+            type="feather"
+            size={12}
+            reverse
+        />
+        return renderItemWithIcon(item, icon)
+    }
+
+    if (games.length === 0 && inUserWishlist.length === 0) {
         return (null)
     } else {
         return (
-            <View style={{ padding: 10, height: 130, backgroundColor: 'white', borderRadius: 15, shadowOpacity: 0.2, margin: 10 }}>
-                <View style={{ marginBottom: 5 }}>
-                    <Text style={{ fontFamily: styleconstants.primaryFont }}>{props.userName + " owns 5 of your wants."}</Text>
+            <TouchableOpacity style={{ padding: 10, height: 130, backgroundColor: 'white', margin: 1 }}
+                onPress={() => {
+                    props.navigation.navigate('ProfileStack', { screen: 'Profile', params: { userName: props.userName } })
+                }}
 
-                </View>
-                {gamesFetched ?
-                    <ScrollView horizontal>
+            >
+                {inUserWishlist.length > 0 ?
+                    <View style={{ marginBottom: 5 }}>
+                        <Text style={{ fontFamily: styleconstants.primaryFontBold }}>{props.userName + " owns " + inUserWishlist.length.toString() + " of your wants."}</Text>
+
+                    </View>
+                    : <View style={{ marginBottom: 5 }}>
+                        <Text style={{ fontFamily: styleconstants.primaryFontBold }}>{props.userName}</Text>
+
+                    </View>
+                }
+                <ScrollView horizontal>
+                    <View style={{ alignItems: 'center', flexDirection: 'row' }}>
+
+
+                        <FlatList
+                            data={inUserWishlist}
+                            keyExtractor={keyExtractor}
+                            renderItem={_renderTarget}
+                            getItemLayout={getItemLayout}
+                            horizontal
+                        />
+
+                        {inUserWishlist.length > 0 ?
+                            <Icon
+                                containerStyle={{ margin: 10, justifyContent: 'center', alignItems: "center" }}
+                                name="more-horizontal"
+                                color={'black'}
+                                type="feather"
+                                size={20}
+
+                            />
+                            : null}
+
+
+
                         <FlatList
                             data={games}
                             keyExtractor={keyExtractor}
@@ -72,21 +117,16 @@ export default UserThumbNail = props => {
                             getItemLayout={getItemLayout}
                             horizontal
                         />
-                    </ScrollView>
+                    </View>
 
-                    :
-                    <BarIndicator color={styleconstants.bggorange} count={5} size={20} />
-                }
-            </View>
+                </ScrollView>
+
+
+            </TouchableOpacity>
 
         )
     }
 
 
 
-}
-
-UserThumbNail.propTypes = {
-
-    userName: PropTypes.string.isRequired,
 }
