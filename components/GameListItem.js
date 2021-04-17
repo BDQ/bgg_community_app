@@ -1,22 +1,24 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { StyleSheet, View, Text } from 'react-native'
+import { StyleSheet, View, Text, Image } from 'react-native'
 import { Avatar } from 'react-native-elements'
 
 export default class GameListItem extends React.PureComponent {
   render() {
     return (
       <View style={styles.itemContainer}>
-        <Avatar
-          size="large"
+        <Image
           source={{ uri: this.props.thumbnail }}
+          style={{ width: 80, height: 80, borderRadius: 5 }}
           activeOpacity={0.7}
+
         />
+
         <View style={styles.gameDetails}>
           <Text numberOfLines={1} style={styles.gameName}>
             {this.props.name}
           </Text>
-          <Text style={{ fontFamily: 'lato-bold' }}>{this.props.subtitle}</Text>
+          <Text style={{ fontFamily: 'lato-bold', color: 'grey' }}>{this.props.subtitle}</Text>
         </View>
       </View>
     )

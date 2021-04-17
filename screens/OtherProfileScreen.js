@@ -6,7 +6,7 @@ import { showMessage } from 'react-native-flash-message'
 import SafeAreaView from 'react-native-safe-area-view'
 import { createStackNavigator } from '@react-navigation/stack'
 import { logIn, getUserId } from '../shared/auth'
-import CollectionScreen from './CollectionScreen'
+import CollectionScreen from './OtherUserCollection'
 import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
 import { SearchBar, Icon } from 'react-native-elements'
 import styleconstants from '../shared/styles/styleconstants'
@@ -53,26 +53,17 @@ const ProfileScreen = props => {
   let [loading, setLoading] = useState(false)
 
   /// if there are no params, we are logging in, so we use the global username
-  let userName = props.route.params ? props.route.params.userName : global.username
+  let userName = props.route.params.userName
 
   console.log("props", props)
   console.log(props.route.params)
-
-  const handleLogOut = () => {
-
-
-    //tells global store we've logged in
-    props.navigation.navigate("Login")
-    getDispatch().logOut()
-  }
-
 
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#ffffff' }}>
 
       <ProfileCard userName={userName} />
-      <CollectionScreen insideScreen={true} />
+      <CollectionScreen insideScreen={true} lists={props.route.params.lists} />
 
     </SafeAreaView>
   )

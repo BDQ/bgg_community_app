@@ -12,7 +12,7 @@ import { useSafeArea } from 'react-native-safe-area-view'
 export default UserThumbNail = props => {
     let games = props.otherGames
     let inUserWishlist = props.inUserWishlist
-
+    let othersWishlist = props.othersWishlist
 
     keyExtractor = item => item.key || item.objectId
 
@@ -39,7 +39,7 @@ export default UserThumbNail = props => {
                     thumbnail={item.thumbnail}
                     subtitle={item.subtitle}
                 />
-                <View style={{ position: 'absolute', right: -10, top: -10 }}>
+                <View style={{ position: 'absolute', right: -1, top: -5 }}>
                     {icon}
 
                 </View>
@@ -56,11 +56,11 @@ export default UserThumbNail = props => {
     _renderTarget = ({ item }) => {
 
         const icon = <Icon
-            name="heart"
+            name="bookmark"
             color={styleconstants.bggorange}
-            type="feather"
-            size={12}
-            reverse
+            type="font-awesome"
+            size={28}
+
         />
         return renderItemWithIcon(item, icon)
     }
@@ -71,7 +71,7 @@ export default UserThumbNail = props => {
         return (
             <TouchableOpacity style={{ padding: 10, height: 130, backgroundColor: 'white', margin: 1 }}
                 onPress={() => {
-                    props.navigation.navigate('ProfileStack', { screen: 'Profile', params: { userName: props.userName } })
+                    props.navigation.navigate('User', { screen: 'Profile', params: { userName: props.userName, lists: { inUserWishlist: inUserWishlist, otherGames: games, othersWishlist: othersWishlist } } })
                 }}
 
             >

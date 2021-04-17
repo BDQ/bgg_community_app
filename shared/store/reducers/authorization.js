@@ -15,5 +15,6 @@ export const setCredentials = (state, dispatch, bggCredentials) => {
 
 export const logOut = async () => {
   await AsyncStorage.clear()
+  global.cookie = null
   return initialState
 }

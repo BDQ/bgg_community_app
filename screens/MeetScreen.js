@@ -6,6 +6,7 @@ import { createStackNavigator } from '@react-navigation/stack'
 
 import { Icon } from 'react-native-elements'
 import styleconstants from '../shared/styles/styleconstants'
+import styles from '../shared/styles'
 import { SearchBar } from 'react-native-elements'
 var DomParser = require('react-native-html-parser').DOMParser
 import { fetchCollectionFromBGG } from '../shared/collection'
@@ -40,7 +41,6 @@ const MeetScreen = ({ navigation, route }) => {
     let [country, setCountry] = useState("Netherlands")
     let [city, setCity] = useState("Utrecht")
 
-    let [locals, setLocals] = useState([])
     let [localUserComponents, setLocalUserComponents] = useState([])
     let [fetchingInProgress, setFetchingInProgress] = useState(false)
     let [userComponentConstructionInProgress, setUserComponentConstructionInProgress] = useState(false)
@@ -63,6 +63,7 @@ const MeetScreen = ({ navigation, route }) => {
         console.log("Fetching for ", userName)
         var gamesFetched = await fetchCollectionFromBGG(userName)
         var gamesFiltered = gamesFetched.filter((game) => game.status.own === '1')
+        let otherWl = gamesFetched.filter((game) => game.status.wishlist === '1')
 
         let gl = []
         let wl = []
@@ -75,7 +76,12 @@ const MeetScreen = ({ navigation, route }) => {
             }
         }
 
-        return { otherGames: gl, inUserWants: wl }
+        let userGameLists = { otherGames: gl, inUserWants: wl, othersWishlist: otherWl }
+        let userComp = <UserThumbNail otherGames={userGameLists.otherGames} inUserWishlist={userGameLists.inUserWants} othersWishlist={userGameLists.othersWishlist} userName={userName} navigation={navigation} />
+        let newComp = { component: userComp, inWants: userGameLists.inUserWants.length }
+        setLocalUserComponents(oldList => [...oldList, newComp])
+
+
     }
 
     function compare(a, b) {
@@ -93,62 +99,66 @@ const MeetScreen = ({ navigation, route }) => {
         return sorted
     }
 
-    async function getUserLists() {
+    async function getUserLists(userNameList) {
         setUserComponentConstructionInProgress(true)
-        for (var lInd in locals) {
-            let userGameLists = await getCollectionForUser(locals[lInd].name)
-            let userComp = <UserThumbNail otherGames={userGameLists.otherGames} inUserWishlist={userGameLists.inUserWants} userName={locals[lInd].name} navigation={navigation} />
-            console.log("current list", localUserComponents.length)
-            let newComp = { component: userComp, inWants: userGameLists.inUserWants.length }
-
-
-            setLocalUserComponents(oldList => [...oldList, newComp])
-
+        for (var lInd in userNameList) {
+            getCollectionForUser(userNameList[lInd].name)
         }
+        console.log("collection requests sent")
+    }
+
+    function processHTMLUserList(respText){
+        let doc = new DomParser({locator: {},
+            errorHandler: { warning: function (w) { }, 
+            error: function (e) { }, 
+            fatalError: function (e) { console.error(e) } }}).parseFromString(respText, 'text/html')
+        let loc = doc.getElementsByClassName('username')
+
+        console.log("found locals")
+
+        console.log(loc.toString())
+
+        let names = loc.toString().match(/>(.*?)</g)
+
+
+        var locFinal = []
+
+        for (var ind in names) {
+            if (!(names[ind].startsWith("><") ||names[ind].startsWith(">(<")||names[ind].startsWith(">)<") )) {
+                locFinal.push({ 'name': names[ind].substring(1, names[ind].length - 1), inWants: 0 })
+            }
+        }
+
+        return locFinal
+
+ 
     }
 
 
     async function fetchLocalUsers() {
         setFetchingInProgress(true)
-        let resp = await fetchRaw('https://boardgamegeek.com/users?country=' + country + '&state=&city=' + city, fetchArgs)
-        resp.text().then(respText => {
-            let doc = new DomParser().parseFromString(respText, 'text/html')
-            let loc = doc.getElementsByClassName('username')
+        var pageNum = 1
+        var maxPageNum = 10
+        while(pageNum <= maxPageNum){
+            let resp = await fetchRaw('https://boardgamegeek.com/users/page/' + pageNum.toString() +'?country=' + country + '&state=&city=' + city, fetchArgs)
+            resp.text().then(respText => {
+                let localUsersPart = processHTMLUserList(respText)
+                getUserLists(localUsersPart)
+        
+            })
+            pageNum += 1
+        }
 
-            console.log("found locals")
-
-            console.log(loc.toString())
-
-            loc = loc.toString()
-            loc = loc.replaceAll("<div class=\"username\">(<a href=\"/user/", "")
-            loc = loc.replaceAll("\">", " ")
-            loc = loc.replaceAll("</a>)</div>", " ")
-
-            loc = loc.split(" ")
-            var locFinal = []
-
-            for (var ind in loc) {
-                if (ind % 2) {
-                    locFinal.push({ 'name': loc[ind], inWants: 0 })
-                }
-            }
-
-            setLocals(locFinal)
-            setFetchingInProgress(false)
-
-        })
+  
 
     }
 
 
     useEffect(() => {
-        if (locals.length === 0 && !fetchingInProgress) {
+        if (!fetchingInProgress) {
             fetchLocalUsers()
         }
-        if (locals.length > 0 && !userComponentConstructionInProgress) {
-            getUserLists()
-        }
-
+  
     })
 
 
@@ -185,9 +195,9 @@ const MeetScreen = ({ navigation, route }) => {
                     </View>
                 </View>
                 <View>
-                    {fetchingInProgress ?
-                        <View>
-                            <Text>Loading users nearby ...</Text>
+                    {localUserComponents.length < 1 ?
+        <View style={styles.emptyView}>
+        <Text>Loading users nearby ...</Text>
 
                         </View> :
                         <View>
@@ -228,7 +238,7 @@ export default () => (
 
         <Stack.Screen options={{ headerShown: true }} name="BGG users nearby" component={MeetScreen} />
         <Stack.Screen options={{ headerShown: false }} name="GameStack" component={GameStack} />
-        <Stack.Screen options={{ headerShown: false }} name="ProfileStack" component={ProfileStack} />
+        <Stack.Screen options={{ headerShown: false }} name="User" component={ProfileStack} />
 
     </Stack.Navigator>
 

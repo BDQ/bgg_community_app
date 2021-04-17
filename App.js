@@ -17,7 +17,7 @@ import { createStackNavigator } from '@react-navigation/stack'
 
 import { PREVIEW_SHORT_NAME } from 'react-native-dotenv'
 
-import { AppLoading } from 'expo'
+import AppLoading from 'expo-app-loading'
 import * as Font from 'expo-font'
 import FlashMessage from 'react-native-flash-message'
 
@@ -28,6 +28,7 @@ import LoginScreen from './screens/LoginScreen'
 import OwnedScreen from './screens/OwnedScreen'
 import CollectionScreen from './screens/CollectionScreen'
 import MeetScreen from './screens/MeetScreen'
+import MessagesScreen from './screens/MessagesScreen'
 import WishlistScreen from './screens/WishlistScreen'
 import PreviewScreen from './screens/PreviewScreen'
 
@@ -71,7 +72,7 @@ export default class App extends React.PureComponent {
 
           this.dispatch.setCredentials(bggCredentials)
           this.setState({ loggedIn: true })
-          this.global.username = username
+          global.username = username
 
           // getting user info
           const url = "https://boardgamegeek.com/xmlapi2/users?name=" + username
@@ -116,21 +117,43 @@ export default class App extends React.PureComponent {
     //     tabsToRender = { ...tabsToRender, Scan, Subscriptions }
     //   }
     // }
-
+    function getTabBarVisibility(route) {
+      const routeName = route.state
+        ? route.state.routes[route.state.index].name
+        : '';
+    
+      if (routeName === 'Conversation' ) {
+        return false;
+      }
+    
+      return true;
+    }
     const Tab = createBottomTabNavigator()
     const Drawer = createStackNavigator()
 
     const mainTabNav = () => {
-      return <Tab.Navigator backBehavior="none" initialRouteName="ProfileStack" >
+      return <Tab.Navigator backBehavior="none" initialRouteName="Collection" >
         <Tab.Screen
           name="Share"
           component={MeetScreen}
           options={{
             tabBarLabel: 'Share',
             tabBarIcon: ({ color, size }) => (
-              <Ionicons name="md-share" size={size} color={color} />
+              <Ionicons name="share-social" size={size} color={color} />
             )
           }}
+        />
+                <Tab.Screen
+          name="Geekmail"
+          component={MessagesScreen}
+        
+          options={({ route }) => ({
+            tabBarVisible: getTabBarVisibility(route),
+            tabBarLabel: 'Geekmail',
+            tabBarIcon: ({ color, size }) => (
+              <Ionicons name="ios-mail-outline" size={size} color={color} />
+            )
+          })} 
         />
         <Tab.Screen
           name="Collection"

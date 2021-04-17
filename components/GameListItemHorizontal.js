@@ -1,17 +1,18 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { StyleSheet, View, Text } from 'react-native'
+import { StyleSheet, View, Text, Image } from 'react-native'
 import { Avatar } from 'react-native-elements'
 
 export default class GameListItem extends React.PureComponent {
   render() {
     return (
-      <View>
-        <Avatar
-          size="large"
+      <View style={styles.itemContainer}>
+        <Image
           source={{ uri: this.props.thumbnail }}
-          activeOpacity={0.7}
+          style={{ width: 100, height: 80, borderRadius: 5 }}
         />
+
+
       </View>
 
 
@@ -29,17 +30,11 @@ const styles = StyleSheet.create({
   itemContainer: {
     justifyContent: 'center',
     alignItems: 'center',
-    height: 99,
-    width: 99,
-    padding: 8,
-    borderTopWidth: 2,
-    borderColor: '#dde4eb',
+    height: 80,
+    width: 105,
     flexDirection: 'column',
     backgroundColor: '#ffffff',
-    borderRadius: 15,
-    shadowRadius: 0.5,
-    shadowOpacity: 0.2,
-    margin: 2
+
   },
   gameDetails: {
     paddingLeft: 10,

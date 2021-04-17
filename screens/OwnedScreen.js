@@ -17,7 +17,10 @@ import GameList from './../components/GameList'
 import globalStyles from '../shared/styles'
 import { logger } from '../shared/debug'
 
-const OwnedListScreen = ({ navigation, route }) => {
+const OwnedListScreen = (props) => {
+  const navigation = props.navigation
+  const route = props.route
+
   const [refreshing, setRefreshing] = useState(false)
 
   const [collectionFetchedAt, setCollectionFetchedAt] = useGlobal(
@@ -62,10 +65,20 @@ const OwnedListScreen = ({ navigation, route }) => {
     setRefreshing(false)
   }
 
-  if (collectionFetchedAt > 0) {
-    const { navigate } = navigation
-    const games = collection.filter((game) => game.status.own === '1')
 
+  if (collectionFetchedAt > 0 || (props.route.params && props.route.params.gamelist)) {
+    var games
+    var isSelf
+    if (props.route.params && props.route.params.gamelist) {
+      /// if list is passed, it is a different user
+      isSelf = false
+      games = props.route.params.gamelist
+    } else {
+      games = collection.filter((game) => game.status.own === '1')
+      isSelf = true
+    }
+
+    const { navigate } = props.navigation.dangerouslyGetParent().dangerouslyGetParent().dangerouslyGetParent()
     return (
       <GameList
         navigation={{ navigate }}
@@ -73,6 +86,7 @@ const OwnedListScreen = ({ navigation, route }) => {
         games={games}
         refreshing={refreshing}
         onRefresh={handleRefresh}
+        isSelf = {isSelf}
       />
     )
   } else {

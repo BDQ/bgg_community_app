@@ -14,7 +14,7 @@ import styles from '../shared/styles'
 import { getDispatch } from 'reactn'
 import ProfileCard from './ProfileCard'
 
-import { fetchXML } from '../shared/HTTP'
+import { fetchRaw } from '../shared/HTTP'
 var parseString = require('react-native-xml2js').parseString;
 
 
@@ -48,15 +48,20 @@ const customStyles = StyleSheet.create({
   }
 })
 
+
+
 const ProfileScreen = props => {
 
   let [loading, setLoading] = useState(false)
 
   /// if there are no params, we are logging in, so we use the global username
-  let userName = props.route.params ? props.route.params.userName : global.username
+  let userName = global.username
 
-  console.log("props", props)
-  console.log(props.route.params)
+  useEffect(() => {
+  
+
+   
+})
 
   const handleLogOut = () => {
 

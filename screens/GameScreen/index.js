@@ -21,6 +21,8 @@ import styles from './styles'
 const GameScreen = ({ navigation, route }) => {
   const { game } = route.params
 
+  console.log("gamescreen params", route.params)
+
   const [details, setDetails] = useState(null)
   const [itemStats, setItemStates] = useState({ item: { rankinfo: [] } })
 
@@ -47,8 +49,10 @@ const GameScreen = ({ navigation, route }) => {
   }, [game])
 
   getGameDetails = async (objectId) => {
+    console.log("fetching game", objectId)
     const url = `https://api.geekdo.com/api/geekitems?objectid=${objectId}&showcount=10&nosession=1&ajax=1&objecttype=thing`
     const { item } = await fetchJSON(url)
+    console.log("fetched game")
 
     setDetails(item)
   }

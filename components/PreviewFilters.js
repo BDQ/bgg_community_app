@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import { View, Text, TouchableOpacity, ScrollView } from 'react-native'
 import { TagSelect } from 'react-native-tag-select'
 import { Button } from 'react-native-elements'
-import { Dropdown } from 'react-native-material-dropdown'
+import { Dropdown } from 'react-native-material-dropdown-v2'
 
 import styles from '../shared/styles'
 import {

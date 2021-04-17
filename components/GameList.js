@@ -84,17 +84,28 @@ export default class GameList extends React.PureComponent {
         </View>
       )
     } else {
-      return (
-        <View style={styles.emptyView}>
-          <View style={{ flexDirection: 'row' }}>
-            <Text>Your {this.props.listName} is empty, why not </Text>
-            <Text style={styles.link} onPress={this.goToSearch}>
-              add one
-            </Text>
-            <Text>?</Text>
+      if(this.props.isSelf){
+        return (
+          <View style={styles.emptyView}>
+            <View style={{ flexDirection: 'row' }}>
+              <Text>Your {this.props.listName} is empty, why not </Text>
+              <Text style={styles.link} onPress={this.goToSearch}>
+                add one
+              </Text>
+              <Text>?</Text>
+            </View>
           </View>
-        </View>
-      )
+        )
+      }else{
+        return (
+          <View style={styles.emptyView}>
+            <View style={{ flexDirection: 'row' }}>
+              <Text>This list is empty</Text>
+            </View>
+          </View>
+        )
+      }
+   
     }
   }
 

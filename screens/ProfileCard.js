@@ -97,14 +97,14 @@ const ProfileCard = props => {
             <View style={{ flexDirection: 'column', justifyContent: 'center', marginRight: 20 }}>
               {profileDetails.user.avatarlink[0].$.value == "N/A" ?
                 <Image
-                  style={{ width: 120, height: 120 }}
+                  style={{ width: 64, height: 64 }}
                   source={{
                     uri:
                       "https://ynnovate.it/wp-content/uploads/2015/07/default-avatar1.png"
                   }} />
                 :
                 <Image
-                  style={{ width: 120, height: 120 }}
+                  style={{ width: 64, height: 64 }}
                   source={{
                     uri:
                       profileDetails.user.avatarlink[0].$.value

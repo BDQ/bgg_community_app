@@ -1,6 +1,6 @@
 {
   "expo": {
-    "sdkVersion": "37.0.0",
+    "sdkVersion": "40.0.0",
     "splash": {
       "image": "./assets/splash.png",
       "backgroundColor": "#3F3A60",

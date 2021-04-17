@@ -25,11 +25,13 @@ const tabNav = props => {
             indicatorStyle: {
                 backgroundColor: styleconstants.bggorange, height: 3
             },
-            labelStyle: { fontFamily: 'lato-bold' }
+            labelStyle: { fontFamily: 'lato-bold', fontSize: 12 }
 
         }}>
-        <Tab.Screen name="Owned" component={OwnedScreen} />
-        <Tab.Screen name="Wishlist" component={WishlistScreen} />
+        <Tab.Screen name="In my wishlist" component={WishlistScreen} initialParams={{ gamelist: props.route.params.lists.inUserWishlist }} />
+        <Tab.Screen name="Owned" component={OwnedScreen} initialParams={{ gamelist: props.route.params.lists.otherGames }} />
+        <Tab.Screen name="Wishlist" component={WishlistScreen} initialParams={{ gamelist: props.route.params.lists.othersWishlist }} />
+
     </Tab.Navigator>
 }
 
@@ -53,7 +55,7 @@ const tabNavWrapped = props => {
 
     }}>
 
-        <StackTabWrapper.Screen name="Collection" component={tabNav} />
+        <StackTabWrapper.Screen options={{ headerShown: false }} name="Collection" component={tabNav} initialParams={props.route.params} />
 
     </StackTabWrapper.Navigator>
 
@@ -68,7 +70,7 @@ export default props => {
         <Stack.Navigator >
 
 
-            <Stack.Screen options={{ headerShown: false }} name="Collection" component={tabNavWrapped} initialParams={{ insideScreen: props.insideScreen }} />
+            <Stack.Screen options={{ headerShown: false }} name="Collection" component={tabNavWrapped} initialParams={{ lists: props.lists }} />
             <Stack.Screen options={{ headerShown: false }} name="GameStack" component={GameStack} />
 
         </Stack.Navigator>
