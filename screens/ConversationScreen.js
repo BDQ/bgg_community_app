@@ -3,21 +3,31 @@ import React, { useState, useEffect, useGlobal } from 'reactn'
 import SafeAreaView from 'react-native-safe-area-view'
 import { createStackNavigator } from '@react-navigation/stack'
 import { useFocusEffect } from '@react-navigation/native';
+import { getNumUnread } from '../shared/FetchWithCookie'
 
 import { fetchRaw } from '../shared/HTTP'
-import { View, Text, ScrollView, FlatList, TouchableOpacity, Dimensions, TextInput, KeyboardAvoidingView } from 'react-native';
+import { View, Text, ScrollView, FlatList, TouchableOpacity, Dimensions, TextInput, KeyboardAvoidingView , Keyboard} from 'react-native';
 import styles from '../shared/styles'
 import { func } from 'prop-types';
 import MessageThumbNail from './MessageThumbNail'
 import { manipulateAsync } from 'expo-image-manipulator';
 import { Icon } from 'react-native-elements'
+import { BarIndicator } from 'react-native-indicators';
+import { showMessage } from 'react-native-flash-message'
 
 import HTML from "react-native-render-html";
 import styleconstants from '../shared/styles/styleconstants';
 
+
+const showFlash = (message, type = 'danger') => {
+  showMessage({ message, type, icon: 'auto' })
+}
+
 const ConversationScreen = props => {
 
   let [loading, setLoading] = useState(true)
+  let [sending, setSending] = useState(false)
+
   let [messages, setMessages] = useState(null)
   let [messageToSend, setMessageToSend] = useState('');
 
@@ -26,6 +36,71 @@ const ConversationScreen = props => {
   const maxTextInputHeight = 22 * numLines
   const extraTextInputHeight = Platform.OS === 'ios' ? 10 : 2
   let [textInputHeight, setHeight] = useState(34 + extraTextInputHeight)
+
+
+  function getPastMessagesString(){
+    var s = ""
+    for(var mInd in messages){
+      s += "[q=\"" + messages[mInd].sender + "\"]" + messages[mInd].message
+    }
+    s += "[/q][/q]"
+    return encodeURIComponent(s)
+  }
+
+  async function sendMessage(){
+    Keyboard.dismiss()
+    setSending(true)
+
+
+    var myHeaders = new Headers();
+    myHeaders.append("authority", "boardgamegeek.com");
+    myHeaders.append("sec-ch-ua", "\"Google Chrome\";v=\"89\", \"Chromium\";v=\"89\", \";Not A Brand\";v=\"99\"");
+    myHeaders.append("accept", "text/javascript, text/html, application/xml, text/xml, */*");
+    myHeaders.append("x-requested-with", "XMLHttpRequest");
+    myHeaders.append("sec-ch-ua-mobile", "?0");
+    myHeaders.append("user-agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.114 Safari/537.36");
+    myHeaders.append("content-type", "application/x-www-form-urlencoded; charset=UTF-8");
+    myHeaders.append("origin", "https://boardgamegeek.com");
+    myHeaders.append("sec-fetch-site", "same-origin");
+    myHeaders.append("sec-fetch-mode", "cors");
+    myHeaders.append("sec-fetch-dest", "empty");
+    myHeaders.append("referer", "https://boardgamegeek.com/geekmail");
+    myHeaders.append("accept-language", "en-US,en;q=0.9");
+    myHeaders.append("cookie", global.cookie);
+
+    var raw = "action=save&messageid=&touser=" + encodeURIComponent(props.route.params.user) + "&subject="+encodeURIComponent(props.route.params.subject)+"&savecopy=1&geek_link_select_1=&sizesel=10&body="+encodeURIComponent(messageToSend) + getPastMessagesString()+"&B1=Send&folder=inbox&label=&ajax=1&searchid=0&pageID=1";
+    
+    var requestOptions = {
+      method: 'POST',
+      headers: myHeaders,
+      body: raw,
+      redirect: 'follow',
+      credentials: 'omit'
+    };
+    
+    fetch("https://boardgamegeek.com/geekmail_controller.php", requestOptions)
+      .then(response => {
+        console.log("resp status", response.status)
+        if(response.status === 200){
+          response.text()
+          .then(rt => {
+            console.log("resp text", rt)
+            setSending(false)
+            showFlash(`Your message was sent successfully`, 'success')
+            getNumUnread()
+      
+            props.navigation.navigate("GeekMail", {"refetch":true})
+          })
+          .catch(error => console.log('error', error));
+
+        }else{
+          showFlash(`An error has occured`, 'error')
+
+        }
+        
+    })
+
+  }
 
 
   async function getMessages(){
@@ -38,13 +113,18 @@ const ConversationScreen = props => {
   
     const requestHeaders = {
       Accept: '*/*',
-      Cookie: "bggusername=BalintHompot; bggpassword=v2s49n9d6uvqyu5410vqyrsflkw7m10axx; bggusername=BalintHompot; bggpassword=yfgysc3v29qbbz10pqcenv3prm8qrgovg; SessionID=d81c9ff2789975350e11a072689b0c640b2d0b56u2573199; "
+      cookie: global.cookie
+
     }
    let resp = await fetchRaw("https://boardgamegeek.com/geekmail_controller.php?action=getmessage&ajax=1&folder=inbox&messageid=" + props.route.params.messageid, 
    {
     method: 'GET',
-    credentials: 'include',
+    credentials: 'omit',
   }, requestHeaders)
+
+    ///also refresh number of unread
+    getNumUnread()
+    
     console.log("resp messages", resp.status, resp.statusText)
     resp.text().then(rText => {
 
@@ -57,22 +137,62 @@ const ConversationScreen = props => {
       let msgList = []
       let sender  = ""
       let msg = ""
+      let messagesBlockStarted = false
+      let messagesBlockEnded = false
+      let nextIsFirstSender = false
+      let subjectFound = false
+      let firstMsgCountdown = 2
 
       for(var ind in regexMsgs){
-        if(!regexMsgs[ind].startsWith(">\\") && regexMsgs[ind] != "><" ){
+        if((!regexMsgs[ind].startsWith(">\\") && regexMsgs[ind] != "><" && !regexMsgs[ind].startsWith("> \\") &&  !regexMsgs[ind].startsWith(">)")||regexMsgs[ind].endsWith("Subject: <"))){
 
-          if(regexMsgs[ind].startsWith(">Collapse")){
-            
+          if(!messagesBlockStarted){
+            //// getting the first message is different from getting the rest
+            if(regexMsgs[ind].startsWith(">(")){
+              nextIsFirstSender = true
+            }
+            else if(nextIsFirstSender){
+              sender = regexMsgs[ind].substring(1, regexMsgs[ind].length - 1)
+              nextIsFirstSender = false
+
+            }
+
+            if(regexMsgs[ind].endsWith("Subject: <")){
+              subjectFound = true
+            }
+            else if(subjectFound){
+              if(firstMsgCountdown === 0){
+                msg = regexMsgs[ind].substring(1, regexMsgs[ind].length - 1)
+                messagesBlockStarted = true
+                msgList.push({"sender":sender, "message":msg})
+                msg = ""
+                sender = ""
+              }else{
+                firstMsgCountdown -=1
+              }
+   
+
+            }
+
+          }
+          
+          if(messagesBlockStarted && !messagesBlockEnded){
+    
+            if(regexMsgs[ind].startsWith(">Collapse")){
+              messagesBlockEnded = true
+            }
+            else if(regexMsgs[ind].endsWith("wrote:<")){
+              msgList.push({"sender":sender, "message":msg})
+              sender = regexMsgs[ind].substring(1, regexMsgs[ind].length - 8)
+              msg = ""
+  
+            }else{
+              msg += regexMsgs[ind].substring(1, regexMsgs[ind].length - 1) + "\n"
+            }
+        
           }
 
-          if(regexMsgs[ind].endsWith("wrote:<")){
-            msgList.push({"sender":sender, "message":msg})
-            sender = regexMsgs[ind].substring(1, regexMsgs[ind].length - 8)
-            msg = ""
-
-          }else{
-            msg += regexMsgs[ind].substring(1, regexMsgs[ind].length - 1) + "\n"
-          }
+   
 
 
         }
@@ -145,11 +265,10 @@ const ConversationScreen = props => {
 }
 
  
-<View style={{ flexDirection: 'row', height: textInputHeight + 15, justifyContent: 'space-between', width:'100%', maxHeight: maxTextInputHeight + 15, alignItems:'flex-end'}}>
+<View style={{ flexDirection: 'row',  justifyContent: 'space-between', width:'100%', maxHeight: maxTextInputHeight + 15, alignItems:'flex-end'}}>
 
-<View style={{ paddingHorizontal: 10, backgroundColor: 'white', borderRadius: 15, marginVertical: Platform.OS === 'ios' ? 8 : 4, height: textInputHeight, maxHeight: maxTextInputHeight, width:'85%', marginHorizontal:6 }}>
+<View style={{ paddingHorizontal: 10, backgroundColor: 'white', borderRadius: 15, marginVertical: 8, height: textInputHeight + 10, maxHeight: maxTextInputHeight, width:'85%', marginHorizontal:6 ,justifyContent:'center', paddingBottom:5}}>
 <TextInput
-    style={{height : textInputHeight}}
     onChangeText={Msg => setMessageToSend(Msg)}
     placeholder="Write a message"
     placeholderTextColor={'lightgrey'}
@@ -168,6 +287,11 @@ const ConversationScreen = props => {
 
     />
     </View>
+    {sending?
+    <View style = {{marginBottom:0, marginRight:5}}>
+      <BarIndicator size={16} color={styleconstants.bggorange} count={5}  />
+      </View>
+      :                              
       
       <Icon
       name='paper-plane'
@@ -175,8 +299,10 @@ const ConversationScreen = props => {
       color={styleconstants.bggorange}
       size={16}
       style={{ textAlign: 'center', justifyContent: 'center', alignItems: 'center' }}
+      onPress = {() => {sendMessage()}}
       reverse
       />
+    }
 
     </View>
     </KeyboardAvoidingView>

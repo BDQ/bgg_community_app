@@ -6,6 +6,7 @@ const requestHeaders = new Headers({
 })
 
 export const logIn = async (username, password) => {
+  console.log("logging in with username", username)
   const init = {
     method: 'POST',
     body: JSON.stringify({

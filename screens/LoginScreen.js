@@ -1,11 +1,12 @@
 import React, { useState, useDispatch } from 'reactn'
 import Sentry from 'sentry-expo'
-import { View, Text, StyleSheet, Linking, ScrollView, Dimensions, ImageBackground, Image } from 'react-native'
+import { View, Text, StyleSheet, Linking, ScrollView, Dimensions, ImageBackground, Image, AsyncStorage, Platform ,KeyboardAvoidingView} from 'react-native'
 import { Input, Button } from 'react-native-elements'
 import { showMessage } from 'react-native-flash-message'
 import SafeAreaView from 'react-native-safe-area-view'
 import { createStackNavigator } from '@react-navigation/stack'
 import { logIn, getUserId } from '../shared/auth'
+import { getNumUnread } from '../shared/FetchWithCookie'
 
 
 import styles from '../shared/styles'
@@ -29,7 +30,7 @@ const customStyles = StyleSheet.create({
   },
 
   buttonContainer: {
-    paddingVertical: 30
+    paddingVertical: 30,
   },
 
   button: {
@@ -90,6 +91,8 @@ const LoginScreen = props => {
 
   const attemptBGGLogin = async (username, password) => {
     try {
+      AsyncStorage.setItem('userName', username);
+      AsyncStorage.setItem('userPassword', password);
       const { success } = await logIn(username, password)
 
       setLoading(false)
@@ -108,6 +111,7 @@ const LoginScreen = props => {
           }
 
 
+          await getNumUnread()
 
           dispatch.setCredentials(bggCredentials)
           global.username = username
@@ -149,9 +153,13 @@ const LoginScreen = props => {
 
 
   return (
+
+
     <ImageBackground source={require("../assets/loginBackground.jpg")} style={{ width: '100%', height: '100%' }}>
 
-      <View style={{ alignItems: 'center', padding: 10, flex: 1, backgroundColor: 'rgba(1,1,1,0.4)' }}>
+      <View style={{ alignItems: 'center', padding: 10, flex: 1, backgroundColor: 'rgba(1,1,1,0.4)'}}>
+      <KeyboardAvoidingView style={ { width: '100%', flex:1 } } behavior={Platform.OS === "ios" ? "padding" : null} keyboardVerticalOffset={ 0}>
+      <View style = {{justifyContent:'flex-end', alignItems:'center', flex:1}}>
         <Image source={require('../assets/BGG-Logo-removebg.png')} style={{ width: 150, height: 150, marginTop: 100, marginBottom: 20 }} />
 
         <Input
@@ -182,8 +190,10 @@ const LoginScreen = props => {
           inputStyle={{ color: 'white' }}
           labelStyle={{ color: 'white' }}
         />
-        <View style={[customStyles.buttonContainer, { width: '100%' }]}>
-          <Button
+
+        <View style={[customStyles.buttonContainer, { width: '100%',  }] }>
+          
+        <Button
             id="submitButton"
             backgroundColor="#03A9F4"
             style={customStyles.button}
@@ -194,8 +204,10 @@ const LoginScreen = props => {
             title={'Sign In'}
           />
         </View>
-
-        <View >
+        </View>
+ 
+        </KeyboardAvoidingView>
+        <View style = {{marginBottom : '50%'}}>
           <Text style={{ color: 'white' }}>
             This app is an <Text style={customStyles.strong}>unofficial</Text>{' '}
             {' '}
@@ -208,8 +220,11 @@ const LoginScreen = props => {
             logo are trademarks of BoardGameGeek, LLC.
               </Text>
         </View>
+
       </View>
     </ImageBackground>
+
+
   )
 
 }

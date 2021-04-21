@@ -9,7 +9,7 @@ Sentry.init({
 */
 
 import React from 'reactn'
-import { View } from 'react-native'
+import { View, AsyncStorage } from 'react-native'
 import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
@@ -39,6 +39,9 @@ import { BETA_USERS } from 'react-native-dotenv'
 import styleconstants from './shared/styles/styleconstants'
 import { logIn, getUserId } from './shared/auth'
 import { fetchXML } from './shared/HTTP'
+import { getNumUnread } from './shared/FetchWithCookie'
+import {  Badge } from 'react-native-elements'
+
 var parseString = require('react-native-xml2js').parseString;
 
 const betaUsers = BETA_USERS.split(',')
@@ -54,42 +57,47 @@ export default class App extends React.PureComponent {
   }
 
   async attemptBGGLoginInBackground(username, password) {
-    try {
-      const { success } = await logIn(username, password)
-
-
-      if (success) {
-        const { userid, firstname, lastname } = await getUserId()
-
-        if (userid > 0) {
-
-          const bggCredentials = {
-            username,
-            userid,
-            firstname,
-            lastname
-          }
-
-          this.dispatch.setCredentials(bggCredentials)
-          this.setState({ loggedIn: true })
-          global.username = username
-
-          // getting user info
-          const url = "https://boardgamegeek.com/xmlapi2/users?name=" + username
-
-          const userDetails = await fetchXML(url, { method: 'GET' })
-          await parseString(userDetails, function (err, result) {
-            console.log("xml parsed", result)
-            if (result) {
-              this.setState({ userDetails: result })
+    if(username && password){
+      try {
+        const { success } = await logIn(username, password)
+  
+  
+        if (success) {
+          const { userid, firstname, lastname } = await getUserId()
+  
+          if (userid > 0) {
+  
+            const bggCredentials = {
+              username,
+              userid,
+              firstname,
+              lastname
             }
-          }.bind(this))
+
+            await getNumUnread()
+  
+            this.dispatch.setCredentials(bggCredentials)
+            this.setState({ loggedIn: true })
+            global.username = username
+  
+            // getting user info
+            const url = "https://boardgamegeek.com/xmlapi2/users?name=" + username
+            
+            const userDetails = await fetchXML(url, { method: 'GET' })
+            await parseString(userDetails, function (err, result) {
+              console.log("xml parsed", result)
+              if (result) {
+                this.setState({ userDetails: result })
+              }
+            }.bind(this))
+          }
         }
+      } catch (error) {
+        console.warn(error)
+        //Sentry.captureException(error)
       }
-    } catch (error) {
-      console.warn(error)
-      //Sentry.captureException(error)
     }
+    
   }
 
   _fireUp = async () => {
@@ -98,7 +106,14 @@ export default class App extends React.PureComponent {
       lato: require('./assets/Lato-Regular.ttf'),
       'lato-bold': require('./assets/Lato-Bold.ttf')
     })
-    await this.attemptBGGLoginInBackground("BalintHompot", "Sanyika1-")
+      let valueName =  await AsyncStorage.getItem('userName')
+      console.log("retrieved name value")
+      console.log(valueName)
+      let valuePassword = await AsyncStorage.getItem('userPassword')
+      console.log("retrieved password value")
+      console.log(valuePassword)
+      
+      await this.attemptBGGLoginInBackground(valueName, valuePassword)
 
   }
 
@@ -151,7 +166,18 @@ export default class App extends React.PureComponent {
             tabBarVisible: getTabBarVisibility(route),
             tabBarLabel: 'Geekmail',
             tabBarIcon: ({ color, size }) => (
+              <View>
+       
               <Ionicons name="ios-mail-outline" size={size} color={color} />
+              {global.numUnread > 0? 
+              <Badge
+              status="error"
+              containerStyle={{ position: 'absolute', top: -4, right: -4 }}
+              value = {global.numUnread}
+              
+            />
+            :null}
+              </View>
             )
           })} 
         />

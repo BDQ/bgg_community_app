@@ -138,7 +138,7 @@ const MeetScreen = ({ navigation, route }) => {
     async function fetchLocalUsers() {
         setFetchingInProgress(true)
         var pageNum = 1
-        var maxPageNum = 10
+        var maxPageNum = 1
         while(pageNum <= maxPageNum){
             let resp = await fetchRaw('https://boardgamegeek.com/users/page/' + pageNum.toString() +'?country=' + country + '&state=&city=' + city, fetchArgs)
             resp.text().then(respText => {
