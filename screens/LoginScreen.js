@@ -1,6 +1,6 @@
 import React, { useState, useDispatch } from 'reactn'
 import Sentry from 'sentry-expo'
-import { View, Text, StyleSheet, Linking, ScrollView, Dimensions, ImageBackground, Image, AsyncStorage, Platform ,KeyboardAvoidingView} from 'react-native'
+import { View, Text, StyleSheet, Linking, Dimensions, ImageBackground, Image, AsyncStorage, Platform ,KeyboardAvoidingView, UIManager, ScrollView} from 'react-native'
 import { Input, Button } from 'react-native-elements'
 import { showMessage } from 'react-native-flash-message'
 import SafeAreaView from 'react-native-safe-area-view'
@@ -12,6 +12,12 @@ import { getNumUnread } from '../shared/FetchWithCookie'
 import styles from '../shared/styles'
 
 const height = Dimensions.get('screen').height
+
+if (Platform.OS === 'android') {
+  if (UIManager.setLayoutAnimationEnabledExperimental) {
+    UIManager.setLayoutAnimationEnabledExperimental(true);
+  }
+}
 
 const customStyles = StyleSheet.create({
   text: {
@@ -53,6 +59,8 @@ const LoginScreen = props => {
 
   let [loading, setLoading] = useState(false)
   let [message, setMessage] = useState(null)
+
+  ///android cant handle partial avoiding view
 
   const dispatch = useDispatch()
 
@@ -151,81 +159,93 @@ const LoginScreen = props => {
     }
   }
 
+  let InnerScreen =  <ImageBackground source={require("../assets/loginBackground.jpg")} style={{ width: '100%', height: '100%' }}>
 
-  return (
+    <View style={{ alignItems: 'center', padding: 10, flex: 1, backgroundColor: 'rgba(1,1,1,0.4)'}}>
+    <KeyboardAvoidingView style={ { width: '100%', flex:1 } } behavior={Platform.OS === "ios" ? "padding" : null} >
+    <View style = {{justifyContent:'flex-end', alignItems:'center', flex:1}}>
+      <Image source={require('../assets/BGG-Logo-removebg.png')} style={{ width: 150, height: 150, marginTop: 100, marginBottom: 20 }} />
 
+      <Input
+        id="usernameInput"
+        label="BGG Username"
+        focus={true}
+        autoCapitalize={'none'}
+        autoCorrect={false}
+        spellCheck={false}
+        onChangeText={usernameChange}
+        value={username}
+        errorMessage={usernameError}
+        containerStyle={{ backgroundColor: 'rgba(1,1,1,0.5)', padding: 20, borderRadius: 15 }}
+        inputStyle={{ color: 'white' }}
+        labelStyle={{ color: 'white' }}
+      />
 
-    <ImageBackground source={require("../assets/loginBackground.jpg")} style={{ width: '100%', height: '100%' }}>
+      <Input
+        id="passwordInput"
+        label="BGG Password"
+        autoCapitalize="none"
+        containerStyle={{ marginTop: 25 }}
+        onChangeText={passwordChange}
+        secureTextEntry={true}
+        value={password}
+        errorMessage={passwordError}
+        containerStyle={{ backgroundColor: 'rgba(1,1,1,0.5)', padding: 20, borderRadius: 15 }}
+        inputStyle={{ color: 'white' }}
+        labelStyle={{ color: 'white' }}
+      />
 
-      <View style={{ alignItems: 'center', padding: 10, flex: 1, backgroundColor: 'rgba(1,1,1,0.4)'}}>
-      <KeyboardAvoidingView style={ { width: '100%', flex:1 } } behavior={Platform.OS === "ios" ? "padding" : null} keyboardVerticalOffset={ 0}>
-      <View style = {{justifyContent:'flex-end', alignItems:'center', flex:1}}>
-        <Image source={require('../assets/BGG-Logo-removebg.png')} style={{ width: 150, height: 150, marginTop: 100, marginBottom: 20 }} />
-
-        <Input
-          id="usernameInput"
-          label="BGG Username"
-          focus={true}
-          autoCapitalize={'none'}
-          autoCorrect={false}
-          spellCheck={false}
-          onChangeText={usernameChange}
-          value={username}
-          errorMessage={usernameError}
-          containerStyle={{ backgroundColor: 'rgba(1,1,1,0.5)', padding: 20, borderRadius: 15 }}
-          inputStyle={{ color: 'white' }}
-          labelStyle={{ color: 'white' }}
+      <View style={[customStyles.buttonContainer, { width: '100%',  }] }>
+        
+      <Button
+          id="submitButton"
+          backgroundColor="#03A9F4"
+          style={customStyles.button}
+          onPress={
+            handleLogIn
+          }
+          loading={loading}
+          title={'Sign In'}
         />
-
-        <Input
-          id="passwordInput"
-          label="BGG Password"
-          autoCapitalize="none"
-          containerStyle={{ marginTop: 25 }}
-          onChangeText={passwordChange}
-          secureTextEntry={true}
-          value={password}
-          errorMessage={passwordError}
-          containerStyle={{ backgroundColor: 'rgba(1,1,1,0.5)', padding: 20, borderRadius: 15 }}
-          inputStyle={{ color: 'white' }}
-          labelStyle={{ color: 'white' }}
-        />
-
-        <View style={[customStyles.buttonContainer, { width: '100%',  }] }>
-          
-        <Button
-            id="submitButton"
-            backgroundColor="#03A9F4"
-            style={customStyles.button}
-            onPress={
-              handleLogIn
-            }
-            loading={loading}
-            title={'Sign In'}
-          />
-        </View>
-        </View>
- 
-        </KeyboardAvoidingView>
-        <View style = {{marginBottom : '50%'}}>
-          <Text style={{ color: 'white' }}>
-            This app is an <Text style={customStyles.strong}>unofficial</Text>{' '}
-            {' '}
-              community initiative to build a sharing mobile application
-              for the amazing BoardGameGeek.com site.
-            </Text>
-          <Text></Text>
-          <Text style={{ color: 'white' }}>
-            Geekdo, BoardGameGeek, the Geekdo logo, and the BoardGameGeek
-            logo are trademarks of BoardGameGeek, LLC.
-              </Text>
-        </View>
-
       </View>
-    </ImageBackground>
+      </View>
+
+      </KeyboardAvoidingView>
+      <View style = {{marginBottom : '50%'}}>
+        <Text style={{ color: 'white' }}>
+          This app is an <Text style={customStyles.strong}>unofficial</Text>{' '}
+          {' '}
+            community initiative to build a sharing mobile application
+            for the amazing BoardGameGeek.com site.
+          </Text>
+        <Text></Text>
+        <Text style={{ color: 'white' }}>
+          Geekdo, BoardGameGeek, the Geekdo logo, and the BoardGameGeek
+          logo are trademarks of BoardGameGeek, LLC.
+            </Text>
+      </View>
+
+    </View>
+  </ImageBackground>
+  
+
+  if(Platform.OS === 'ios'){
+    return (
+      {InnerScreen}
+    )
+  }else{
+    return (
 
 
-  )
+      <ScrollView>
+      {InnerScreen}
+      </ScrollView>
+  
+  
+    )
+  }
+
+
 
 }
 const Stack = createStackNavigator()
