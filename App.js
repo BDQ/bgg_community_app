@@ -133,11 +133,14 @@ export default class App extends React.PureComponent {
     //   }
     // }
     function getTabBarVisibility(route) {
+      console.log("input route", route)
       const routeName = route.state
         ? route.state.routes[route.state.index].name
         : '';
-    
-      if (routeName === 'Conversation' ) {
+
+        console.log("route name is", routeName)
+
+      if (routeName === 'Conversation' || routeName === 'Compose' ) {
         return false;
       }
     
@@ -151,12 +154,13 @@ export default class App extends React.PureComponent {
         <Tab.Screen
           name="Share"
           component={MeetScreen}
-          options={{
+          options={({ route }) => ({
+            tabBarVisible: getTabBarVisibility(route),
             tabBarLabel: 'Share',
             tabBarIcon: ({ color, size }) => (
               <Ionicons name="share-social" size={size} color={color} />
             )
-          }}
+          })}
         />
                 <Tab.Screen
           name="Geekmail"

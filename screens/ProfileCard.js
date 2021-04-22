@@ -93,6 +93,8 @@ const ProfileCard = props => {
     <View >
       {userFetched ?
         <View style={{ flexDirection: 'column' }}>
+          <View style={{ flexDirection: 'row', justifyContent:'space-between' }}>
+
           <View style={{ flexDirection: 'row' }}>
             <View style={{ flexDirection: 'column', justifyContent: 'center', marginRight: 20 }}>
               {profileDetails.user.avatarlink[0].$.value == "N/A" ?
@@ -182,11 +184,24 @@ const ProfileCard = props => {
                 </Text>
               </View>
             </View>
-
+            </View>
+            <View style = {{alignItems:'center', justifyContent:'center', marginRight:30}}>
+              {profileDetails.user.$.name != global.username?
+            <Icon
+                  name="mail"
+                  color={styleconstants.bggorange}
+                  type="ionicons"
+                  containerStyle={{ margin: 4 }}
+                  size={30}
+                  onPress = {() => {props.navigation.navigate("Compose", {messageid:null, subject : "New message", user:profileDetails.user.$.name})
+                }}
+                />
+                :null}
+              </View>
 
 
           </View>
-
+       
         </View>
         : <View style={styles.emptyView}>
 

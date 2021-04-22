@@ -22,6 +22,7 @@ import GameAddTo from './GameAddTo'
 import UserThumbNail from './../components/UserThumbNail'
 import GameStack from './GameStack'
 import ProfileStack from './OtherProfileScreen'
+import ConversationScreen from './ConversationScreen'
 
 import globalStyles from '../shared/styles'
 import { logger } from '../shared/debug'
@@ -38,8 +39,8 @@ const fetchArgs = {
 }
 
 const MeetScreen = ({ navigation, route }) => {
-    let [country, setCountry] = useState("Netherlands")
-    let [city, setCity] = useState("Utrecht")
+    let [country, setCountry] = useState("Germany")
+    let [city, setCity] = useState("Gevelsberg")
 
     let [localUserComponents, setLocalUserComponents] = useState([])
     let [fetchingInProgress, setFetchingInProgress] = useState(false)
@@ -164,7 +165,6 @@ const MeetScreen = ({ navigation, route }) => {
 
     return (
         <View>
-            <ScrollView>
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                     <SearchBar
                         onChangeText={(t) => { setCountry(t) }}
@@ -212,7 +212,6 @@ const MeetScreen = ({ navigation, route }) => {
                         </View>
                     }
                 </View>
-            </ScrollView>
         </View>
     )
 
@@ -239,6 +238,10 @@ export default () => (
         <Stack.Screen options={{ headerShown: true }} name="BGG users nearby" component={MeetScreen} />
         <Stack.Screen options={{ headerShown: false }} name="GameStack" component={GameStack} />
         <Stack.Screen options={{ headerShown: false }} name="User" component={ProfileStack} />
+        <Stack.Screen name="Compose" component={ConversationScreen}  options={({ route }) => ({
+
+title: route.params.subject,
+})} />
 
     </Stack.Navigator>
 

@@ -41,10 +41,9 @@ const GameScreen = ({ navigation, route }) => {
   useEffect(() => {
     const objectId = game.objectId
     if (details === null) {
-      InteractionManager.runAfterInteractions(async () => {
         getGameStats(objectId)
         getGameDetails(objectId)
-      })
+      
     }
   }, [game])
 

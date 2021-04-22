@@ -106,6 +106,7 @@ const ConversationScreen = props => {
   async function getMessages(){
     console.log("global cookie", global.cookie)
     console.log("message id", props.route.params.messageid)
+    if(props.route.params.messageid){
   
   
     // can't fetchJSON here as we want the full http response
@@ -124,7 +125,7 @@ const ConversationScreen = props => {
 
     ///also refresh number of unread
     getNumUnread()
-    
+
     console.log("resp messages", resp.status, resp.statusText)
     resp.text().then(rText => {
 
@@ -199,15 +200,15 @@ const ConversationScreen = props => {
       }
       msgList.push({"sender":sender, "message":msg})
 
-
-
-
-
       setMessages(msgList)
       setLoading(false)
 
   
     })
+  }else{
+    setMessages([])
+    setLoading(false)
+  }
   }
 
   useFocusEffect(

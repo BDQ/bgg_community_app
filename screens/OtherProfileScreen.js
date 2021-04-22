@@ -7,6 +7,8 @@ import SafeAreaView from 'react-native-safe-area-view'
 import { createStackNavigator } from '@react-navigation/stack'
 import { logIn, getUserId } from '../shared/auth'
 import CollectionScreen from './OtherUserCollection'
+import ConversationScreen from './ConversationScreen'
+
 import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
 import { SearchBar, Icon } from 'react-native-elements'
 import styleconstants from '../shared/styles/styleconstants'
@@ -62,7 +64,7 @@ const ProfileScreen = props => {
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#ffffff' }}>
 
-      <ProfileCard userName={userName} />
+      <ProfileCard userName={userName} navigation = {props.navigation.dangerouslyGetParent()} />
       <CollectionScreen insideScreen={true} lists={props.route.params.lists} />
 
     </SafeAreaView>
@@ -83,5 +85,7 @@ export default () => (
     },
   }}>
     <Stack.Screen name="Profile" component={ProfileScreen} />
+
+
   </Stack.Navigator>
 )

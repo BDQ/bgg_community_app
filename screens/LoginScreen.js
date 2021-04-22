@@ -231,14 +231,15 @@ const LoginScreen = props => {
 
   if(Platform.OS === 'ios'){
     return (
+      <View>
       {InnerScreen}
-    )
+    </View>    )
   }else{
     return (
 
 
       <ScrollView>
-      {InnerScreen}
+        {InnerScreen}
       </ScrollView>
   
   

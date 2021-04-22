@@ -55,55 +55,69 @@ const MessagesScreen = props => {
       credentials: 'omit'
     };
     
+
     fetch("https://boardgamegeek.com/geekmail_controller.php?action=viewfolder&ajax=1&folder="+folderName+"&pageID=1&searchid=0&label=", requestOptions)
       .then(resp => {
             
     console.log("resp messages", resp.status, resp.statusText)
     resp.text().then(rText => {
 
-      let mainTable = rText.match(/mychecks(.*)</g)[0]
-      let msgIDs = rText.match(/GetMessage(.*?)return/g)
-      let msgRead = rText.match(/(font-style:|font-weight:)(.*?)subject_/g)
-      console.log("messages read status", msgRead)
 
-      
-      let regexMsgs = mainTable.match(/>(.*?)</g)
-      let msgs = []
-      let counter = 0
-      let msgCounter = 0
-      let subject = ""
-      let user = ""
-      let date = ""
-      let dateStr = ""
 
-      for(var ind in regexMsgs){
-        if(!regexMsgs[ind].startsWith(">\\")){
-          if(counter == 6){
-            msgs.push({
-              "user":user, 
-              "subject":subject, 
-              "date":date,
-              "id" : msgIDs[msgCounter].substring(12, msgIDs[msgCounter].length-10),
-              "read" : msgRead[msgCounter].startsWith('font-weight:bold') ? false : true
-            })
-            counter = 0
-            msgCounter += 1
-          }else{
-            if(counter == 1){
-              user = regexMsgs[ind].substring(1, regexMsgs[ind].length-1)
-            }else if(counter == 3){
-              subject = regexMsgs[ind].substring(1, regexMsgs[ind].length-1)
-            }else if(counter == 5){
-              dateStr = regexMsgs[ind].substring(1, regexMsgs[ind].length-1)
-              date = dateStr.replace(/&nbsp/g, "")
+      try {
+
+        let mainTable = rText.match(/mychecks(.*)</g)[0]
+        let msgIDs = rText.match(/GetMessage(.*?)return/g)
+        let msgRead = rText.match(/(font-style:|font-weight:)(.*?)subject_/g)
+        console.log("messages read status", msgRead)
+
+        
+        let regexMsgs = mainTable.match(/>(.*?)</g)
+        let msgs = []
+        let counter = 0
+        let msgCounter = 0
+        let subject = ""
+        let user = ""
+        let date = ""
+        let dateStr = ""
+          for(var ind in regexMsgs){
+            if(!regexMsgs[ind].startsWith(">\\")){
+              if(counter == 6){
+                msgs.push({
+                  "user":user, 
+                  "subject":subject, 
+                  "date":date,
+                  "id" : msgIDs[msgCounter].substring(12, msgIDs[msgCounter].length-10),
+                  "read" : msgRead[msgCounter].startsWith('font-weight:bold') ? false : true
+                })
+                counter = 0
+                msgCounter += 1
+              }else{
+                if(counter == 1){
+                  user = regexMsgs[ind].substring(1, regexMsgs[ind].length-1)
+                }else if(counter == 3){
+                  subject = regexMsgs[ind].substring(1, regexMsgs[ind].length-1)
+                }else if(counter == 5){
+                  dateStr = regexMsgs[ind].substring(1, regexMsgs[ind].length-1)
+                  date = dateStr.replace(/&nbsp/g, "")
+                }
+                counter += 1
+              }
             }
-            counter += 1
           }
-        }
-      }
 
-      setMessages(msgs)
-      setLoading(false)
+
+
+        setMessages(msgs)
+        setLoading(false)
+      } catch (error) {
+        console.log("problem processing the messages", error)
+        setMessages([])     
+        setLoading(false)
+ 
+}
+
+
 
   
     })
@@ -134,6 +148,7 @@ const MessagesScreen = props => {
       label: 'outbox',
       value: 'outbox'
     },
+
  
   ]
   return (
@@ -163,8 +178,13 @@ const MessagesScreen = props => {
 
         </View>
       :
-      <View>
-       
+
+      <View style = {{height:'100%'}}>
+        {messages.length == 0?
+             <View style={[styles.emptyView]}>
+             <Text>This folder is empty</Text>
+      
+              </View>:
       <View style = {{backgroundColor:'gainsboro'}}>
         
       <FlatList
@@ -190,6 +210,7 @@ const MessagesScreen = props => {
 
       />
         </View>
+      }
         </View>
 
         
