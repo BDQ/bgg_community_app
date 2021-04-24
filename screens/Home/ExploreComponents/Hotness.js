@@ -6,17 +6,17 @@ import { createStackNavigator } from '@react-navigation/stack'
 
 import { Icon } from 'react-native-elements'
 
-import GameScreen from '../GameScreen'
-import LogPlay from '../Plays/Log'
-import ListPlays from '../Plays/List'
-import GameSearch from '../GameSearch'
-import GameAddTo from '../GameAddTo'
+import GameScreen from '../../GameScreen'
+import LogPlay from '../../Plays/Log'
+import ListPlays from '../../Plays/List'
+import GameSearch from '../../GameSearch'
+import GameAddTo from '../../GameAddTo'
 
-import GameList from '../../components/GameList'
+import GameList from '../../../components/GameList'
 
-import globalStyles from '../../shared/styles'
-import { logger } from '../../shared/debug'
-import styleconstants from '../../shared/styles/styleconstants'
+import globalStyles from '../../../shared/styles'
+import { logger } from '../../../shared/debug'
+import styleconstants from '../../../shared/styles/styleconstants'
 import { showMessage } from 'react-native-flash-message'
 
 const Hotness = (props) => {
@@ -90,7 +90,7 @@ const Hotness = (props) => {
         return (
             <TouchableOpacity style={{ margin: 3, width: 150, padding: 10 }}
                 onPress={() => {
-                    props.navigation.navigate('GameStack', { screen: 'Game', params: { game: { "objectId": props.item.objectid } } })
+                    props.navigation.navigate('GameStack', { screen: 'Game', params: { game: { "objectId": props.item.objectid, "name": props.item.name } } })
                 }}
             >
 
@@ -133,7 +133,10 @@ const Hotness = (props) => {
                         }}
                         horizontal
                     /> :
-                    <Text>Loading the hot list...</Text>
+                    <View style={{ height: 250 }}>
+
+                        <Text>Loading the hot list...</Text>
+                    </View>
                 }
             </View>
         </View>

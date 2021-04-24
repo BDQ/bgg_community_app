@@ -15,6 +15,7 @@ import ImageList from './ImageList'
 import AddToButton from './AddToButton'
 import LogPlayButton from './LogPlayButton'
 import { fetchJSON } from '../../shared/HTTP'
+import { getRatingColor } from '../../shared/collection'
 
 import styles from './styles'
 
@@ -41,9 +42,9 @@ const GameScreen = ({ navigation, route }) => {
   useEffect(() => {
     const objectId = game.objectId
     if (details === null) {
-        getGameStats(objectId)
-        getGameDetails(objectId)
-      
+      getGameStats(objectId)
+      getGameDetails(objectId)
+
     }
   }, [game])
 
@@ -128,7 +129,7 @@ const GameScreen = ({ navigation, route }) => {
       ratingBGColor = '#999999'
       ratingText = '--'
     } else {
-      ratingBGColor = '#5369a2'
+      ratingBGColor = getRatingColor(stats.average)
       ratingText = _trimTo(stats.average, 1)
     }
 
@@ -295,7 +296,7 @@ const GameScreen = ({ navigation, route }) => {
     } else {
       return (
         <View style={styles.emptyView}>
- 
+
 
           <Text style={{ marginTop: 10, color: 'white' }}>Loading...</Text>
         </View>

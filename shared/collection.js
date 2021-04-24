@@ -2,6 +2,7 @@ import * as Sentry from 'sentry-expo'
 const XMLParser = require('react-xml-parser')
 
 import { AsyncStorage, InteractionManager } from 'react-native'
+import styleconstants from './styles/styleconstants'
 
 import nextFrame from 'next-frame'
 
@@ -97,4 +98,17 @@ export const loadCollection = async updatedAt => {
       return {}
     }
   }
+}
+
+export function getRatingColor(rating) {
+  if (rating > 8) {
+    return '#1d804c'
+  } else if (rating > 7) {
+    return '#1978b3'
+  } else if (rating > 5) {
+    return styleconstants.bggpurple
+  } else {
+    return '#d71925'
+  }
+
 }

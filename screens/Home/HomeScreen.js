@@ -4,7 +4,10 @@ import { View, Text, InteractionManager, useWindowDimensions } from 'react-nativ
 import { Button } from 'react-native-elements'
 import { createStackNavigator } from '@react-navigation/stack'
 import ExploreScreen from './Explore'
-import WishlistScreen from '../Collection/WishlistScreen'
+import MoreScreen from './MoreScreen'
+import MeetScreen from '../../screens/Meet/MeetScreen'
+import ConversationScreen from '../../screens/Mail/ConversationScreen'
+
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 
 import { Icon } from 'react-native-elements'
@@ -18,6 +21,7 @@ const Tab = createMaterialTopTabNavigator();
 const StackTabWrapper = createStackNavigator()
 const Stack = createStackNavigator()
 import styleconstants from '../../shared/styles/styleconstants'
+import PreviewScreen from '../../screens/PreviewScreen'
 
 const tabNav = props => {
     return <Tab.Navigator
@@ -29,7 +33,7 @@ const tabNav = props => {
 
         }}>
         <Tab.Screen name="Explore" component={ExploreScreen} />
-        <Tab.Screen name="More" component={WishlistScreen} />
+        <Tab.Screen name="More" component={MoreScreen} />
     </Tab.Navigator>
 }
 
@@ -65,11 +69,26 @@ export default props => {
 
     return (
 
-        <Stack.Navigator >
+        <Stack.Navigator screenOptions={{
+            headerStyle: {
+                backgroundColor: '#403c64',
+            },
+            headerTintColor: '#fff',
+            headerTitleStyle: {
+                fontWeight: 'bold',
+            },
+        }} >
 
 
             <Stack.Screen options={{ headerShown: false }} name="Home" component={tabNavWrapped} />
             <Stack.Screen options={{ headerShown: false }} name="GameStack" component={GameStack} />
+            <Stack.Screen options={{ headerShown: false }} name="Preview" component={PreviewScreen} />
+            <Stack.Screen options={{ headerShown: false }} name="Gamers nearby" component={MeetScreen} />
+            <Stack.Screen name="Compose" component={ConversationScreen} options={({ route }) => ({
+
+                title: route.params.subject,
+            })} />
+
 
         </Stack.Navigator>
 

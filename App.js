@@ -163,17 +163,7 @@ export default class App extends React.PureComponent {
             )
           })}
         />
-        <Tab.Screen
-          name="Share"
-          component={MeetScreen}
-          options={({ route }) => ({
-            tabBarVisible: getTabBarVisibility(route),
-            tabBarLabel: 'Share',
-            tabBarIcon: ({ color, size }) => (
-              <Ionicons name="share-social" size={size} color={color} />
-            )
-          })}
-        />
+
         <Tab.Screen
           name="Geekmail"
           component={MessagesScreen}
@@ -208,6 +198,17 @@ export default class App extends React.PureComponent {
           }}
         />
         {/*
+               <Tab.Screen
+          name="Share"
+          component={MeetScreen}
+          options={({ route }) => ({
+            tabBarVisible: getTabBarVisibility(route),
+            tabBarLabel: 'Share',
+            tabBarIcon: ({ color, size }) => (
+              <Ionicons name="share-social" size={size} color={color} />
+            )
+          })}
+        />
           <Tab.Screen
             name="Wishlist"
             component={WishlistScreen}

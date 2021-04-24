@@ -6,17 +6,17 @@ import { createStackNavigator } from '@react-navigation/stack'
 
 import { Icon } from 'react-native-elements'
 
-import GameScreen from '../GameScreen'
-import LogPlay from '../Plays/Log'
-import ListPlays from '../Plays/List'
-import GameSearch from '../GameSearch'
-import GameAddTo from '../GameAddTo'
+import GameScreen from '../../GameScreen'
+import LogPlay from '../../Plays/Log'
+import ListPlays from '../../Plays/List'
+import GameSearch from '../../GameSearch'
+import GameAddTo from '../../GameAddTo'
 
-import GameList from '../../components/GameList'
+import GameList from '../../../components/GameList'
 
-import globalStyles from '../../shared/styles'
-import { logger } from '../../shared/debug'
-import styleconstants from '../../shared/styles/styleconstants'
+import globalStyles from '../../../shared/styles'
+import { logger } from '../../../shared/debug'
+import styleconstants from '../../../shared/styles/styleconstants'
 import { showMessage } from 'react-native-flash-message'
 
 const CrowdFunding = (props) => {
@@ -78,7 +78,7 @@ const CrowdFunding = (props) => {
         return (
             <TouchableOpacity style={{ margin: 3, width: 150, padding: 10 }}
                 onPress={() => {
-                    props.navigation.navigate('GameStack', { screen: 'Game', params: { game: { "objectId": props.item.item.id } } })
+                    props.navigation.navigate('GameStack', { screen: 'Game', params: { game: { "objectId": props.item.item.id, "name": props.item.name } } })
                 }}
             >
 
@@ -124,7 +124,10 @@ const CrowdFunding = (props) => {
                         }}
                         horizontal
                     /> :
-                    <Text>Loading crowdfunding countdown...</Text>
+                    <View style={{ height: 250 }}>
+
+                        <Text>Loading crowdfunding countdown...</Text>
+                    </View>
                 }
             </View>
         </View>

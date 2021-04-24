@@ -242,10 +242,7 @@ export default () => (
         <Stack.Screen options={{ headerShown: true }} name="BGG users nearby" component={MeetScreen} />
         <Stack.Screen options={{ headerShown: false }} name="GameStack" component={GameStack} />
         <Stack.Screen options={{ headerShown: false }} name="User" component={ProfileStack} />
-        <Stack.Screen name="Compose" component={ConversationScreen} options={({ route }) => ({
 
-            title: route.params.subject,
-        })} />
 
     </Stack.Navigator>
 

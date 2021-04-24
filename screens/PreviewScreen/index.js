@@ -109,8 +109,16 @@ PreviewListScreen.propTypes = {
 const Stack = createStackNavigator()
 
 export default () => (
-  <Stack.Navigator>
-    <Stack.Screen name="List" component={PreviewListScreen} />
+  <Stack.Navigator screenOptions={{
+    headerStyle: {
+      backgroundColor: '#403c64',
+    },
+    headerTintColor: '#fff',
+    headerTitleStyle: {
+      fontWeight: 'bold',
+    },
+  }}>
+    <Stack.Screen name="Previews" component={PreviewListScreen} />
     <Stack.Screen
       name="Game"
       component={GameScreen}

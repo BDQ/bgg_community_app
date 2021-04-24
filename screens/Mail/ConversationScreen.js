@@ -34,7 +34,7 @@ const ConversationScreen = props => {
 
   const isNewMessage = props.route.params.subject === 'New message'
 
-  const { height } = Dimensions.get("window")
+  const { height, width } = Dimensions.get("window")
   const numLines = Math.floor((height / 4) / 22)      /// 22 is the height of the main font
   const maxTextInputHeight = 22 * numLines
   const extraTextInputHeight = Platform.OS === 'ios' ? 10 : 2
@@ -304,7 +304,7 @@ const ConversationScreen = props => {
             : null}
         </View>
         <View style={{ flexDirection: 'row', justifyContent: 'space-between', width: '100%', maxHeight: maxTextInputHeight + 15, alignItems: 'flex-end' }}>
-          <View style={{ paddingHorizontal: 10, backgroundColor: 'white', borderRadius: 15, marginVertical: 8, height: isNewMessage ? 120 : textInputHeight + 10, maxHeight: maxTextInputHeight, width: '85%', marginHorizontal: 6, justifyContent: isNewMessage ? 'flex-start' : 'center', paddingBottom: 5 }}>
+          <View style={{ paddingHorizontal: 10, backgroundColor: 'white', borderRadius: 15, marginVertical: 8, height: isNewMessage ? 120 : textInputHeight + 10, maxHeight: maxTextInputHeight, width: width * 0.8, marginLeft: 6, justifyContent: isNewMessage ? 'flex-start' : 'center', paddingBottom: 5 }}>
             <TextInput
               onChangeText={Msg => setMessageToSend(Msg)}
               placeholder="Write a message"
@@ -331,6 +331,7 @@ const ConversationScreen = props => {
             :
 
             <Icon
+              containerStyle={{ marginRight: 5 }}
               name='paper-plane'
               type='font-awesome'
               color={styleconstants.bggorange}
