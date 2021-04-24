@@ -25,11 +25,12 @@ import FlashMessage from 'react-native-flash-message'
 
 import ProfileScreen from './screens/OwnProfileScreen'
 import LoginScreen from './screens/LoginScreen'
-import OwnedScreen from './screens/OwnedScreen'
-import CollectionScreen from './screens/CollectionScreen'
-import MeetScreen from './screens/MeetScreen'
-import MessagesScreen from './screens/MessagesScreen'
-import WishlistScreen from './screens/WishlistScreen'
+import OwnedScreen from './screens/Collection/OwnedScreen'
+import CollectionScreen from './screens/Collection/CollectionScreen'
+import HomeScreen from './screens/Home/HomeScreen'
+import MeetScreen from './screens/Meet/MeetScreen'
+import MessagesScreen from './screens/Mail/MessagesScreen'
+import WishlistScreen from './screens/Collection/WishlistScreen'
 import PreviewScreen from './screens/PreviewScreen'
 
 import Ionicons from 'react-native-vector-icons/Ionicons'
@@ -40,7 +41,7 @@ import styleconstants from './shared/styles/styleconstants'
 import { logIn, getUserId } from './shared/auth'
 import { fetchXML } from './shared/HTTP'
 import { getNumUnread } from './shared/FetchWithCookie'
-import {  Badge } from 'react-native-elements'
+import { Badge } from 'react-native-elements'
 
 var parseString = require('react-native-xml2js').parseString;
 
@@ -57,16 +58,16 @@ export default class App extends React.PureComponent {
   }
 
   async attemptBGGLoginInBackground(username, password) {
-    if(username && password){
+    if (username && password) {
       try {
         const { success } = await logIn(username, password)
-  
-  
+
+
         if (success) {
           const { userid, firstname, lastname } = await getUserId()
-  
+
           if (userid > 0) {
-  
+
             const bggCredentials = {
               username,
               userid,
@@ -75,14 +76,14 @@ export default class App extends React.PureComponent {
             }
 
             await getNumUnread()
-  
+
             this.dispatch.setCredentials(bggCredentials)
             this.setState({ loggedIn: true })
             global.username = username
-  
+
             // getting user info
             const url = "https://boardgamegeek.com/xmlapi2/users?name=" + username
-            
+
             const userDetails = await fetchXML(url, { method: 'GET' })
             await parseString(userDetails, function (err, result) {
               console.log("xml parsed", result)
@@ -97,7 +98,7 @@ export default class App extends React.PureComponent {
         //Sentry.captureException(error)
       }
     }
-    
+
   }
 
   _fireUp = async () => {
@@ -106,14 +107,14 @@ export default class App extends React.PureComponent {
       lato: require('./assets/Lato-Regular.ttf'),
       'lato-bold': require('./assets/Lato-Bold.ttf')
     })
-      let valueName =  await AsyncStorage.getItem('userName')
-      console.log("retrieved name value")
-      console.log(valueName)
-      let valuePassword = await AsyncStorage.getItem('userPassword')
-      console.log("retrieved password value")
-      console.log(valuePassword)
-      
-      await this.attemptBGGLoginInBackground(valueName, valuePassword)
+    let valueName = await AsyncStorage.getItem('userName')
+    console.log("retrieved name value")
+    console.log(valueName)
+    let valuePassword = await AsyncStorage.getItem('userPassword')
+    console.log("retrieved password value")
+    console.log(valuePassword)
+
+    await this.attemptBGGLoginInBackground(valueName, valuePassword)
 
   }
 
@@ -138,19 +139,30 @@ export default class App extends React.PureComponent {
         ? route.state.routes[route.state.index].name
         : '';
 
-        console.log("route name is", routeName)
+      console.log("route name is", routeName)
 
-      if (routeName === 'Conversation' || routeName === 'Compose' ) {
+      if (routeName === 'Conversation' || routeName === 'Compose') {
         return false;
       }
-    
+
       return true;
     }
     const Tab = createBottomTabNavigator()
     const Drawer = createStackNavigator()
 
     const mainTabNav = () => {
-      return <Tab.Navigator backBehavior="none" initialRouteName="Collection" >
+      return <Tab.Navigator backBehavior="none" initialRouteName="Home" >
+        <Tab.Screen
+          name="Home"
+          component={HomeScreen}
+          options={({ route }) => ({
+            tabBarVisible: getTabBarVisibility(route),
+            tabBarLabel: 'Home',
+            tabBarIcon: ({ color, size }) => (
+              <Ionicons name="home-outline" size={size} color={color} />
+            )
+          })}
+        />
         <Tab.Screen
           name="Share"
           component={MeetScreen}
@@ -162,28 +174,28 @@ export default class App extends React.PureComponent {
             )
           })}
         />
-                <Tab.Screen
+        <Tab.Screen
           name="Geekmail"
           component={MessagesScreen}
-        
+
           options={({ route }) => ({
             tabBarVisible: getTabBarVisibility(route),
             tabBarLabel: 'Geekmail',
             tabBarIcon: ({ color, size }) => (
               <View>
-       
-              <Ionicons name="ios-mail-outline" size={size} color={color} />
-              {global.numUnread > 0? 
-              <Badge
-              status="error"
-              containerStyle={{ position: 'absolute', top: -4, right: -4 }}
-              value = {global.numUnread}
-              
-            />
-            :null}
+
+                <Ionicons name="ios-mail-outline" size={size} color={color} />
+                {global.numUnread > 0 ?
+                  <Badge
+                    status="error"
+                    containerStyle={{ position: 'absolute', top: -4, right: -4 }}
+                    value={global.numUnread}
+
+                  />
+                  : null}
               </View>
             )
-          })} 
+          })}
         />
         <Tab.Screen
           name="Collection"

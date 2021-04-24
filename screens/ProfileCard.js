@@ -1,13 +1,7 @@
 import React, { useState, useEffect, useGlobal } from 'reactn'
 import Sentry from 'sentry-expo'
 import { View, Text, StyleSheet, Linking, ScrollView, Image } from 'react-native'
-import { Input, Button } from 'react-native-elements'
-import { showMessage } from 'react-native-flash-message'
-import SafeAreaView from 'react-native-safe-area-view'
-import { createStackNavigator } from '@react-navigation/stack'
-import { logIn, getUserId } from '../shared/auth'
-import CollectionScreen from './CollectionScreen'
-import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
+
 import { SearchBar, Icon } from 'react-native-elements'
 import styleconstants from '../shared/styles/styleconstants'
 import styles from '../shared/styles'
@@ -93,115 +87,116 @@ const ProfileCard = props => {
     <View >
       {userFetched ?
         <View style={{ flexDirection: 'column' }}>
-          <View style={{ flexDirection: 'row', justifyContent:'space-between' }}>
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
 
-          <View style={{ flexDirection: 'row' }}>
-            <View style={{ flexDirection: 'column', justifyContent: 'center', marginRight: 20 }}>
-              {profileDetails.user.avatarlink[0].$.value == "N/A" ?
-                <Image
-                  style={{ width: 64, height: 64 }}
-                  source={{
-                    uri:
-                      "https://ynnovate.it/wp-content/uploads/2015/07/default-avatar1.png"
-                  }} />
-                :
-                <Image
-                  style={{ width: 64, height: 64 }}
-                  source={{
-                    uri:
-                      profileDetails.user.avatarlink[0].$.value
-                  }} />
-              }
+            <View style={{ flexDirection: 'row' }}>
+              <View style={{ flexDirection: 'column', justifyContent: 'center', marginRight: 20 }}>
+                {profileDetails.user.avatarlink[0].$.value == "N/A" ?
+                  <Image
+                    style={{ width: 64, height: 64 }}
+                    source={{
+                      uri:
+                        "https://ynnovate.it/wp-content/uploads/2015/07/default-avatar1.png"
+                    }} />
+                  :
+                  <Image
+                    style={{ width: 64, height: 64 }}
+                    source={{
+                      uri:
+                        profileDetails.user.avatarlink[0].$.value
+                    }} />
+                }
 
+              </View>
+
+              <View style={{ flexDirection: 'column', justifyContent: "center" }}>
+
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                  <Icon
+                    name="id-card-o"
+                    color="dodgerblue"
+                    type="font-awesome"
+                    containerStyle={{ margin: 4 }}
+                    size={16}
+                  />
+                  <Text>
+                    {profileDetails.user.firstname[0].$.value}
+                  </Text>
+                  <Text> </Text>
+                  <Text>
+                    {profileDetails.user.lastname[0].$.value}
+                  </Text>
+                </View>
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                  <Icon
+                    name="id-card"
+                    color="dodgerblue"
+                    type="font-awesome"
+                    containerStyle={{ margin: 4 }}
+                    size={16}
+                  />
+                  <Text >
+                    {profileDetails.user.$.name}
+                  </Text>
+                </View>
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                  <Icon
+                    name="globe"
+                    color="dodgerblue"
+                    type="font-awesome"
+                    containerStyle={{ margin: 4 }}
+                    size={16}
+                  />
+                  <Text>
+                    {profileDetails.user.country[0].$.value}
+                  </Text>
+                  <Text> / </Text>
+                  <Text>
+                    {profileDetails.user.stateorprovince[0].$.value}
+                  </Text>
+                </View>
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                  <Icon
+                    name="exchange"
+                    color="dodgerblue"
+                    type="font-awesome"
+                    containerStyle={{ margin: 4 }}
+                    size={16}
+                  />
+                  <Text>
+                    {profileDetails.user.traderating[0].$.value}
+                  </Text>
+                  <Icon
+                    name="cube"
+                    color="dodgerblue"
+                    type="font-awesome"
+                    containerStyle={{ margin: 4 }}
+                    size={16}
+                  />
+                  <Text>
+                    {profileDetails.user.marketrating[0].$.value}
+                  </Text>
+                </View>
+              </View>
             </View>
-
-            <View style={{ flexDirection: 'column', justifyContent: "center" }}>
-
-              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <View style={{ alignItems: 'center', justifyContent: 'center', marginRight: 30 }}>
+              {profileDetails.user.$.name != global.username ?
                 <Icon
-                  name="id-card-o"
-                  color="dodgerblue"
-                  type="font-awesome"
-                  containerStyle={{ margin: 4 }}
-                  size={16}
-                />
-                <Text>
-                  {profileDetails.user.firstname[0].$.value}
-                </Text>
-                <Text> </Text>
-                <Text>
-                  {profileDetails.user.lastname[0].$.value}
-                </Text>
-              </View>
-              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                <Icon
-                  name="id-card"
-                  color="dodgerblue"
-                  type="font-awesome"
-                  containerStyle={{ margin: 4 }}
-                  size={16}
-                />
-                <Text >
-                  {profileDetails.user.$.name}
-                </Text>
-              </View>
-              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                <Icon
-                  name="globe"
-                  color="dodgerblue"
-                  type="font-awesome"
-                  containerStyle={{ margin: 4 }}
-                  size={16}
-                />
-                <Text>
-                  {profileDetails.user.country[0].$.value}
-                </Text>
-                <Text> / </Text>
-                <Text>
-                  {profileDetails.user.stateorprovince[0].$.value}
-                </Text>
-              </View>
-              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                <Icon
-                  name="exchange"
-                  color="dodgerblue"
-                  type="font-awesome"
-                  containerStyle={{ margin: 4 }}
-                  size={16}
-                />
-                <Text>
-                  {profileDetails.user.traderating[0].$.value}
-                </Text>
-                <Icon
-                  name="cube"
-                  color="dodgerblue"
-                  type="font-awesome"
-                  containerStyle={{ margin: 4 }}
-                  size={16}
-                />
-                <Text>
-                  {profileDetails.user.marketrating[0].$.value}
-                </Text>
-              </View>
-            </View>
-            </View>
-            <View style = {{alignItems:'center', justifyContent:'center', marginRight:30}}>
-              {profileDetails.user.$.name != global.username?
-            <Icon
                   name="mail"
                   color={styleconstants.bggorange}
                   type="ionicons"
                   containerStyle={{ margin: 4 }}
                   size={30}
-                  onPress = {() => {props.navigation.navigate("Compose", {messageid:null, subject : "New message", user:profileDetails.user.$.name})
-                }}
+                  onPress={() => {
+                    props.navigation.navigate("Compose", { messageid: null, subject: "New message", user: profileDetails.user.$.name })
+                  }}
                 />
-                :null}
-              </View>
+                : null}
+            </View>
 
 
           </View>
-       
+
         </View>
         : <View style={styles.emptyView}>
 

@@ -44,6 +44,7 @@ class SubscriptionsWebScreen extends React.Component {
           alignItems: 'center'
         }}
       >
+
       </View>
     )
   }

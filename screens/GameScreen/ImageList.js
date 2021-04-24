@@ -62,7 +62,6 @@ export default class ImageList extends React.Component {
               >
                 <ImageProgress
                   source={{ uri: item.url }}
-                  //indicator={ProgressBar}
                   indicatorProps={{
                     color: '#000000'
                   }}
@@ -83,7 +82,6 @@ export default class ImageList extends React.Component {
               return (
                 <ImageProgress
                   source={source}
-                  indicator={ProgressBar}
                   indicatorProps={{
                     color: '#ffffff'
                   }}

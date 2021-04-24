@@ -5,18 +5,18 @@ import { Input, Button } from 'react-native-elements'
 import { showMessage } from 'react-native-flash-message'
 import SafeAreaView from 'react-native-safe-area-view'
 import { createStackNavigator } from '@react-navigation/stack'
-import { logIn, getUserId } from '../shared/auth'
+import { logIn, getUserId } from '../../shared/auth'
 import CollectionScreen from './OtherUserCollection'
-import ConversationScreen from './ConversationScreen'
+import ConversationScreen from '../Mail/ConversationScreen'
 
 import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
 import { SearchBar, Icon } from 'react-native-elements'
-import styleconstants from '../shared/styles/styleconstants'
-import styles from '../shared/styles'
+import styleconstants from '../../shared/styles/styleconstants'
+import styles from '../../shared/styles'
 import { getDispatch } from 'reactn'
-import ProfileCard from './ProfileCard'
+import ProfileCard from '../ProfileCard'
 
-import { fetchXML } from '../shared/HTTP'
+import { fetchXML } from '../../shared/HTTP'
 var parseString = require('react-native-xml2js').parseString;
 
 
@@ -64,7 +64,7 @@ const ProfileScreen = props => {
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#ffffff' }}>
 
-      <ProfileCard userName={userName} navigation = {props.navigation.dangerouslyGetParent()} />
+      <ProfileCard userName={userName} navigation={props.navigation.dangerouslyGetParent()} />
       <CollectionScreen insideScreen={true} lists={props.route.params.lists} />
 
     </SafeAreaView>

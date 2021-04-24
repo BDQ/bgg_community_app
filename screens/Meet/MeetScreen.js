@@ -5,28 +5,28 @@ import { Button } from 'react-native-elements'
 import { createStackNavigator } from '@react-navigation/stack'
 
 import { Icon } from 'react-native-elements'
-import styleconstants from '../shared/styles/styleconstants'
-import styles from '../shared/styles'
+import styleconstants from '../../shared/styles/styleconstants'
+import styles from '../../shared/styles'
 import { SearchBar } from 'react-native-elements'
 var DomParser = require('react-native-html-parser').DOMParser
-import { fetchCollectionFromBGG } from '../shared/collection'
+import { fetchCollectionFromBGG } from '../../shared/collection'
 import { BarIndicator } from 'react-native-indicators';
 
 
-import GameScreen from './GameScreen'
-import LogPlay from './Plays/Log'
-import ListPlays from './Plays/List'
-import GameSearch from './GameSearch'
-import GameAddTo from './GameAddTo'
+import GameScreen from '../GameScreen'
+import LogPlay from '../Plays/Log'
+import ListPlays from '../Plays/List'
+import GameSearch from '../GameSearch'
+import GameAddTo from '../GameAddTo'
 
-import UserThumbNail from './../components/UserThumbNail'
-import GameStack from './GameStack'
+import UserThumbNail from '../../components/UserThumbNail'
+import GameStack from '../GameStack'
 import ProfileStack from './OtherProfileScreen'
-import ConversationScreen from './ConversationScreen'
+import ConversationScreen from '../Mail/ConversationScreen'
 
-import globalStyles from '../shared/styles'
-import { logger } from '../shared/debug'
-import { fetchRaw } from '../shared/HTTP'
+import globalStyles from '../../shared/styles'
+import { logger } from '../../shared/debug'
+import { fetchRaw } from '../../shared/HTTP'
 
 const requestHeaders = new Headers({
     Accept: 'application/json',
@@ -108,11 +108,15 @@ const MeetScreen = ({ navigation, route }) => {
         console.log("collection requests sent")
     }
 
-    function processHTMLUserList(respText){
-        let doc = new DomParser({locator: {},
-            errorHandler: { warning: function (w) { }, 
-            error: function (e) { }, 
-            fatalError: function (e) { console.error(e) } }}).parseFromString(respText, 'text/html')
+    function processHTMLUserList(respText) {
+        let doc = new DomParser({
+            locator: {},
+            errorHandler: {
+                warning: function (w) { },
+                error: function (e) { },
+                fatalError: function (e) { console.error(e) }
+            }
+        }).parseFromString(respText, 'text/html')
         let loc = doc.getElementsByClassName('username')
 
         console.log("found locals")
@@ -125,14 +129,14 @@ const MeetScreen = ({ navigation, route }) => {
         var locFinal = []
 
         for (var ind in names) {
-            if (!(names[ind].startsWith("><") ||names[ind].startsWith(">(<")||names[ind].startsWith(">)<") )) {
+            if (!(names[ind].startsWith("><") || names[ind].startsWith(">(<") || names[ind].startsWith(">)<"))) {
                 locFinal.push({ 'name': names[ind].substring(1, names[ind].length - 1), inWants: 0 })
             }
         }
 
         return locFinal
 
- 
+
     }
 
 
@@ -140,17 +144,17 @@ const MeetScreen = ({ navigation, route }) => {
         setFetchingInProgress(true)
         var pageNum = 1
         var maxPageNum = 1
-        while(pageNum <= maxPageNum){
-            let resp = await fetchRaw('https://boardgamegeek.com/users/page/' + pageNum.toString() +'?country=' + country + '&state=&city=' + city, fetchArgs)
+        while (pageNum <= maxPageNum) {
+            let resp = await fetchRaw('https://boardgamegeek.com/users/page/' + pageNum.toString() + '?country=' + country + '&state=&city=' + city, fetchArgs)
             resp.text().then(respText => {
                 let localUsersPart = processHTMLUserList(respText)
                 getUserLists(localUsersPart)
-        
+
             })
             pageNum += 1
         }
 
-  
+
 
     }
 
@@ -159,59 +163,59 @@ const MeetScreen = ({ navigation, route }) => {
         if (!fetchingInProgress) {
             fetchLocalUsers()
         }
-  
+
     })
 
 
     return (
         <View>
-                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                    <SearchBar
-                        onChangeText={(t) => { setCountry(t) }}
-                        onClearText={(t) => { setCountry("") }}
-                        placeholder="Country..."
-                        value={country}
-                        containerStyle={{ width: '40%', backgroundColor: styleconstants.bggpurple }}
-                        inputContainerStyle={{ backgroundColor: 'white' }}
-                    // showLoadingIcon={true}
-                    />
-                    <SearchBar
-                        onChangeText={(t) => { setCity(t) }}
-                        onClearText={(t) => { setCity("") }}
-                        placeholder="City..."
-                        value={city}
-                        containerStyle={{ width: '40%', backgroundColor: styleconstants.bggpurple }}
-                        inputContainerStyle={{ backgroundColor: 'white' }}
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                <SearchBar
+                    onChangeText={(t) => { setCountry(t) }}
+                    onClearText={(t) => { setCountry("") }}
+                    placeholder="Country..."
+                    value={country}
+                    containerStyle={{ width: '40%', backgroundColor: styleconstants.bggpurple }}
+                    inputContainerStyle={{ backgroundColor: 'white' }}
+                // showLoadingIcon={true}
+                />
+                <SearchBar
+                    onChangeText={(t) => { setCity(t) }}
+                    onClearText={(t) => { setCity("") }}
+                    placeholder="City..."
+                    value={city}
+                    containerStyle={{ width: '40%', backgroundColor: styleconstants.bggpurple }}
+                    inputContainerStyle={{ backgroundColor: 'white' }}
 
 
-                    // showLoadingIcon={true}
-                    />
-                    <View style={{ backgroundColor: styleconstants.bggorange, width: "20%", justifyContent: 'center', alignItems: 'center' }}>
-                        {fetchingInProgress || userComponentConstructionInProgress ?
-                            <BarIndicator size={15} color={"white"} count={5} />
-                            :
-                            <Text>Search</Text>
-                        }
-                    </View>
-                </View>
-                <View>
-                    {localUserComponents.length < 1 ?
-        <View style={styles.emptyView}>
-        <Text>Loading users nearby ...</Text>
-
-                        </View> :
-                        <View>
-
-                            <FlatList
-                                data={_sortArray()}
-                                renderItem={({ item }) => {
-                                    return item.component
-                                }}
-                            />
-
-                        </View>
+                // showLoadingIcon={true}
+                />
+                <View style={{ backgroundColor: styleconstants.bggorange, width: "20%", justifyContent: 'center', alignItems: 'center' }}>
+                    {fetchingInProgress || userComponentConstructionInProgress ?
+                        <BarIndicator size={15} color={"white"} count={5} />
+                        :
+                        <Text>Search</Text>
                     }
                 </View>
+            </View>
+            <View>
+                {localUserComponents.length < 1 ?
+                    <View style={styles.emptyView}>
+                        <Text>Loading users nearby ...</Text>
+
+                    </View> :
+                    <View>
+
+                        <FlatList
+                            data={_sortArray()}
+                            renderItem={({ item }) => {
+                                return item.component
+                            }}
+                        />
+
+                    </View>
+                }
+            </View>
         </View>
     )
 
@@ -238,10 +242,10 @@ export default () => (
         <Stack.Screen options={{ headerShown: true }} name="BGG users nearby" component={MeetScreen} />
         <Stack.Screen options={{ headerShown: false }} name="GameStack" component={GameStack} />
         <Stack.Screen options={{ headerShown: false }} name="User" component={ProfileStack} />
-        <Stack.Screen name="Compose" component={ConversationScreen}  options={({ route }) => ({
+        <Stack.Screen name="Compose" component={ConversationScreen} options={({ route }) => ({
 
-title: route.params.subject,
-})} />
+            title: route.params.subject,
+        })} />
 
     </Stack.Navigator>
 

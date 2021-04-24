@@ -7,7 +7,7 @@ import {
   StyleSheet
 } from 'react-native'
 import { SearchBar, Icon } from 'react-native-elements'
-import ProgressBar from 'react-native-progress/Circle'
+//import ProgressBar from 'react-native-progress/Circle'
 
 import PreviewListCompany from './PreviewListCompany'
 import PreviewListGame from './PreviewListGame'
@@ -180,11 +180,7 @@ export default class PreviewList extends React.PureComponent {
     } else {
       return (
         <View style={sharedStyles.emptyView}>
-          <ProgressBar
-            indeterminate={true}
-            color="#000000"
-            style={{ marginBottom: 10 }}
-          />
+      
           {this._renderFirstLoadMessage()}
         </View>
       )

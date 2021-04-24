@@ -6,16 +6,16 @@ import { createStackNavigator } from '@react-navigation/stack'
 
 import { Icon } from 'react-native-elements'
 
-import GameScreen from './GameScreen'
-import LogPlay from './Plays/Log'
-import ListPlays from './Plays/List'
-import GameSearch from './GameSearch'
-import GameAddTo from './GameAddTo'
+import GameScreen from '../GameScreen'
+import LogPlay from '../Plays/Log'
+import ListPlays from '../Plays/List'
+import GameSearch from '../GameSearch'
+import GameAddTo from '../GameAddTo'
 
-import GameList from './../components/GameList'
+import GameList from '../../components/GameList'
 
-import globalStyles from '../shared/styles'
-import { logger } from '../shared/debug'
+import globalStyles from '../../shared/styles'
+import { logger } from '../../shared/debug'
 
 const OwnedListScreen = (props) => {
   const navigation = props.navigation
@@ -86,7 +86,7 @@ const OwnedListScreen = (props) => {
         games={games}
         refreshing={refreshing}
         onRefresh={handleRefresh}
-        isSelf = {isSelf}
+        isSelf={isSelf}
       />
     )
   } else {

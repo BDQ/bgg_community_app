@@ -1,7 +1,7 @@
 import React from 'react'
 import { createStackNavigator } from 'react-navigation-stack'
 import { View, Text, Image } from 'react-native'
-import ProgressBar from 'react-native-progress/Circle'
+//import ProgressBar from 'react-native-progress/Circle'
 import { Button } from 'react-native-elements'
 import { showMessage } from 'react-native-flash-message'
 
@@ -128,7 +128,6 @@ class VisualSearchScreen extends React.Component {
     } else {
       return (
         <React.Fragment>
-          <ProgressBar indeterminate={true} color="#000000" style={{}} />
           <Text style={{ marginTop: 15, marginBottom: 10 }}>
             Searching the shelves...
           </Text>

@@ -4,13 +4,13 @@ import { View, Text } from 'react-native'
 import { createStackNavigator } from '@react-navigation/stack'
 import { Icon } from 'react-native-elements'
 
-import GameScreen from './GameScreen'
-import GameSearch from './GameSearch'
-import GameAddTo from './GameAddTo'
-import LogPlay from './Plays/Log'
-import GameList from './../components/GameList'
+import GameScreen from '../GameScreen'
+import GameSearch from '../GameSearch'
+import GameAddTo from '../GameAddTo'
+import LogPlay from '../Plays/Log'
+import GameList from '../../components/GameList'
 
-import styles from '../shared/styles'
+import styles from '../../shared/styles'
 
 class WishlistListScreen extends React.PureComponent {
   static navigationOptions = ({ navigation }) => {
@@ -57,7 +57,7 @@ class WishlistListScreen extends React.PureComponent {
           refreshing={false}
           games={games}
           onRefresh={this.handleRefresh}
-          isSelf = {isSelf}
+          isSelf={isSelf}
         />
       )
     } else {

@@ -5,10 +5,7 @@ import { Input, Button } from 'react-native-elements'
 import { showMessage } from 'react-native-flash-message'
 import SafeAreaView from 'react-native-safe-area-view'
 import { createStackNavigator } from '@react-navigation/stack'
-import { logIn, getUserId } from '../shared/auth'
-import CollectionScreen from './CollectionScreen'
-import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
-import { SearchBar, Icon } from 'react-native-elements'
+
 import styleconstants from '../shared/styles/styleconstants'
 import styles from '../shared/styles'
 import { getDispatch } from 'reactn'
@@ -58,10 +55,10 @@ const ProfileScreen = props => {
   let userName = global.username
 
   useEffect(() => {
-  
 
-   
-})
+
+
+  })
 
   const handleLogOut = () => {
 

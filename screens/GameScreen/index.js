@@ -285,7 +285,6 @@ const GameScreen = ({ navigation, route }) => {
       return (
         <ImageProgress
           source={{ uri: images.previewthumb }}
-          //indicator={ProgressBar}
           indicatorProps={{
             color: '#ffffff',
           }}
@@ -296,7 +295,7 @@ const GameScreen = ({ navigation, route }) => {
     } else {
       return (
         <View style={styles.emptyView}>
-
+ 
 
           <Text style={{ marginTop: 10, color: 'white' }}>Loading...</Text>
         </View>

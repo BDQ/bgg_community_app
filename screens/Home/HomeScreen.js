@@ -3,21 +3,21 @@ import PropTypes from 'prop-types'
 import { View, Text, InteractionManager, useWindowDimensions } from 'react-native'
 import { Button } from 'react-native-elements'
 import { createStackNavigator } from '@react-navigation/stack'
-import OwnedScreen from './OwnedScreen'
-import WishlistScreen from './WishlistScreen'
+import ExploreScreen from './Explore'
+import WishlistScreen from '../Collection/WishlistScreen'
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 
 import { Icon } from 'react-native-elements'
 
-import GameStack from './GameStack'
+import GameStack from '../GameStack'
 
-import globalStyles from '../shared/styles'
-import { logger } from '../shared/debug'
+import globalStyles from '../../shared/styles'
+import { logger } from '../../shared/debug'
 
 const Tab = createMaterialTopTabNavigator();
 const StackTabWrapper = createStackNavigator()
 const Stack = createStackNavigator()
-import styleconstants from '../shared/styles/styleconstants'
+import styleconstants from '../../shared/styles/styleconstants'
 
 const tabNav = props => {
     return <Tab.Navigator
@@ -28,8 +28,8 @@ const tabNav = props => {
             labelStyle: { fontFamily: 'lato-bold' }
 
         }}>
-        <Tab.Screen name="Owned" component={OwnedScreen} />
-        <Tab.Screen name="Wishlist" component={WishlistScreen} />
+        <Tab.Screen name="Explore" component={ExploreScreen} />
+        <Tab.Screen name="More" component={WishlistScreen} />
     </Tab.Navigator>
 }
 
@@ -44,7 +44,7 @@ const tabNavWrapped = props => {
         },
         headerRight: () => (
             <Button
-                icon={<Icon name="add-to-list" type="entypo" size={20} color={'white'} />}
+                icon={<Icon name="search" type="ionicons" size={20} color={'white'} />}
                 onPress={() => props.navigation.navigate('GameStack', { screen: 'Search' })}
                 buttonStyle={globalStyles.headerIconButton}
             />
@@ -53,7 +53,7 @@ const tabNavWrapped = props => {
 
     }}>
 
-        <StackTabWrapper.Screen name="Collection" component={tabNav} />
+        <StackTabWrapper.Screen name="Home" component={tabNav} />
 
     </StackTabWrapper.Navigator>
 
@@ -68,7 +68,7 @@ export default props => {
         <Stack.Navigator >
 
 
-            <Stack.Screen options={{ headerShown: false }} name="Collection" component={tabNavWrapped} initialParams={{ insideScreen: props.insideScreen }} />
+            <Stack.Screen options={{ headerShown: false }} name="Home" component={tabNavWrapped} />
             <Stack.Screen options={{ headerShown: false }} name="GameStack" component={GameStack} />
 
         </Stack.Navigator>

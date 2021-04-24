@@ -3,21 +3,21 @@ import PropTypes from 'prop-types'
 import { View, Text, InteractionManager, useWindowDimensions } from 'react-native'
 import { Button } from 'react-native-elements'
 import { createStackNavigator } from '@react-navigation/stack'
-import OwnedScreen from './OwnedScreen'
-import WishlistScreen from './WishlistScreen'
+import OwnedScreen from '../Collection/OwnedScreen'
+import WishlistScreen from '../Collection/WishlistScreen'
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 
 import { Icon } from 'react-native-elements'
 
-import GameStack from './GameStack'
+import GameStack from '../GameStack'
 
-import globalStyles from '../shared/styles'
-import { logger } from '../shared/debug'
+import globalStyles from '../../shared/styles'
+import { logger } from '../../shared/debug'
 
 const Tab = createMaterialTopTabNavigator();
 const StackTabWrapper = createStackNavigator()
 const Stack = createStackNavigator()
-import styleconstants from '../shared/styles/styleconstants'
+import styleconstants from '../../shared/styles/styleconstants'
 
 const tabNav = props => {
     return <Tab.Navigator

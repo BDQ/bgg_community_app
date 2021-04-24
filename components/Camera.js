@@ -4,7 +4,7 @@ import { Text, View } from 'react-native'
 import * as ImageManipulator from 'expo-image-manipulator'
 import * as Permissions from 'expo-permissions'
 import * as ImagePicker from 'expo-image-picker'
-import ProgressBar from 'react-native-progress/Circle'
+//import ProgressBar from 'react-native-progress/Circle'
 import styles from '../shared/styles'
 import { logger } from '../shared/debug'
 
@@ -66,7 +66,6 @@ export default class Camera extends React.Component {
     } else {
       return (
         <View style={styles.emptyView}>
-          <ProgressBar indeterminate={true} color="#000000" />
         </View>
       )
     }
