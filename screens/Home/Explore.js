@@ -6,7 +6,7 @@ import { createStackNavigator } from '@react-navigation/stack'
 import Hotness from './ExploreComponents/Hotness'
 import CrowdFunding from './ExploreComponents/CrowdFunding'
 import HomeList from './ExploreComponents/HomeList'
-
+import AllTimeList from './ExploreComponents/AllTimeList'
 import { Icon } from 'react-native-elements'
 
 
@@ -20,6 +20,7 @@ import { logger } from '../../shared/debug'
 const ExploreScreen = (props) => {
     let [homeListId, setHomeListId] = useState(null)
     let [homeListId2, setHomeListId2] = useState(null)
+
 
     useEffect(() => {
         if (!homeListId && !homeListId2) {
@@ -38,10 +39,13 @@ const ExploreScreen = (props) => {
             })
         })
     }
+
+
     return (
         <ScrollView>
             <Hotness navigation={props.navigation} />
             <CrowdFunding navigation={props.navigation} />
+            <AllTimeList navigation={props.navigation} />
             {homeListId ?
                 <HomeList navigation={props.navigation} listId={homeListId} />
                 : null}
