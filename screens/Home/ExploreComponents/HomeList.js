@@ -135,9 +135,9 @@ const HomeList = (props) => {
 
                 </View>
 
-                <View style={{ flexDirection: 'row', height: 30 }}>
+                <View style={{ flexDirection: 'row' }}>
 
-                    <Text style={{ marginVertical: 4, fontFamily: styleconstants.primaryFontBold }}>{" " + props.item.item.name}</Text>
+                    <Text numberOfLines={1} style={{ marginVertical: 4, fontFamily: styleconstants.primaryFontBold }}>{props.item.item.name}</Text>
 
                 </View>
                 <Text style={{ fontFamily: styleconstants.primaryFont }}>{props.item.description}</Text>

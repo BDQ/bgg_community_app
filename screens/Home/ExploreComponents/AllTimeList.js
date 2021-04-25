@@ -160,9 +160,9 @@ const AllTimeList = (props) => {
 
                 </View>
 
-                <View style={{ flexDirection: 'row', height: 30 }}>
+                <View style={{ flexDirection: 'row' }}>
 
-                    <Text style={{ marginVertical: 4, fontFamily: styleconstants.primaryFontBold }}>{" " + props.item.item.name}</Text>
+                    <Text numberOfLines={1} style={{ marginVertical: 4, fontFamily: styleconstants.primaryFontBold }}>{props.item.item.name}</Text>
 
                 </View>
                 <Text style={{ fontFamily: styleconstants.primaryFont }}>{props.item.description}</Text>
@@ -177,7 +177,7 @@ const AllTimeList = (props) => {
 
     return (
         <View style={{ backgroundColor: 'white', marginVertical: 3, padding: 15 }}>
-            <View style={{ flexDirection: 'row' }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                 <Text style={{ fontFamily: styleconstants.primaryFontBold, fontSize: 20 }}>{"Best games of all time in: "}</Text>
 
                 <Dropdown
@@ -186,7 +186,7 @@ const AllTimeList = (props) => {
                         left: 0
                     }}
                     itemCount={subcats.length}
-                    containerStyle={{ width: 150, margin: 0, height: 30 }}
+                    containerStyle={{ width: 150, margin: 0, height: 30, color: 'red' }}
                     inputContainerStyle={{ borderBottomWidth: 2, borderBottomColor: styleconstants.bggorange }}
                     style={{ margin: 0, height: 30 }}
                     data={subcats}
@@ -195,6 +195,7 @@ const AllTimeList = (props) => {
                         setSelectedCat(f)
                         fetchallTimeList(subcats[ind].id)
                     }}
+                    overlayStyle={{ fontFamily: styleconstants.primaryFont, }}
                 />
             </View>
             <Text style={{ fontFamily: styleconstants.primaryFont, fontSize: 16 }}>{subTitle}</Text>

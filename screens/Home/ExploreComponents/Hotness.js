@@ -102,10 +102,10 @@ const Hotness = (props) => {
                     {getDeltaIcon(props.item)}
                 </View>
 
-                <View style={{ flexDirection: 'row', height: 30 }}>
+                <View style={{ flexDirection: 'row' }}>
                     <Text style={{ marginVertical: 4, fontFamily: styleconstants.primaryFontBold }}>{props.index + 1}</Text>
 
-                    <Text style={{ marginVertical: 4, fontFamily: styleconstants.primaryFontBold }}>{" " + props.item.name}</Text>
+                    <Text numberOfLines={1} style={{ marginVertical: 4, fontFamily: styleconstants.primaryFontBold }}>{". " + props.item.name}</Text>
 
                 </View>
                 <Text style={{ fontFamily: styleconstants.primaryFont }}>{props.item.description}</Text>
