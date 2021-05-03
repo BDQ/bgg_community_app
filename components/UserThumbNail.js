@@ -76,17 +76,20 @@ export default UserThumbNail = props => {
 
             >
                 {inUserWishlist.length > 0 ?
-                    <View style={{ marginBottom: 5 }}>
+                    <View style={{ marginBottom: 5, height: 30, flexDirection: 'row', justifyContent: 'space-between' }}>
                         <Text style={{ fontFamily: styleconstants.primaryFontBold }}>{props.userName + " owns " + inUserWishlist.length.toString() + " of your wants."}</Text>
+                        <Text style={{ color: 'dodgerblue', textDecorationLine: 'underline' }}>{"See all games (" + (games.length + inUserWishlist.length).toString() + ") >"}</Text>
 
                     </View>
-                    : <View style={{ marginBottom: 5 }}>
+                    : <View style={{ marginBottom: 5, height: 30, flexDirection: 'row', justifyContent: 'space-between' }}>
+
                         <Text style={{ fontFamily: styleconstants.primaryFontBold }}>{props.userName}</Text>
+                        <Text style={{ color: 'dodgerblue', textDecorationLine: 'underline' }}>{"See all games (" + (games.length + inUserWishlist.length).toString() + ") >"}</Text>
 
                     </View>
                 }
-                <ScrollView horizontal>
-                    <View style={{ alignItems: 'center', flexDirection: 'row' }}>
+                <View style={{ alignItems: 'center', flexDirection: 'row' }}>
+                    {inUserWishlist.length > 0 ?
 
 
                         <FlatList
@@ -96,30 +99,20 @@ export default UserThumbNail = props => {
                             getItemLayout={getItemLayout}
                             horizontal
                         />
-
-                        {inUserWishlist.length > 0 ?
-                            <Icon
-                                containerStyle={{ margin: 10, justifyContent: 'center', alignItems: "center" }}
-                                name="more-horizontal"
-                                color={'black'}
-                                type="feather"
-                                size={20}
-
-                            />
-                            : null}
-
-
-
+                        :
                         <FlatList
-                            data={games}
+                            data={games.slice(0, 10)}
                             keyExtractor={keyExtractor}
                             renderItem={_renderItem}
                             getItemLayout={getItemLayout}
                             horizontal
                         />
-                    </View>
+                    }
 
-                </ScrollView>
+
+
+                </View>
+
 
 
             </TouchableOpacity>

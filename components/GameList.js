@@ -66,7 +66,7 @@ export default class GameList extends React.PureComponent {
     })
   }
 
-  goToSearch = () => this.props.navigation.navigate('Search')
+  goToSearch = () => this.props.navigation.navigate('GameStack', { screen: 'Search' })
 
   clearFilter = () => this.filter('')
 
@@ -84,7 +84,7 @@ export default class GameList extends React.PureComponent {
         </View>
       )
     } else {
-      if(this.props.isSelf){
+      if (this.props.isSelf) {
         return (
           <View style={styles.emptyView}>
             <View style={{ flexDirection: 'row' }}>
@@ -96,7 +96,7 @@ export default class GameList extends React.PureComponent {
             </View>
           </View>
         )
-      }else{
+      } else {
         return (
           <View style={styles.emptyView}>
             <View style={{ flexDirection: 'row' }}>
@@ -105,7 +105,7 @@ export default class GameList extends React.PureComponent {
           </View>
         )
       }
-   
+
     }
   }
 

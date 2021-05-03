@@ -156,9 +156,21 @@ const ConversationScreen = props => {
         let messagesBlockEnded = false
         let nextIsFirstSender = false
         let subjectFound = false
-        let firstMsgCountdown = 2
+        let firstMsgCountdown = 1
 
         for (var ind in regexMsgs) {
+          if (subjectFound && firstMsgCountdown >= 0) {
+            firstMsgCountdown -= 1
+          } else if (subjectFound && firstMsgCountdown <= 0) {
+            subjectFound = false
+            msg = regexMsgs[ind].substring(9, regexMsgs[ind].length - 1) + "\n"
+            console.log("first message is: ", msg)
+            msgList.push({ "sender": sender, "message": msg })
+            messagesBlockStarted = true
+            msg = ""
+            sender = ""
+          }
+
           if ((!regexMsgs[ind].startsWith(">\\") && regexMsgs[ind] != "><" && !regexMsgs[ind].startsWith("> \\") && !regexMsgs[ind].startsWith(">)") || regexMsgs[ind].endsWith("Subject: <"))) {
 
             if (!messagesBlockStarted) {
@@ -168,25 +180,13 @@ const ConversationScreen = props => {
               }
               else if (nextIsFirstSender) {
                 sender = regexMsgs[ind].substring(1, regexMsgs[ind].length - 1)
+                console.log("first sender is: ", sender)
                 nextIsFirstSender = false
 
               }
 
-              if (regexMsgs[ind].endsWith("Subject: <")) {
+              else if (regexMsgs[ind].endsWith("Subject: <")) {
                 subjectFound = true
-              }
-              else if (subjectFound) {
-                if (firstMsgCountdown === 0) {
-                  msg = regexMsgs[ind].substring(1, regexMsgs[ind].length - 1)
-                  messagesBlockStarted = true
-                  msgList.push({ "sender": sender, "message": msg })
-                  msg = ""
-                  sender = ""
-                } else {
-                  firstMsgCountdown -= 1
-                }
-
-
               }
 
             }
@@ -197,7 +197,8 @@ const ConversationScreen = props => {
                 messagesBlockEnded = true
               }
               else if (regexMsgs[ind].endsWith("wrote:<")) {
-                msgList.push({ "sender": sender, "message": msg })
+                if (!(sender === "" && msg === ""))
+                  msgList.push({ "sender": sender, "message": msg })
                 sender = regexMsgs[ind].substring(1, regexMsgs[ind].length - 8)
                 msg = ""
 
@@ -213,6 +214,16 @@ const ConversationScreen = props => {
           }
         }
         msgList.push({ "sender": sender, "message": msg })
+
+        //// if the first messages is multiple line, we need to merge them here, as they are represented in two different messages, and the second without sender
+
+        if (msgList.length >= 2) {
+          if (msgList[1].sender === "") {
+            msgList[0].message += msgList[1].message
+            msgList.splice(1, 1)
+          }
+        }
+
 
         setMessages(msgList)
         setLoading(false)

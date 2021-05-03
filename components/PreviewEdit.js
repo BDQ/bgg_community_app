@@ -6,7 +6,7 @@ import styles from '../shared/styles'
 
 export default class PreviewEdit extends React.Component {
   state = {
-    text: this.props.navigation.state.params.notes.text || ''
+    text: this.props.route.params.notes.text || ''
   }
 
   handleSave = () => {
@@ -14,7 +14,7 @@ export default class PreviewEdit extends React.Component {
     const {
       notes: oldNotes,
       persistUserSelection
-    } = this.props.navigation.state.params
+    } = this.props.route.params
 
     const notes = Object.assign({}, oldNotes, { text: this.state.text })
 

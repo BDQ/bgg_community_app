@@ -19,6 +19,7 @@ import { Dropdown } from 'react-native-material-dropdown-v2'
 const MessagesScreen = props => {
 
   let [loading, setLoading] = useState(true)
+
   let [messages, setMessages] = useState("")
   let [folder, setFolder] = useState("inbox")
   let [readUpdateDummy, setReadUpdate] = useState(0)
@@ -188,6 +189,11 @@ const MessagesScreen = props => {
             <View style={{ backgroundColor: 'gainsboro' }}>
 
               <FlatList
+
+                onRefresh={() => {
+                  getMessages(folder)
+                }}
+                refreshing={loading}
                 data={messages}
                 renderItem={({ item }) => {
 

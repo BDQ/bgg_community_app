@@ -1,6 +1,6 @@
 import React, { useState, useDispatch } from 'reactn'
 import Sentry from 'sentry-expo'
-import { View, Text, StyleSheet, Linking, Dimensions, ImageBackground, Image, AsyncStorage, Platform ,KeyboardAvoidingView, UIManager, ScrollView} from 'react-native'
+import { View, Text, StyleSheet, Linking, Dimensions, ImageBackground, Image, AsyncStorage, Platform, KeyboardAvoidingView, UIManager, ScrollView } from 'react-native'
 import { Input, Button } from 'react-native-elements'
 import { showMessage } from 'react-native-flash-message'
 import SafeAreaView from 'react-native-safe-area-view'
@@ -10,8 +10,10 @@ import { getNumUnread } from '../shared/FetchWithCookie'
 
 
 import styles from '../shared/styles'
+import styleconstants from '../shared/styles/styleconstants'
 
 const height = Dimensions.get('screen').height
+const width = Dimensions.get('screen').width
 
 if (Platform.OS === 'android') {
   if (UIManager.setLayoutAnimationEnabledExperimental) {
@@ -32,7 +34,7 @@ const customStyles = StyleSheet.create({
   bottomText: {
     flex: 1,
     justifyContent: 'flex-end',
-    marginBottom: 20
+    marginBottom: 20,
   },
 
   buttonContainer: {
@@ -127,14 +129,8 @@ const LoginScreen = props => {
 
           props.navigation.navigate("MainTabWrapper", {
             screen: "mainTab", params: {
-              screen: 'ProfileStack',
-              params: {
-                screen: 'Profile',
-                params: {
-                  userName: username, isSelf: true
+              screen: 'Home',
 
-                }
-              },
             }
           })
 
@@ -159,90 +155,96 @@ const LoginScreen = props => {
     }
   }
 
-  let InnerScreen =  <ImageBackground source={require("../assets/loginBackground.jpg")} style={{ width: '100%', height: '100%' }}>
+  let InnerScreen = <View style={{ width: '100%', height: '100%', backgroundColor: 'white' }}>
 
-    <View style={{ alignItems: 'center', padding: 10, flex: 1, backgroundColor: 'rgba(1,1,1,0.4)'}}>
-    <KeyboardAvoidingView style={ { width: '100%', flex:1 } } behavior={Platform.OS === "ios" ? "padding" : null} >
-    <View style = {{justifyContent:'flex-end', alignItems:'center', flex:1}}>
-      <Image source={require('../assets/BGG-Logo-removebg.png')} style={{ width: 150, height: 150, marginTop: 100, marginBottom: 20 }} />
+    <View style={{ alignItems: 'center', padding: 10, flex: 1, backgroundColor: 'white' }}>
+      <Image source={require('../assets/bgg_background_1.png')} style={{ position: 'absolute', bottom: 0, height: height, width: 300, left: 0 }} />
+      <Image source={require('../assets/bgg_background_2.png')} style={{ position: 'absolute', bottom: 0, height: height / 5, width: 300, right: 0 }} />
 
-      <Input
-        id="usernameInput"
-        label="BGG Username"
-        focus={true}
-        autoCapitalize={'none'}
-        autoCorrect={false}
-        spellCheck={false}
-        onChangeText={usernameChange}
-        value={username}
-        errorMessage={usernameError}
-        containerStyle={{ backgroundColor: 'rgba(1,1,1,0.5)', padding: 20, borderRadius: 15 }}
-        inputStyle={{ color: 'white' }}
-        labelStyle={{ color: 'white' }}
-      />
+      <KeyboardAvoidingView style={{ width: '100%', flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : null} >
+        <View style={{ justifyContent: 'flex-end', alignItems: 'center', flex: 1 }}>
+          <Image source={require('../assets/BGG-Logo-removebg.png')} style={{ width: 150, height: 150, marginTop: 100, marginBottom: 20 }} />
 
-      <Input
-        id="passwordInput"
-        label="BGG Password"
-        autoCapitalize="none"
-        containerStyle={{ marginTop: 25 }}
-        onChangeText={passwordChange}
-        secureTextEntry={true}
-        value={password}
-        errorMessage={passwordError}
-        containerStyle={{ backgroundColor: 'rgba(1,1,1,0.5)', padding: 20, borderRadius: 15 }}
-        inputStyle={{ color: 'white' }}
-        labelStyle={{ color: 'white' }}
-      />
+          <View style={{ backgroundColor: 'rgba(1,1,1,0.5)', padding: 20, borderRadius: 15, width: '100%' }}>
 
-      <View style={[customStyles.buttonContainer, { width: '100%',  }] }>
-        
-      <Button
-          id="submitButton"
-          backgroundColor="#03A9F4"
-          style={customStyles.button}
-          onPress={
-            handleLogIn
-          }
-          loading={loading}
-          title={'Sign In'}
-        />
-      </View>
-      </View>
+            <Input
+              id="usernameInput"
+              label="BGG Username"
+              focus={true}
+              autoCapitalize={'none'}
+              autoCorrect={false}
+              spellCheck={false}
+              onChangeText={usernameChange}
+              value={username}
+              errorMessage={usernameError}
+              containerStyle={{ padding: 15 }}
+              inputStyle={{ color: 'white' }}
+              labelStyle={{ color: 'white' }}
+            />
+
+            <Input
+              id="passwordInput"
+              label="BGG Password"
+              autoCapitalize="none"
+              containerStyle={{ marginTop: 25 }}
+              onChangeText={passwordChange}
+              secureTextEntry={true}
+              value={password}
+              errorMessage={passwordError}
+              containerStyle={{ padding: 15 }}
+              inputStyle={{ color: 'white' }}
+              labelStyle={{ color: 'white' }}
+            />
+          </View>
+          <View style={[customStyles.buttonContainer, { width: '100%', }]}>
+
+            <Button
+              id="submitButton"
+              backgroundColor="#03A9F4"
+              style={customStyles.button}
+              onPress={
+                handleLogIn
+              }
+              loading={loading}
+              title={'Sign In'}
+              buttonStyle={{ backgroundColor: styleconstants.bggpurple }}
+            />
+          </View>
+        </View>
 
       </KeyboardAvoidingView>
-      <View style = {{marginBottom : '50%'}}>
-        <Text style={{ color: 'white' }}>
+      <View style={{ marginBottom: '50%' }}>
+        <Text style={{ color: 'black' }}>
           This app is an <Text style={customStyles.strong}>unofficial</Text>{' '}
           {' '}
             community initiative to build a sharing mobile application
             for the amazing BoardGameGeek.com site.
           </Text>
         <Text></Text>
-        <Text style={{ color: 'white' }}>
+        <Text style={{ color: 'black' }}>
           Geekdo, BoardGameGeek, the Geekdo logo, and the BoardGameGeek
           logo are trademarks of BoardGameGeek, LLC.
             </Text>
       </View>
 
     </View>
-  </ImageBackground>
-  
+  </View>
 
-  if(Platform.OS === 'ios'){
+
+  if (Platform.OS === 'ios') {
     return (
       <View>
-      {InnerScreen}
-    </View>    )
-  }else{
+        {InnerScreen}
+      </View>)
+  } else {
     return (
 
 
       <ScrollView>
         {InnerScreen}
       </ScrollView>
-  
-  
+
+
     )
   }
 

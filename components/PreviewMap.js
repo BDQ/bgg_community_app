@@ -54,7 +54,7 @@ export default class PreviewMap extends React.PureComponent {
 
   static getDerivedStateFromProps(props, state) {
     if (!state.locations) {
-      const { companies } = props.navigation.state.params
+      const { companies } = props.route.params
 
       const locations = {}
       const locationCounts = {}
@@ -155,11 +155,11 @@ export default class PreviewMap extends React.PureComponent {
           }}
           // minZoomLevel={16}
           maxZoomLevel={20}
-          // click on map to dump location
-          // onPress={evt => {
-          //   console.log(evt.nativeEvent)
-          //   this.setState({ startingCoordinate: evt.nativeEvent.coordinate })
-          // }}
+        // click on map to dump location
+        // onPress={evt => {
+        //   console.log(evt.nativeEvent)
+        //   this.setState({ startingCoordinate: evt.nativeEvent.coordinate })
+        // }}
         >
           <UrlTile
             urlTemplate={

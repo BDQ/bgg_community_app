@@ -42,6 +42,8 @@ import { logIn, getUserId } from './shared/auth'
 import { fetchXML } from './shared/HTTP'
 import { getNumUnread } from './shared/FetchWithCookie'
 import { Badge } from 'react-native-elements'
+import { findCoordinates } from './shared/location'
+import { fetchCollection } from './shared/store/reducers/collection'
 
 var parseString = require('react-native-xml2js').parseString;
 
@@ -49,6 +51,7 @@ const betaUsers = BETA_USERS.split(',')
 //bootstraps ReactN global store
 setupStore()
 
+console.disableYellowBox = true;
 
 export default class App extends React.PureComponent {
   state = {
@@ -115,6 +118,13 @@ export default class App extends React.PureComponent {
     console.log(valuePassword)
 
     await this.attemptBGGLoginInBackground(valueName, valuePassword)
+
+    col = fetchCollection
+
+    global.location = { "city": "Utrecht", "country": "Netherlands" }
+
+    findCoordinates()
+
 
   }
 
