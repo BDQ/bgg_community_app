@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import { View, Text, InteractionManager } from 'react-native'
 import { Button } from 'react-native-elements'
 import { createStackNavigator } from '@react-navigation/stack'
+import { useFocusEffect } from '@react-navigation/native';
 
 import { Icon } from 'react-native-elements'
 

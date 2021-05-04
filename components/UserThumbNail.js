@@ -13,6 +13,7 @@ export default UserThumbNail = props => {
     let games = props.otherGames
     let inUserWishlist = props.inUserWishlist
     let othersWishlist = props.othersWishlist
+    const navigation = props.navigation
 
     keyExtractor = item => item.key || item.objectId
 
@@ -31,7 +32,7 @@ export default UserThumbNail = props => {
         return (
             <TouchableOpacity
                 onPress={() => {
-                    props.navigation.navigate('GameStack', { screen: 'Game', params: { game: item } })
+                    navigation.navigate('GameStack', { screen: 'Game', params: { game: item } })
                 }}
             >
                 <GameListItemHorizontal
@@ -53,16 +54,22 @@ export default UserThumbNail = props => {
         return renderItemWithIcon(item, null)
     }
 
-    _renderTarget = ({ item }) => {
+    _renderTarget = ({ item, index }) => {
+        if (index < inUserWishlist.length) {
 
-        const icon = <Icon
-            name="bookmark"
-            color={styleconstants.bggorange}
-            type="font-awesome"
-            size={28}
+            const icon = <Icon
+                name="bookmark"
+                color={styleconstants.bggorange}
+                type="font-awesome"
+                size={28}
 
-        />
-        return renderItemWithIcon(item, icon)
+            />
+            return renderItemWithIcon(item, icon)
+        } else {
+            return renderItemWithIcon(item, null)
+
+        }
+
     }
 
     if (games.length === 0 && inUserWishlist.length === 0) {
@@ -71,7 +78,9 @@ export default UserThumbNail = props => {
         return (
             <TouchableOpacity style={{ padding: 10, height: 130, backgroundColor: 'white', margin: 1 }}
                 onPress={() => {
-                    props.navigation.navigate('User', { screen: 'Profile', params: { userName: props.userName, lists: { inUserWishlist: inUserWishlist, otherGames: games, othersWishlist: othersWishlist } } })
+                    console.log("user clicked", props)
+
+                    navigation.navigate('User', { screen: 'Profile', params: { userName: props.userName, lists: { inUserWishlist: inUserWishlist, otherGames: games, othersWishlist: othersWishlist } } })
                 }}
 
             >
@@ -91,17 +100,18 @@ export default UserThumbNail = props => {
                 <View style={{ alignItems: 'center', flexDirection: 'row' }}>
                     {inUserWishlist.length > 0 ?
 
-
                         <FlatList
-                            data={inUserWishlist}
+                            style={{ flexGrow: 0 }}
+                            data={inUserWishlist.concat(games.slice(0, 4))}
                             keyExtractor={keyExtractor}
                             renderItem={_renderTarget}
                             getItemLayout={getItemLayout}
                             horizontal
                         />
+
                         :
                         <FlatList
-                            data={games.slice(0, 10)}
+                            data={games.slice(0, 7)}
                             keyExtractor={keyExtractor}
                             renderItem={_renderItem}
                             getItemLayout={getItemLayout}

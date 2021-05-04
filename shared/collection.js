@@ -18,6 +18,7 @@ export const removeDuplicates = (myArr, prop) => {
 }
 
 export const fetchCollectionFromBGG = async username => {
+
   if (!username) {
     return []
   }
@@ -34,16 +35,16 @@ export const fetchCollectionFromBGG = async username => {
       return fetchCollectionFromBGG(username)
     } else if (response.status == 200) {
       // yay! we have a collection response
-      await nextFrame()
+      //await nextFrame()
       const xml = await response.text()
 
-      await nextFrame()
+      //await nextFrame()
       // const doc = await parseXML(xml)
       var doc = new XMLParser().parseFromString(xml)
 
       let collection = []
       for (item of doc.getElementsByTagName('item')) {
-        await nextFrame()
+        //await nextFrame()
 
         const objectId = item.attributes.objectid
 
@@ -56,6 +57,8 @@ export const fetchCollectionFromBGG = async username => {
         let statusElement = item.getElementsByTagName('status')[0] || {}
 
         let subtitle = `Year: ${yearpublished}`
+
+
 
         collection.push({
           objectId,
@@ -83,6 +86,8 @@ export const fetchCollectionFromBGG = async username => {
   }
   return []
 }
+
+
 
 export const loadCollection = async updatedAt => {
   if (!updatedAt) {

@@ -43,7 +43,7 @@ import { fetchXML } from './shared/HTTP'
 import { getNumUnread } from './shared/FetchWithCookie'
 import { Badge } from 'react-native-elements'
 import { findCoordinates } from './shared/location'
-import { fetchCollection } from './shared/store/reducers/collection'
+import { fetchCollectionFromBGG } from './shared/collection'
 
 var parseString = require('react-native-xml2js').parseString;
 
@@ -119,7 +119,7 @@ export default class App extends React.PureComponent {
 
     await this.attemptBGGLoginInBackground(valueName, valuePassword)
 
-    col = fetchCollection
+    col = fetchCollectionFromBGG(valueName)
 
     global.location = { "city": "Utrecht", "country": "Netherlands" }
 

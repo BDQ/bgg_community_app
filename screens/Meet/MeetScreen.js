@@ -13,6 +13,7 @@ var DomParser = require('react-native-html-parser').DOMParser
 import { fetchCollectionFromBGG } from '../../shared/collection'
 import { BarIndicator } from 'react-native-indicators';
 import { RateLimit } from "async-sema";
+import { useFocusEffect } from '@react-navigation/native';
 
 
 import GameScreen from '../GameScreen'
@@ -32,7 +33,7 @@ import { fetchRaw } from '../../shared/HTTP'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 
 const COMPONENTS_PER_PAGE = 8
-const NUM_PARALLEL_FETCHES = 10
+let num_parallel_fetches = 5
 
 const requestHeaders = new Headers({
     Accept: 'application/json',
@@ -44,14 +45,15 @@ const fetchArgs = {
     requestHeaders
 }
 let constructedUserComponents = []
-let usersToFetch = null
-let usersFetched = 0
+let usersPageIndex = 1
+let fetchingOnGoing = false
 
-const limit = RateLimit(5);
+const limit = RateLimit(num_parallel_fetches);
+let limitBackground = RateLimit(1)
 let usersFetchFinishedCount = 0
 let usersToFetchCount = 0
 
-
+let controller = new AbortController();
 
 
 const MeetScreen = ({ navigation, route }) => {
@@ -86,7 +88,6 @@ const MeetScreen = ({ navigation, route }) => {
 
     function inWishlist(item) {
         for (var wishItem in wishlist) {
-            console.log("item check", wishlist[wishItem])
             if (item.objectId === wishlist[wishItem].objectId) {
                 return true
             }
@@ -95,7 +96,8 @@ const MeetScreen = ({ navigation, route }) => {
     }
 
     async function getCollectionForUser(userName) {
-        console.log("Fetching for ", userName)
+        console.log(usersFetchFinishedCount, ", Fetching for ", userName)
+
         var gamesFetched = await fetchCollectionFromBGG(userName)
         usersFetchFinishedCount += 1
         var gamesFiltered = gamesFetched.filter((game) => game.status.own === '1')
@@ -133,9 +135,11 @@ const MeetScreen = ({ navigation, route }) => {
     async function getUserLists(userNameList) {
         for (var lInd in userNameList) {
             await limit()
-            getCollectionForUser(userNameList[lInd].name)
+            if (fetchingOnGoing) {
+                getCollectionForUser(userNameList[lInd].name)
+
+            }
         }
-        console.log("collection requests sent")
     }
 
     function processHTMLUserList(respText) {
@@ -149,9 +153,6 @@ const MeetScreen = ({ navigation, route }) => {
         }).parseFromString(respText, 'text/html')
         let loc = doc.getElementsByClassName('username')
 
-        console.log("found locals")
-
-        console.log(loc.toString())
 
         let names = loc.toString().match(/>(.*?)</g)
 
@@ -176,9 +177,10 @@ const MeetScreen = ({ navigation, route }) => {
     }
 
     function rerenderUserListPeriodically() {
+        LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+        setLocalUserComponents(getComponentsForPage(pageNumToRender))
         setTimeout(() => {
-            LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-            setLocalUserComponents(getComponentsForPage(pageNumToRender))
+
             if (usersFetchFinishedCount > 0 && usersFetchFinishedCount >= usersToFetchCount) {
                 setUserComponentConstructionInProgress(false)
             } else {
@@ -193,26 +195,34 @@ const MeetScreen = ({ navigation, route }) => {
         setUserComponentConstructionInProgress(true)
         rerenderUserListPeriodically()
 
-        var pageNum = 1
         let usersFetchedNumber = 1
         while (usersFetchedNumber > 0) {
-            let resp = await fetchRaw('https://boardgamegeek.com/users/page/' + pageNum.toString() + '?country=' + country + '&state=&city=' + city, fetchArgs)
-            resp.text().then(respText => {
-                let localUsersPart = processHTMLUserList(respText)
-                usersFetchedNumber = localUsersPart.length
-                usersToFetchCount += usersFetchedNumber
-                getUserLists(localUsersPart)
+            if (fetchingOnGoing) {
+                let resp = await fetchRaw('https://boardgamegeek.com/users/page/' + usersPageIndex.toString() + '?country=' + country + '&state=&city=' + city, fetchArgs)
+                resp.text().then(respText => {
+                    if (fetchingOnGoing) {
+                        let localUsersPart = processHTMLUserList(respText)
+                        usersFetchedNumber = localUsersPart.length
+                        usersToFetchCount += usersFetchedNumber
+                        getUserLists(localUsersPart)
+                    }
 
-            })
-            pageNum += 1
+
+                })
+                console.log(usersPageIndex)
+                usersPageIndex += 1
+            } else {
+                break
+            }
+
         }
-        console.log("last user fetch sent, page num: ", pageNum)
+        console.log("last user fetch sent, page num: ", usersPageIndex)
 
 
 
     }
 
-    function startFetchingLocalUsers() {
+    function proceedFetchingLocalUsers() {
         if (global.location) {
             setCity(global.location.city)
             setCountry(global.location.country)
@@ -224,30 +234,35 @@ const MeetScreen = ({ navigation, route }) => {
         } else {
             console.log("still waiting for location")
             setTimeout(() => {
-                startFetchingLocalUsers()
+                proceedFetchingLocalUsers()
             }, 1000)
         }
 
     }
 
-
-    useEffect(() => {
-        const unsubscribe = navigation.addListener('focus', () => {
+    useFocusEffect(
+        React.useCallback(() => {
+            isUserprofileNext = false
             if (!initialFetchStarted) {
+                fetchingOnGoing = true
                 setInitialFetchStarted(true)
-                startFetchingLocalUsers()
+                proceedFetchingLocalUsers()
             }
-        });
+            return () => {
+
+            };
+        }, [])
+    );
 
 
-
-    })
 
     const stopFetch = () => {
         LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
         setUserComponentConstructionInProgress(false)
         setLocalUserComponents([])
         constructedUserComponents = []
+        fetchingOnGoing = false
+        usersPageIndex = 0
     }
 
     const getComponentsForPage = (p) => {
@@ -299,7 +314,10 @@ const MeetScreen = ({ navigation, route }) => {
                         <View>
                             {global.location ?
                                 <TouchableOpacity style={{ backgroundColor: styleconstants.bggorange }}
-                                    onPress={() => { fetchLocalUsers(country, city) }}
+                                    onPress={() => {
+                                        fetchingOnGoing = true
+                                        fetchLocalUsers(country, city)
+                                    }}
                                 >
                                     <Icon
                                         name="caretright"
