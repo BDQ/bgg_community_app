@@ -32,10 +32,10 @@ const CrowdFunding = (props) => {
     const fetchCfList = () => {
         let cfURL = "https://api.geekdo.com/api/ending_preorders"
         fetch(cfURL).then(cfList => {
-            console.log("cf is", cfList.status)
+            //console.log("cf is", cfList.status)
             if (cfList.status === 200) {
                 cfList.json().then(cfListJson => {
-                    console.log("cf list json", cfListJson)
+                    //console.log("cf list json", cfListJson)
                     setCfList(cfListJson)
                 })
             } else {

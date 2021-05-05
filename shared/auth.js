@@ -20,21 +20,21 @@ export const logIn = async (username, password) => {
   // so we can inspect the cookies... like a monster ;)
   const { status, headers } = await fetchRaw('/login/api/v1', init)
 
-  console.log("login headers", headers)
+  //console.log("login headers", headers)
 
   /// getting cookie
   global.cookie = null
 
   let cookieOriginal = headers.get("set-cookie")
   let cookie = cookieOriginal.split(" ")
-  console.log("cookie ", cookie)
+  //console.log("cookie ", cookie)
   let cookieFinal = ""
   for (var cookieParamInd in cookie) {
     if (cookie[cookieParamInd].startsWith("bggusername") || cookie[cookieParamInd].startsWith("bggpassword") || cookie[cookieParamInd].startsWith("SessionID")) {
       cookieFinal += cookie[cookieParamInd] + " "
     }
   }
-  console.log("final cookie", cookieFinal)
+  //console.log("final cookie", cookieFinal)
   global.cookie = cookieFinal
   //////
 

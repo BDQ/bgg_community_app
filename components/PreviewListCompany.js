@@ -2,6 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { StyleSheet, View, Text } from 'react-native'
 import { Avatar, Icon } from 'react-native-elements'
+import styleconstants from '../shared/styles/styleconstants'
 
 export default class PreviewListCompany extends React.PureComponent {
   _renderMapButton = () => {
@@ -49,10 +50,10 @@ export default class PreviewListCompany extends React.PureComponent {
     return (
       <View
         style={styles.itemContainer}
-        // onLayout={event => {
-        //   var { x, y, width, height } = event.nativeEvent.layout
-        //   logger({ x, y, width, height })
-        // }}
+      // onLayout={event => {
+      //   var { x, y, width, height } = event.nativeEvent.layout
+      //   logger({ x, y, width, height })
+      // }}
       >
         <Avatar
           // onPress={() => console.log(this.props.publisherId)}
@@ -99,12 +100,12 @@ const styles = StyleSheet.create({
     flexDirection: 'column'
   },
   companyName: {
-    fontFamily: 'lato-bold',
+    fontFamily: styleconstants.primaryFontBold,
     fontSize: 20,
     color: '#292e62'
   },
   location: {
-    fontFamily: 'lato-bold',
+    fontFamily: styleconstants.primaryFontBold,
     color: '#161616'
   },
   text: {

@@ -1,6 +1,6 @@
 import React, { useGlobal, useEffect, useState, useDispatch, useRef } from 'reactn'
 import PropTypes from 'prop-types'
-import { View, Text, InteractionManager, ScrollView, FlatList, LayoutAnimation } from 'react-native'
+import { View, Text, InteractionManager, ScrollView, FlatList, LayoutAnimation, Keyboard } from 'react-native'
 import { Button } from 'react-native-elements'
 import { createStackNavigator } from '@react-navigation/stack'
 import SafeAreaView from 'react-native-safe-area-view'
@@ -35,6 +35,7 @@ import { TouchableOpacity } from 'react-native-gesture-handler'
 const COMPONENTS_PER_PAGE = 8
 let num_parallel_fetches = 5
 
+
 const requestHeaders = new Headers({
     Accept: 'application/json',
     'Content-Type': 'application/json;charset=UTF-8'
@@ -44,7 +45,7 @@ const fetchArgs = {
     credentials: 'include',
     requestHeaders
 }
-let constructedUserComponents = []
+let orderedFetchedUsers = []
 let usersPageIndex = 1
 let fetchingOnGoing = false
 
@@ -52,6 +53,7 @@ const limit = RateLimit(num_parallel_fetches);
 let limitBackground = RateLimit(1)
 let usersFetchFinishedCount = 0
 let usersToFetchCount = 0
+let filterStringAsync = ""
 
 let controller = new AbortController();
 
@@ -72,6 +74,9 @@ const MeetScreen = ({ navigation, route }) => {
     let [initialFetchStarted, setInitialFetchStarted] = useState(false)
     let [userComponentConstructionInProgress, setUserComponentConstructionInProgress] = useState(false)
     let [pageNumToRender, setPageNumToRender] = useState(0)
+    let [searchOpen, setSearchOpen] = useState(false)
+    let [filterString, setFilterstring] = useState("")
+    let [startSearchButtonVisible, setStartSearchButtonVisible] = useState(false)
 
     const [collection] = useGlobal('collection')
     const wishlist = collection.filter(
@@ -115,14 +120,14 @@ const MeetScreen = ({ navigation, route }) => {
                 }
             }
 
-            let userGameLists = { otherGames: gl, inUserWants: wl, othersWishlist: otherWl }
-            let userComp = <UserThumbNail otherGames={userGameLists.otherGames} inUserWishlist={userGameLists.inUserWants} othersWishlist={userGameLists.othersWishlist} userName={userName} navigation={navigation} />
-            let newComp = { component: userComp, inWants: userGameLists.inUserWants.length }
+            let userObj = { otherGames: gl, inUserWants: wl, othersWishlist: otherWl, userName: userName, inWants: wl.length }
+            //let userComp = <UserThumbNail otherGames={userGameLists.otherGames} inUserWishlist={userGameLists.inUserWants} othersWishlist={userGameLists.othersWishlist} userName={userName} navigation={navigation} />
+            //let newComp = { component: userComp, inWants: userGameLists.inUserWants.length }
             let insertInd = 0
-            while (insertInd < constructedUserComponents.length && constructedUserComponents[insertInd].inWants > newComp.inWants) {
+            while (insertInd < orderedFetchedUsers.length && orderedFetchedUsers[insertInd].inWants > userObj.inWants) {
                 insertInd += 1
             }
-            constructedUserComponents.splice(insertInd, 0, newComp)
+            orderedFetchedUsers.splice(insertInd, 0, userObj)
 
         }
 
@@ -177,11 +182,18 @@ const MeetScreen = ({ navigation, route }) => {
     }
 
     function rerenderUserListPeriodically() {
-        LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-        setLocalUserComponents(getComponentsForPage(pageNumToRender))
+        if (filterStringAsync == "") {
+            LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+            setLocalUserComponents(getComponentsForPage(pageNumToRender))
+        }
+
         setTimeout(() => {
 
             if (usersFetchFinishedCount > 0 && usersFetchFinishedCount >= usersToFetchCount) {
+                if (filterStringAsync == "") {
+                    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+                    setLocalUserComponents(getComponentsForPage(pageNumToRender))
+                }
                 setUserComponentConstructionInProgress(false)
             } else {
                 rerenderUserListPeriodically()
@@ -229,7 +241,7 @@ const MeetScreen = ({ navigation, route }) => {
             //setCity("Utrecht")
             //setCountry("Netherlands")
             fetchLocalUsers(global.location.country, global.location.city)
-            //fetchLocalUsers("Netherlands", "Utrecht")
+            //fetchLocalUsers("Germany", "Gevelsberg")
 
         } else {
             console.log("still waiting for location")
@@ -242,15 +254,24 @@ const MeetScreen = ({ navigation, route }) => {
 
     useFocusEffect(
         React.useCallback(() => {
-            isUserprofileNext = false
+            navigation.setOptions({
+                headerRight: () => (
+                    <Button
+                        icon={<Icon name="search" type="ionicons" size={20} color={'white'} />}
+                        onPress={() => {
+                            LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+                            setSearchOpen(!searchOpen)
+                        }}
+                        buttonStyle={globalStyles.headerIconButton}
+                    />
+                ),
+            })
             if (!initialFetchStarted) {
                 fetchingOnGoing = true
                 setInitialFetchStarted(true)
                 proceedFetchingLocalUsers()
             }
-            return () => {
 
-            };
         }, [])
     );
 
@@ -260,13 +281,54 @@ const MeetScreen = ({ navigation, route }) => {
         LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
         setUserComponentConstructionInProgress(false)
         setLocalUserComponents([])
-        constructedUserComponents = []
+        orderedFetchedUsers = []
         fetchingOnGoing = false
         usersPageIndex = 0
     }
 
     const getComponentsForPage = (p) => {
-        return constructedUserComponents.slice(p * COMPONENTS_PER_PAGE, (p + 1) * COMPONENTS_PER_PAGE)
+        return orderedFetchedUsers.slice(p * COMPONENTS_PER_PAGE, (p + 1) * COMPONENTS_PER_PAGE)
+    }
+
+    function checkUserForFilter(user) {
+        for (var wlInd in user.inUserWants) {
+            if (user.inUserWants[wlInd].name.toLowerCase().includes(filterStringAsync)) {
+                return true
+            }
+
+
+        }
+        for (var gInd in user.otherGames) {
+
+            if (user.otherGames[gInd].name.toLowerCase().includes(filterStringAsync)) {
+                return true
+            }
+
+        }
+        return false
+
+    }
+
+    function filterUsersForGame() {
+        if (filterString !== "") {
+            let filteredUsers = []
+
+            for (var userInd in orderedFetchedUsers) {
+                if (checkUserForFilter(orderedFetchedUsers[userInd])) {
+                    filteredUsers.push(orderedFetchedUsers[userInd])
+                }
+
+
+            }
+
+
+            LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+            setLocalUserComponents(filteredUsers)
+        } else {
+            LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+            setLocalUserComponents(getComponentsForPage(pageNumToRender))
+        }
+
     }
 
 
@@ -339,6 +401,61 @@ const MeetScreen = ({ navigation, route }) => {
                 </View>
             </View>
             <View>
+                {searchOpen ?
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                        <SearchBar
+                            onChangeText={(t) => {
+                                setFilterstring(t)
+                                filterStringAsync = t.toLowerCase()
+                                if (t !== "") {
+                                    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+                                    setStartSearchButtonVisible(true)
+                                } else {
+                                    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+                                    setStartSearchButtonVisible(false)
+                                    setLocalUserComponents(getComponentsForPage(pageNumToRender))
+                                }
+                            }}
+                            onClearText={(t) => {
+                                setFilterstring("")
+                                LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+                                setStartSearchButtonVisible(false)
+                                setLocalUserComponents(getComponentsForPage(pageNumToRender))
+                            }}
+                            placeholder="Search games..."
+                            value={filterString}
+                            containerStyle={{ width: startSearchButtonVisible ? '80%' : '100%', backgroundColor: styleconstants.bggpurple }}
+                            inputContainerStyle={{ backgroundColor: 'white' }}
+                        // showLoadingIcon={true}
+                        />
+                        {startSearchButtonVisible ?
+                            <View style={{ backgroundColor: styleconstants.bggorange, width: "20%", justifyContent: 'center', alignItems: 'center' }}>
+
+                                <View>
+
+                                    <TouchableOpacity style={{ backgroundColor: styleconstants.bggorange }}
+                                        onPress={() => {
+                                            filterUsersForGame()
+                                            Keyboard.dismiss()
+                                        }}
+                                    >
+                                        <Icon
+                                            name="caretright"
+                                            color='white'
+                                            type="antdesign"
+                                            containerStyle={{ margin: 4 }}
+                                            size={16}
+                                        />
+                                    </TouchableOpacity>
+
+                                </View>
+
+                            </View>
+                            : null}
+                    </View>
+                    : null}
+            </View>
+            <View>
                 {global.location ?
                     <View>
                         {localUserComponents.length < 1 ?
@@ -351,48 +468,56 @@ const MeetScreen = ({ navigation, route }) => {
                                     <FlatList
                                         data={localUserComponents}
                                         renderItem={({ item }) => {
-                                            return item.component
+                                            return <UserThumbNail otherGames={item.otherGames} inUserWishlist={item.inUserWants} othersWishlist={item.othersWishlist} userName={item.userName} navigation={navigation} />
                                         }}
                                     />
-                                    <View style={{ flexDirection: 'row', width: '100%', justifyContent: 'space-evenly', marginTop: 20 }}>
+                                    <View>
+                                        {filterStringAsync === "" ?
 
-                                        <Icon
-                                            name="caretleft"
-                                            color={pageNumToRender > 0 ? styleconstants.bggorange : 'lightgrey'}
-                                            type="antdesign"
-                                            containerStyle={{ margin: 4 }}
-                                            size={20}
-                                            onPress={() => {
-                                                if (pageNumToRender > 0) {
-                                                    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-                                                    setLocalUserComponents(getComponentsForPage(pageNumToRender - 1))
-                                                    setPageNumToRender(pageNumToRender - 1)
-                                                    scrollUp()
-                                                }
+                                            <View style={{ flexDirection: 'row', width: '100%', justifyContent: 'space-evenly', marginTop: 20 }}>
 
-                                            }}
-                                        />
+                                                <Icon
+                                                    name="caretleft"
+                                                    color={pageNumToRender > 0 ? styleconstants.bggorange : 'lightgrey'}
+                                                    type="antdesign"
+                                                    containerStyle={{ margin: 4 }}
+                                                    size={20}
+                                                    onPress={() => {
+                                                        if (pageNumToRender > 0) {
+                                                            LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+                                                            setLocalUserComponents(getComponentsForPage(pageNumToRender - 1))
+                                                            setPageNumToRender(pageNumToRender - 1)
+                                                            scrollUp()
+                                                        }
 
-                                        <Icon
-                                            name="caretright"
-                                            color={pageNumToRender < maxPageNumToRender ? styleconstants.bggorange : 'lightgrey'}
-                                            type="antdesign"
-                                            containerStyle={{ margin: 4 }}
-                                            size={20}
-                                            onPress={() => {
-                                                if (pageNumToRender < maxPageNumToRender) {
-                                                    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-                                                    setLocalUserComponents(getComponentsForPage(pageNumToRender + 1))
-                                                    setPageNumToRender(pageNumToRender + 1)
-                                                    scrollUp()
-                                                }
+                                                    }}
+                                                />
 
-                                            }}
+                                                <Icon
+                                                    name="caretright"
+                                                    color={pageNumToRender <= maxPageNumToRender ? styleconstants.bggorange : 'lightgrey'}
+                                                    type="antdesign"
+                                                    containerStyle={{ margin: 4 }}
+                                                    size={20}
+                                                    onPress={() => {
+                                                        if (pageNumToRender <= maxPageNumToRender) {
+                                                            LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+                                                            setLocalUserComponents(getComponentsForPage(pageNumToRender + 1))
+                                                            setPageNumToRender(pageNumToRender + 1)
+                                                            scrollUp()
+                                                        }
 
-                                        />
+                                                    }}
+
+                                                />
+
+                                            </View>
+
+                                            : null}
 
                                     </View>
-                                    <View style={{ height: 100 }}></View>
+                                    <View style={{ height: 200 }}></View>
+
                                 </ScrollView>
 
 

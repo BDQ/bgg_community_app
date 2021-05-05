@@ -57,7 +57,7 @@ const ProfileCard = props => {
 
     const userDetails = await fetchXML(url, { method: 'GET' })
     parseString(userDetails, function (err, result) {
-      console.log("xml parsed", result)
+      //console.log("xml parsed", result)
 
       setProfileDetails(result)
       setUserFetched(true)

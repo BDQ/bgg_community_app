@@ -89,11 +89,11 @@ const ConversationScreen = props => {
 
     fetch("https://boardgamegeek.com/geekmail_controller.php", requestOptions)
       .then(response => {
-        console.log("resp status", response.status)
+        //console.log("resp status", response.status)
         if (response.status === 200) {
           response.text()
             .then(rt => {
-              console.log("resp text", rt)
+              //console.log("resp text", rt)
               setSending(false)
               showFlash(`Your message was sent successfully`, 'success')
               getNumUnread()
@@ -118,8 +118,8 @@ const ConversationScreen = props => {
 
 
   async function getMessages() {
-    console.log("global cookie", global.cookie)
-    console.log("message id", props.route.params.messageid)
+    //console.log("global cookie", global.cookie)
+    //console.log("message id", props.route.params.messageid)
     if (props.route.params.messageid) {
 
 
@@ -140,14 +140,14 @@ const ConversationScreen = props => {
       ///also refresh number of unread
       getNumUnread()
 
-      console.log("resp messages", resp.status, resp.statusText)
+      //console.log("resp messages", resp.status, resp.statusText)
       resp.text().then(rText => {
 
 
 
-        console.log("resp text", rText)
+        //console.log("resp text", rText)
         let regexMsgs = rText.match(/>(.*?)</g)
-        console.log("enclosed", regexMsgs)
+        //console.log("enclosed", regexMsgs)
 
         let msgList = []
         let sender = ""
@@ -164,7 +164,7 @@ const ConversationScreen = props => {
           } else if (subjectFound && firstMsgCountdown <= 0) {
             subjectFound = false
             msg = regexMsgs[ind].substring(9, regexMsgs[ind].length - 1) + "\n"
-            console.log("first message is: ", msg)
+            //console.log("first message is: ", msg)
             msgList.push({ "sender": sender, "message": msg })
             messagesBlockStarted = true
             msg = ""
@@ -180,7 +180,7 @@ const ConversationScreen = props => {
               }
               else if (nextIsFirstSender) {
                 sender = regexMsgs[ind].substring(1, regexMsgs[ind].length - 1)
-                console.log("first sender is: ", sender)
+                //console.log("first sender is: ", sender)
                 nextIsFirstSender = false
 
               }
@@ -239,7 +239,7 @@ const ConversationScreen = props => {
   useFocusEffect(
     React.useCallback(() => {
       if (!messages) {
-        console.log("fetching messages")
+        //console.log("fetching messages")
         getMessages()
       }
 
@@ -328,7 +328,7 @@ const ConversationScreen = props => {
               returnKeyType='default'
               textAlignVertical='center'
               onContentSizeChange={e => {
-                console.log('content size change, height:', e.nativeEvent.contentSize.height);
+                //console.log('content size change, height:', e.nativeEvent.contentSize.height);
                 setHeight(e.nativeEvent.contentSize.height + extraTextInputHeight)
               }}
 

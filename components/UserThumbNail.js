@@ -10,10 +10,11 @@ import { useSafeArea } from 'react-native-safe-area-view'
 
 
 export default UserThumbNail = props => {
-    let games = props.otherGames
-    let inUserWishlist = props.inUserWishlist
-    let othersWishlist = props.othersWishlist
+    const games = props.otherGames
+    const inUserWishlist = props.inUserWishlist
+    const othersWishlist = props.othersWishlist
     const navigation = props.navigation
+    const userName = props.userName
 
     keyExtractor = item => item.key || item.objectId
 
@@ -78,21 +79,21 @@ export default UserThumbNail = props => {
         return (
             <TouchableOpacity style={{ padding: 10, height: 130, backgroundColor: 'white', margin: 1 }}
                 onPress={() => {
-                    console.log("user clicked", props)
+                    console.log("user clicked, navigating to", username)
 
-                    navigation.navigate('User', { screen: 'Profile', params: { userName: props.userName, lists: { inUserWishlist: inUserWishlist, otherGames: games, othersWishlist: othersWishlist } } })
+                    navigation.navigate('User', { screen: 'Profile', params: { userName: userName, lists: { inUserWishlist: inUserWishlist, otherGames: games, othersWishlist: othersWishlist } } })
                 }}
 
             >
                 {inUserWishlist.length > 0 ?
                     <View style={{ marginBottom: 5, height: 30, flexDirection: 'row', justifyContent: 'space-between' }}>
-                        <Text style={{ fontFamily: styleconstants.primaryFontBold }}>{props.userName + " owns " + inUserWishlist.length.toString() + " of your wants."}</Text>
+                        <Text style={{ fontFamily: styleconstants.primaryFontBold }}>{userName + " owns " + inUserWishlist.length.toString() + " of your wants."}</Text>
                         <Text style={{ color: 'dodgerblue', textDecorationLine: 'underline' }}>{"See all games (" + (games.length + inUserWishlist.length).toString() + ") >"}</Text>
 
                     </View>
                     : <View style={{ marginBottom: 5, height: 30, flexDirection: 'row', justifyContent: 'space-between' }}>
 
-                        <Text style={{ fontFamily: styleconstants.primaryFontBold }}>{props.userName}</Text>
+                        <Text style={{ fontFamily: styleconstants.primaryFontBold }}>{userName}</Text>
                         <Text style={{ color: 'dodgerblue', textDecorationLine: 'underline' }}>{"See all games (" + (games.length + inUserWishlist.length).toString() + ") >"}</Text>
 
                     </View>

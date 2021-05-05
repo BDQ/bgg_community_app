@@ -25,7 +25,7 @@ const tabNav = props => {
             indicatorStyle: {
                 backgroundColor: styleconstants.bggorange, height: 3
             },
-            labelStyle: { fontFamily: 'lato-bold', fontSize: 12 }
+            labelStyle: { fontFamily: styleconstants.primaryFontBold, fontSize: 12 }
 
         }}>
         <Tab.Screen name="In my wishlist" component={WishlistScreen} initialParams={{ gamelist: props.route.params.lists.inUserWishlist }} />

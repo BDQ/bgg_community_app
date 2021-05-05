@@ -85,10 +85,10 @@ const HomeList = (props) => {
     const fetchHomeList = () => {
         let homeURL = "https://api.geekdo.com/api/homegamelists/" + props.listId
         fetch(homeURL).then(homeList => {
-            console.log("home list is", homeList.status)
+            //console.log("home list is", homeList.status)
             if (homeList.status === 200) {
                 homeList.json().then(homeListJson => {
-                    console.log("home list json", homeListJson)
+                    //console.log("home list json", homeListJson)
                     setHomeList(homeListJson.games)
                     setTitle(homeListJson.title)
                     setSubTitle(homeListJson.description)

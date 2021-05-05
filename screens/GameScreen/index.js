@@ -18,11 +18,12 @@ import { fetchJSON } from '../../shared/HTTP'
 import { getRatingColor } from '../../shared/collection'
 
 import styles from './styles'
+import styleconstants from '../../shared/styles/styleconstants'
 
 const GameScreen = ({ navigation, route }) => {
   const { game } = route.params
 
-  console.log("gamescreen params", route.params)
+  //console.log("gamescreen params", route.params)
 
   const [details, setDetails] = useState(null)
   const [itemStats, setItemStates] = useState({ item: { rankinfo: [] } })
@@ -49,10 +50,10 @@ const GameScreen = ({ navigation, route }) => {
   }, [game])
 
   getGameDetails = async (objectId) => {
-    console.log("fetching game", objectId)
+    //console.log("fetching game", objectId)
     const url = `https://api.geekdo.com/api/geekitems?objectid=${objectId}&showcount=10&nosession=1&ajax=1&objecttype=thing`
     const { item } = await fetchJSON(url)
-    console.log("fetched game")
+    //console.log("fetched game")
 
     setDetails(item)
   }
@@ -86,7 +87,7 @@ const GameScreen = ({ navigation, route }) => {
             style={[
               styles.headerRatingsText,
               {
-                fontFamily: 'lato-bold',
+                fontFamily: styleconstants.primaryFontBold,
               },
             ]}
           >
@@ -98,7 +99,7 @@ const GameScreen = ({ navigation, route }) => {
               style={[
                 styles.headerRatingsText,
                 {
-                  fontFamily: 'lato',
+                  fontFamily: styleconstants.primaryFont,
                   paddingRight: 8,
                 },
               ]}
@@ -137,7 +138,7 @@ const GameScreen = ({ navigation, route }) => {
       <View style={{ flexDirection: 'row' }}>
         <View style={[styles.headerIcon, { backgroundColor: ratingBGColor }]}>
           <Text
-            style={{ color: '#ffffff', fontSize: 24, fontFamily: 'lato-bold' }}
+            style={{ color: '#ffffff', fontSize: 24, fontFamily: styleconstants.primaryFontBold }}
           >
             {ratingText}
           </Text>
@@ -149,7 +150,7 @@ const GameScreen = ({ navigation, route }) => {
             style={{
               width: '100%',
               fontSize: 18,
-              fontFamily: 'lato-bold',
+              fontFamily: styleconstants.primaryFontBold,
               color: '#ffffff',
             }}
           >
@@ -166,7 +167,7 @@ const GameScreen = ({ navigation, route }) => {
               width: '100%',
               fontSize: 14,
               paddingTop: 2,
-              fontFamily: 'lato',
+              fontFamily: styleconstants.primaryFont,
               color: '#ffffff',
             }}
           >

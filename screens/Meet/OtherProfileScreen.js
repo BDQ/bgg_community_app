@@ -57,8 +57,8 @@ const ProfileScreen = props => {
   /// if there are no params, we are logging in, so we use the global username
   let userName = props.route.params.userName
 
-  console.log("props", props)
-  console.log(props.route.params)
+  //console.log("props", props)
+  //console.log(props.route.params)
 
 
   return (

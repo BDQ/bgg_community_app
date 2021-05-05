@@ -1,4 +1,5 @@
 import { StyleSheet } from 'react-native'
+import styleconstants from '../../shared/styles/styleconstants'
 
 export default StyleSheet.create({
   itemContainer: {
@@ -49,24 +50,24 @@ export default StyleSheet.create({
     height: 65,
   },
   statsTitle: {
-    fontFamily: 'lato-bold',
+    fontFamily: styleconstants.primaryFontBold,
     color: '#282D5C',
     width: '100%',
     textAlign: 'center',
     fontSize: 16,
   },
   statsText: {
-    fontFamily: 'lato',
+    fontFamily: styleconstants.primaryFont,
     color: '#004FAE',
     width: '100%',
     textAlign: 'center',
     fontSize: 12,
   },
   creditText: {
-    fontFamily: 'lato',
+    fontFamily: styleconstants.primaryFont,
   },
   creditTitle: {
-    fontFamily: 'lato-bold',
+    fontFamily: styleconstants.primaryFontBold,
   },
   descriptionHeader: {
     borderBottomColor: '#292e62',
@@ -74,7 +75,7 @@ export default StyleSheet.create({
     marginBottom: 10,
   },
   descriptionHeaderText: {
-    fontFamily: 'lato-bold',
+    fontFamily: styleconstants.primaryFontBold,
     fontSize: 18,
     color: '#292e62',
     marginBottom: 10,
@@ -92,7 +93,7 @@ export default StyleSheet.create({
   headerButton: {
     backgroundColor: '#fff',
   },
-  headerButtonText: { fontFamily: 'lato-bold', fontSize: 14, color: '#000' },
+  headerButtonText: { fontFamily: styleconstants.primaryFontBold, fontSize: 14, color: '#000' },
   headerButtonContainer: {
     borderWidth: 0,
     height: 36,

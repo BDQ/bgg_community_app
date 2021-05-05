@@ -1,6 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { StyleSheet, View, Text, Image } from 'react-native'
+import styleconstants from '../shared/styles/styleconstants'
 import { Avatar } from 'react-native-elements'
 
 export default class GameListItem extends React.PureComponent {
@@ -18,7 +19,7 @@ export default class GameListItem extends React.PureComponent {
           <Text numberOfLines={1} style={styles.gameName}>
             {this.props.name}
           </Text>
-          <Text style={{ fontFamily: 'lato-bold', color: 'grey' }}>{this.props.subtitle}</Text>
+          <Text style={{ fontFamily: styleconstants.primaryFontBold, color: 'grey' }}>{this.props.subtitle}</Text>
         </View>
       </View>
     )
@@ -46,7 +47,7 @@ const styles = StyleSheet.create({
     flexDirection: 'column'
   },
   gameName: {
-    fontFamily: 'lato-bold',
+    fontFamily: styleconstants.primaryFontBold,
     fontSize: 20
   },
   text: {

@@ -90,7 +90,7 @@ const AllTimeList = (props) => {
     const fetchallTimeIDs = () => {
         fetch("https://api.geekdo.com/api/subdomains?domain=boardgame").then(ids => {
             ids.json().then(idJson => {
-                console.log("all time id-s", idJson)
+                //console.log("all time id-s", idJson)
                 let cats = []
                 for (var i in idJson) {
                     cats.push(idJson[i])
@@ -110,10 +110,10 @@ const AllTimeList = (props) => {
     const fetchallTimeList = (listid) => {
         let allTimeURL = "https://api.geekdo.com/api/subdomaingamelists/" + listid
         fetch(allTimeURL).then(allTimeList => {
-            console.log("all time list is", allTimeList.status)
+            //console.log("all time list is", allTimeList.status)
             if (allTimeList.status === 200) {
                 allTimeList.json().then(allTimeListJson => {
-                    console.log("allTime list json", allTimeListJson)
+                    //console.log("allTime list json", allTimeListJson)
                     setallTimeList(allTimeListJson.games)
                     setTitle(allTimeListJson.title)
                     setSubTitle(allTimeListJson.description)

@@ -89,7 +89,7 @@ export default class App extends React.PureComponent {
 
             const userDetails = await fetchXML(url, { method: 'GET' })
             await parseString(userDetails, function (err, result) {
-              console.log("xml parsed", result)
+              //console.log("xml parsed", result)
               if (result) {
                 this.setState({ userDetails: result })
               }
@@ -111,11 +111,11 @@ export default class App extends React.PureComponent {
       'lato-bold': require('./assets/Lato-Bold.ttf')
     })
     let valueName = await AsyncStorage.getItem('userName')
-    console.log("retrieved name value")
-    console.log(valueName)
+    //console.log("retrieved name value")
+    //console.log(valueName)
     let valuePassword = await AsyncStorage.getItem('userPassword')
-    console.log("retrieved password value")
-    console.log(valuePassword)
+    //console.log("retrieved password value")
+    //console.log(valuePassword)
 
     await this.attemptBGGLoginInBackground(valueName, valuePassword)
 
@@ -144,12 +144,12 @@ export default class App extends React.PureComponent {
     //   }
     // }
     function getTabBarVisibility(route) {
-      console.log("input route", route)
+      //console.log("input route", route)
       const routeName = route.state
         ? route.state.routes[route.state.index].name
         : '';
 
-      console.log("route name is", routeName)
+      //console.log("route name is", routeName)
 
       if (routeName === 'Conversation' || routeName === 'Compose') {
         return false;

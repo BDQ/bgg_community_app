@@ -25,7 +25,7 @@ const tabNav = props => {
             indicatorStyle: {
                 backgroundColor: styleconstants.bggorange, height: 3
             },
-            labelStyle: { fontFamily: 'lato-bold' }
+            labelStyle: { fontFamily: styleconstants.primaryFontBold }
 
         }}>
         <Tab.Screen name="Owned" component={OwnedScreen} />

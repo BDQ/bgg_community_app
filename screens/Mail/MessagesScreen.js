@@ -29,7 +29,7 @@ const MessagesScreen = props => {
 
   async function getMessages(folderName) {
     setLoading(true)
-    console.log("global cookie", global.cookie)
+    //console.log("global cookie", global.cookie)
 
 
     // can't fetchJSON here as we want the full http response
@@ -60,7 +60,7 @@ const MessagesScreen = props => {
     fetch("https://boardgamegeek.com/geekmail_controller.php?action=viewfolder&ajax=1&folder=" + folderName + "&pageID=1&searchid=0&label=", requestOptions)
       .then(resp => {
 
-        console.log("resp messages", resp.status, resp.statusText)
+        //console.log("resp messages", resp.status, resp.statusText)
         resp.text().then(rText => {
 
 
@@ -70,7 +70,7 @@ const MessagesScreen = props => {
             let mainTable = rText.match(/mychecks(.*)</g)[0]
             let msgIDs = rText.match(/GetMessage(.*?)return/g)
             let msgRead = rText.match(/(font-style:|font-weight:)(.*?)subject_/g)
-            console.log("messages read status", msgRead)
+            //console.log("messages read status", msgRead)
 
 
             let regexMsgs = mainTable.match(/>(.*?)</g)
@@ -131,7 +131,7 @@ const MessagesScreen = props => {
     React.useCallback(() => {
       if (messages === "" || initRefetch) {
         initRefetch = false
-        console.log("fetching messages")
+        //console.log("fetching messages")
         getMessages(folder)
       }
 

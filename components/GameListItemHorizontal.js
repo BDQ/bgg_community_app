@@ -1,6 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { StyleSheet, View, Text, Image } from 'react-native'
+import styleconstants from '../shared/styles/styleconstants'
 import { Avatar } from 'react-native-elements'
 
 export default class GameListItem extends React.PureComponent {
@@ -42,7 +43,7 @@ const styles = StyleSheet.create({
     flexDirection: 'column'
   },
   gameName: {
-    fontFamily: 'lato-bold',
+    fontFamily: styleconstants.primaryFontBold,
     fontSize: 12
   },
   text: {

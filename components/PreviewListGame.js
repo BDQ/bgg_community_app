@@ -6,6 +6,7 @@ import Swipeout from 'react-native-swipeout'
 
 import { priorities } from '../shared/data'
 import { fetchJSON } from '../shared/HTTP'
+import styleconstants from '../shared/styles/styleconstants'
 // import { logger } from '../shared/debug'
 
 export default class PreviewListGame extends React.PureComponent {
@@ -154,8 +155,8 @@ export default class PreviewListGame extends React.PureComponent {
         </Text>
       </View>
     ) : (
-      <View style={styles.minor} />
-    )
+        <View style={styles.minor} />
+      )
   }
 
   _renderSwipeButton = text => (
@@ -273,10 +274,10 @@ export default class PreviewListGame extends React.PureComponent {
         >
           <View
             style={styles.itemContainer}
-            // onLayout={event => {
-            //   var { x, y, width, height } = event.nativeEvent.layout
-            //   logger({ x, y, width, height })
-            // }}
+          // onLayout={event => {
+          //   var { x, y, width, height } = event.nativeEvent.layout
+          //   logger({ x, y, width, height })
+          // }}
           >
             <View style={styles.mainContainer}>
               <Avatar
@@ -288,7 +289,7 @@ export default class PreviewListGame extends React.PureComponent {
                 <Text numberOfLines={1} style={styles.gameName}>
                   {this.props.name}
                 </Text>
-                <Text style={{ fontFamily: 'lato-bold' }}>
+                <Text style={{ fontFamily: styleconstants.primaryFontBold }}>
                   {this.props.versionName}
                 </Text>
                 <View style={{ flexDirection: 'row' }}>
@@ -346,7 +347,7 @@ const styles = StyleSheet.create({
     flexDirection: 'column'
   },
   gameName: {
-    fontFamily: 'lato-bold',
+    fontFamily: styleconstants.primaryFontBold,
     fontSize: 20
   },
   minor: {

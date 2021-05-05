@@ -32,10 +32,10 @@ const Hotness = (props) => {
     const fetchHotList = () => {
         let hotURL = "https://api.geekdo.com/api/hotness?geeksite=boardgame&objecttype=thing&showcount=50"
         fetch(hotURL).then(hotList => {
-            console.log("hot list is", hotList.status)
+            //console.log("hot list is", hotList.status)
             if (hotList.status === 200) {
                 hotList.json().then(hotListJson => {
-                    console.log("hot list json", hotListJson)
+                    //console.log("hot list json", hotListJson)
                     setHotlist(hotListJson.items)
                 })
             } else {

@@ -1,4 +1,5 @@
 import { StyleSheet } from 'react-native'
+import styleconstants from '../../shared/styles/styleconstants'
 
 export default StyleSheet.create({
   main: {
@@ -7,7 +8,7 @@ export default StyleSheet.create({
   },
 
   gameName: {
-    fontFamily: 'lato-bold',
+    fontFamily: styleconstants.primaryFontBold,
     fontSize: 16,
     paddingLeft: 10,
     paddingTop: 10,
