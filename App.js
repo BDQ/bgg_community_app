@@ -121,7 +121,7 @@ export default class App extends React.PureComponent {
 
     col = fetchCollectionFromBGG(valueName)
 
-    global.location = { "city": "Utrecht", "country": "Netherlands" }
+    //global.location = { "city": "Utrecht", "country": "Netherlands" }
 
     findCoordinates()
 

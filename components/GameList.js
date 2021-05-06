@@ -51,7 +51,7 @@ export default class GameList extends React.PureComponent {
         }}
       >
         <GameListItem
-          name={item.name}
+          name={decodeURI(item.name)}
           thumbnail={item.thumbnail}
           subtitle={item.subtitle}
         />

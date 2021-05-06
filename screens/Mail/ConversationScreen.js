@@ -165,7 +165,7 @@ const ConversationScreen = props => {
             subjectFound = false
             msg = regexMsgs[ind].substring(9, regexMsgs[ind].length - 1) + "\n"
             //console.log("first message is: ", msg)
-            msgList.push({ "sender": sender, "message": msg })
+            msgList.push({ "sender": decodeURI(sender), "message": decodeURI(msg) })
             messagesBlockStarted = true
             msg = ""
             sender = ""
@@ -198,7 +198,7 @@ const ConversationScreen = props => {
               }
               else if (regexMsgs[ind].endsWith("wrote:<")) {
                 if (!(sender === "" && msg === ""))
-                  msgList.push({ "sender": sender, "message": msg })
+                  msgList.push({ "sender": decodeURI(sender), "message": decodeURI(msg) })
                 sender = regexMsgs[ind].substring(1, regexMsgs[ind].length - 8)
                 msg = ""
 
@@ -213,7 +213,7 @@ const ConversationScreen = props => {
 
           }
         }
-        msgList.push({ "sender": sender, "message": msg })
+        msgList.push({ "sender": decodeURI(sender), "message": decodeURI(msg) })
 
         //// if the first messages is multiple line, we need to merge them here, as they are represented in two different messages, and the second without sender
 
