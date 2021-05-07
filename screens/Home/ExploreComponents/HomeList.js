@@ -1,6 +1,6 @@
 import React, { useGlobal, useEffect, useState, useDispatch } from 'reactn'
 import PropTypes, { func } from 'prop-types'
-import { View, Text, InteractionManager, Platform, FlatList, Image, TouchableOpacity, StyleSheet } from 'react-native'
+import { View, Text, InteractionManager, Platform, FlatList, Image, TouchableOpacity, StyleSheet, LayoutAnimation } from 'react-native'
 import { Button } from 'react-native-elements'
 import { createStackNavigator } from '@react-navigation/stack'
 
@@ -106,6 +106,8 @@ const HomeList = (props) => {
 
 
     useEffect(() => {
+        LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+
         if (homeList.length === 0) {
             fetchHomeList()
         }

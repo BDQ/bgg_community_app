@@ -5,6 +5,7 @@ import {
   Text,
   ScrollView,
   InteractionManager,
+  LayoutAnimation
 } from 'react-native'
 import { Icon, Button } from 'react-native-elements'
 import HTMLView from 'react-native-htmlview'
@@ -41,6 +42,8 @@ const GameScreen = ({ navigation, route }) => {
   // })
 
   useEffect(() => {
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+
     const objectId = game.objectId
     if (details === null) {
       getGameStats(objectId)

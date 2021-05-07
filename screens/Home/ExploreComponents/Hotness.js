@@ -1,6 +1,6 @@
 import React, { useGlobal, useEffect, useState, useDispatch } from 'reactn'
 import PropTypes, { func } from 'prop-types'
-import { View, Text, InteractionManager, Platform, FlatList, Image, TouchableOpacity } from 'react-native'
+import { View, Text, InteractionManager, Platform, FlatList, Image, TouchableOpacity, LayoutAnimation } from 'react-native'
 import { Button } from 'react-native-elements'
 import { createStackNavigator } from '@react-navigation/stack'
 
@@ -80,6 +80,8 @@ const Hotness = (props) => {
 
 
     useEffect(() => {
+        LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+
         if (hotList.length === 0) {
             fetchHotList()
         }
