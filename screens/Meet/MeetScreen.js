@@ -33,7 +33,7 @@ import { fetchRaw } from '../../shared/HTTP'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 
 const COMPONENTS_PER_PAGE = 8
-let NUM_PARALLEL_FETCHES = 5
+let NUM_PARALLEL_FETCHES = 10
 
 
 const requestHeaders = new Headers({
@@ -52,6 +52,10 @@ let fetchingOnGoing = false
 const limit = RateLimit(NUM_PARALLEL_FETCHES);
 let limitBackground = RateLimit(1)
 let usersFetchFinishedCount = 0
+let nonEmptyUsersCount = 0
+let pageNumToRender = 0
+let maxPageNumToRender = 1
+
 let usersToFetchCount = 0
 let filterStringSync = ""
 let citySync = ""
@@ -70,12 +74,10 @@ const MeetScreen = ({ navigation, route }) => {
     let [country, setCountry] = useState("")
     let [city, setCity] = useState("")
 
-    let maxPageNumToRender = 1
 
 
     let [localUserComponents, setLocalUserComponents] = useState([])
     let [userComponentConstructionInProgress, setUserComponentConstructionInProgress] = useState(false)
-    let [pageNumToRender, setPageNumToRender] = useState(0)
     let [searchOpen, setSearchOpen] = useState(false)
     let [filterString, setFilterstring] = useState("")
     let [startSearchButtonVisible, setStartSearchButtonVisible] = useState(false)
@@ -110,9 +112,13 @@ const MeetScreen = ({ navigation, route }) => {
         var gamesFetched = await fetchCollectionFromBGG(userName)
         console.log("fetched", userName)
         usersFetchFinishedCount += 1
-        maxPageNumToRender = Math.ceil(usersFetchFinishedCount / COMPONENTS_PER_PAGE)
+
         var gamesFiltered = gamesFetched.filter((game) => game.status.own === '1')
         if ((gamesFiltered.length > 0)) {
+            nonEmptyUsersCount += 1
+            maxPageNumToRender = Math.ceil(nonEmptyUsersCount / COMPONENTS_PER_PAGE)
+            console.log("max page : ", maxPageNumToRender)
+
             let otherWl = gamesFetched.filter((game) => game.status.wishlist === '1')
 
             let gl = []
@@ -295,6 +301,7 @@ const MeetScreen = ({ navigation, route }) => {
                 initialFetchStarted = true
                 proceedFetchingLocalUsers()
             } else {
+                pageNumToRender = 0
                 LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
                 setLocalUserComponents(getComponentsForPage(pageNumToRender))
             }
@@ -316,6 +323,9 @@ const MeetScreen = ({ navigation, route }) => {
         usersPageIndex = 0
         usersToFetchCount = 0
         usersFetchFinishedCount = 0
+        nonEmptyUsersCount = 0
+        pageNumToRender = 0
+        maxPageNumToRender = 1
     }
 
     const startFetch = () => {
@@ -325,6 +335,7 @@ const MeetScreen = ({ navigation, route }) => {
     }
 
     const getComponentsForPage = (p) => {
+        console.log("ordered list", orderedFetchedUsers.length)
         return orderedFetchedUsers.slice(p * COMPONENTS_PER_PAGE, (p + 1) * COMPONENTS_PER_PAGE)
     }
 
@@ -368,7 +379,6 @@ const MeetScreen = ({ navigation, route }) => {
         }
 
     }
-
 
 
     return (
@@ -415,7 +425,9 @@ const MeetScreen = ({ navigation, route }) => {
                             {global.location ?
                                 <TouchableOpacity style={{ backgroundColor: styleconstants.bggorange }}
                                     onPress={() => {
+                                        stopFetch()
                                         startFetch()
+                                        Keyboard.dismiss()
                                     }}
                                 >
                                     <Icon
@@ -524,7 +536,7 @@ const MeetScreen = ({ navigation, route }) => {
                                                         if (pageNumToRender > 0) {
                                                             LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
                                                             setLocalUserComponents(getComponentsForPage(pageNumToRender - 1))
-                                                            setPageNumToRender(pageNumToRender - 1)
+                                                            pageNumToRender -= 1
                                                             scrollUp()
                                                         }
 
@@ -533,15 +545,15 @@ const MeetScreen = ({ navigation, route }) => {
 
                                                 <Icon
                                                     name="caretright"
-                                                    color={pageNumToRender < maxPageNumToRender - 1 ? styleconstants.bggorange : 'lightgrey'}
+                                                    color={pageNumToRender < (maxPageNumToRender - 1) ? styleconstants.bggorange : 'lightgrey'}
                                                     type="antdesign"
                                                     containerStyle={{ margin: 4 }}
                                                     size={20}
                                                     onPress={() => {
-                                                        if (pageNumToRender < maxPageNumToRender - 1) {
+                                                        if (pageNumToRender < (maxPageNumToRender - 1)) {
                                                             LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
                                                             setLocalUserComponents(getComponentsForPage(pageNumToRender + 1))
-                                                            setPageNumToRender(pageNumToRender + 1)
+                                                            pageNumToRender += 1
                                                             scrollUp()
                                                         }
 
