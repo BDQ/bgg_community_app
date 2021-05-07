@@ -45,11 +45,9 @@ const WishlistTabNav = props => {
     function iCanOffer(item) {
         for (var ownInd in owned) {
             if (item.objectId === owned[ownInd].objectId) {
-                //console.log("i can offer - true")
                 return true
             }
         }
-        //console.log("i can offer - false")
         return false
     }
     const owned = collection.filter(

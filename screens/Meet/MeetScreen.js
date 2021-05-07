@@ -33,7 +33,7 @@ import { fetchRaw } from '../../shared/HTTP'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 
 const COMPONENTS_PER_PAGE = 8
-let num_parallel_fetches = 5
+let NUM_PARALLEL_FETCHES = 5
 
 
 const requestHeaders = new Headers({
@@ -49,13 +49,16 @@ let orderedFetchedUsers = []
 let usersPageIndex = 1
 let fetchingOnGoing = false
 
-const limit = RateLimit(num_parallel_fetches);
+const limit = RateLimit(NUM_PARALLEL_FETCHES);
 let limitBackground = RateLimit(1)
 let usersFetchFinishedCount = 0
 let usersToFetchCount = 0
-let filterStringAsync = ""
+let filterStringSync = ""
+let citySync = ""
+let countrySync = ""
 
 let controller = new AbortController();
+let initialFetchStarted = false
 
 
 const MeetScreen = ({ navigation, route }) => {
@@ -67,11 +70,10 @@ const MeetScreen = ({ navigation, route }) => {
     let [country, setCountry] = useState("")
     let [city, setCity] = useState("")
 
-    let maxPageNumToRender = 10
+    let maxPageNumToRender = 1
 
 
     let [localUserComponents, setLocalUserComponents] = useState([])
-    let [initialFetchStarted, setInitialFetchStarted] = useState(false)
     let [userComponentConstructionInProgress, setUserComponentConstructionInProgress] = useState(false)
     let [pageNumToRender, setPageNumToRender] = useState(0)
     let [searchOpen, setSearchOpen] = useState(false)
@@ -106,7 +108,9 @@ const MeetScreen = ({ navigation, route }) => {
         console.log(usersFetchFinishedCount, ", Fetching for ", userName)
 
         var gamesFetched = await fetchCollectionFromBGG(userName)
+        console.log("fetched", userName)
         usersFetchFinishedCount += 1
+        maxPageNumToRender = Math.ceil(usersFetchFinishedCount / COMPONENTS_PER_PAGE)
         var gamesFiltered = gamesFetched.filter((game) => game.status.own === '1')
         if ((gamesFiltered.length > 0)) {
             let otherWl = gamesFetched.filter((game) => game.status.wishlist === '1')
@@ -115,6 +119,7 @@ const MeetScreen = ({ navigation, route }) => {
             let wl = []
 
             let offerList = []
+
 
             //// checking which games I'm looking for
             for (var gameInd in gamesFiltered) {
@@ -144,13 +149,21 @@ const MeetScreen = ({ navigation, route }) => {
 
 
 
-    async function getUserLists(userNameList) {
+    async function getUserLists(userNameList, inputCity, inputCountry) {
         for (var lInd in userNameList) {
-            await limit()
-            if (fetchingOnGoing) {
-                getCollectionForUser(userNameList[lInd].name)
+            /// check if we are still looking for the same city
+            if (inputCity === citySync && inputCountry === countrySync) {
 
+                await limit()
+                /// also check after waiting for the limit
+                if (inputCity === citySync && inputCountry === countrySync) {
+                    if (fetchingOnGoing) {
+                        getCollectionForUser(userNameList[lInd])
+
+                    }
+                }
             }
+
         }
     }
 
@@ -174,7 +187,7 @@ const MeetScreen = ({ navigation, route }) => {
         try {
             for (var ind in names) {
                 if (!(names[ind].startsWith("><") || names[ind].startsWith(">(<") || names[ind].startsWith(">)<"))) {
-                    locFinal.push({ 'name': names[ind].substring(1, names[ind].length - 1), inWants: 0 })
+                    locFinal.push(names[ind].substring(1, names[ind].length - 1))
                 }
             }
         } catch (error) {
@@ -189,7 +202,7 @@ const MeetScreen = ({ navigation, route }) => {
     }
 
     function rerenderUserListPeriodically() {
-        if (filterStringAsync == "") {
+        if (filterStringSync == "") {
             LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
             setLocalUserComponents(getComponentsForPage(pageNumToRender))
         }
@@ -197,11 +210,13 @@ const MeetScreen = ({ navigation, route }) => {
         setTimeout(() => {
 
             if (usersFetchFinishedCount > 0 && usersFetchFinishedCount >= usersToFetchCount) {
-                if (filterStringAsync == "") {
+                if (filterStringSync == "") {
                     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
                     setLocalUserComponents(getComponentsForPage(pageNumToRender))
                 }
                 setUserComponentConstructionInProgress(false)
+                console.log("stopping rerender")
+
             } else {
                 rerenderUserListPeriodically()
             }
@@ -214,16 +229,18 @@ const MeetScreen = ({ navigation, route }) => {
         setUserComponentConstructionInProgress(true)
         rerenderUserListPeriodically()
 
+
         let usersFetchedNumber = 1
         while (usersFetchedNumber > 0) {
             if (fetchingOnGoing) {
                 let resp = await fetchRaw('https://boardgamegeek.com/users/page/' + usersPageIndex.toString() + '?country=' + country + '&state=&city=' + city, fetchArgs)
+
                 resp.text().then(respText => {
                     if (fetchingOnGoing) {
                         let localUsersPart = processHTMLUserList(respText)
                         usersFetchedNumber = localUsersPart.length
                         usersToFetchCount += usersFetchedNumber
-                        getUserLists(localUsersPart)
+                        getUserLists(localUsersPart, city, country)
                     }
 
 
@@ -237,13 +254,13 @@ const MeetScreen = ({ navigation, route }) => {
         }
         console.log("last user fetch sent, page num: ", usersPageIndex)
 
-
-
     }
 
     function proceedFetchingLocalUsers() {
         if (global.location) {
             setCity(global.location.city)
+            citySync = global.location.city
+            countrySync = global.location.country
             setCountry(global.location.country)
             //setCity("Utrecht")
             //setCountry("Netherlands")
@@ -273,10 +290,13 @@ const MeetScreen = ({ navigation, route }) => {
                     />
                 ),
             })
-            if (!initialFetchStarted) {
+            if (!initialFetchStarted && filterStringSync === "") {
                 fetchingOnGoing = true
-                setInitialFetchStarted(true)
+                initialFetchStarted = true
                 proceedFetchingLocalUsers()
+            } else {
+                LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+                setLocalUserComponents(getComponentsForPage(pageNumToRender))
             }
 
         }, [])
@@ -284,13 +304,24 @@ const MeetScreen = ({ navigation, route }) => {
 
 
 
+
+
     const stopFetch = () => {
+        //controller.abort()
         LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
         setUserComponentConstructionInProgress(false)
         setLocalUserComponents([])
         orderedFetchedUsers = []
         fetchingOnGoing = false
         usersPageIndex = 0
+        usersToFetchCount = 0
+        usersFetchFinishedCount = 0
+    }
+
+    const startFetch = () => {
+        fetchingOnGoing = true
+
+        fetchLocalUsers(country, city)
     }
 
     const getComponentsForPage = (p) => {
@@ -299,7 +330,7 @@ const MeetScreen = ({ navigation, route }) => {
 
     function checkUserForFilter(user) {
         for (var wlInd in user.inUserWants) {
-            if (user.inUserWants[wlInd].name.toLowerCase().includes(filterStringAsync)) {
+            if (user.inUserWants[wlInd].name.toLowerCase().includes(filterStringSync)) {
                 return true
             }
 
@@ -307,7 +338,7 @@ const MeetScreen = ({ navigation, route }) => {
         }
         for (var gInd in user.otherGames) {
 
-            if (user.otherGames[gInd].name.toLowerCase().includes(filterStringAsync)) {
+            if (user.otherGames[gInd].name.toLowerCase().includes(filterStringSync)) {
                 return true
             }
 
@@ -344,8 +375,8 @@ const MeetScreen = ({ navigation, route }) => {
         <View>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                 <SearchBar
-                    onChangeText={(t) => { setCountry(t) }}
-                    onClearText={(t) => { setCountry("") }}
+                    onChangeText={(t) => { setCountry(t); countrySync = t }}
+                    onClearText={(t) => { setCountry(""); countrySync = "" }}
                     placeholder="Country..."
                     value={country}
                     containerStyle={{ width: userComponentConstructionInProgress ? "35%" : "40%", backgroundColor: styleconstants.bggpurple }}
@@ -353,8 +384,8 @@ const MeetScreen = ({ navigation, route }) => {
                 // showLoadingIcon={true}
                 />
                 <SearchBar
-                    onChangeText={(t) => { setCity(t) }}
-                    onClearText={(t) => { setCity("") }}
+                    onChangeText={(t) => { setCity(t); citySync = t }}
+                    onClearText={(t) => { setCity(""); citySync = "" }}
                     placeholder="City..."
                     value={city}
                     containerStyle={{ width: userComponentConstructionInProgress ? "35%" : "40%", backgroundColor: styleconstants.bggpurple }}
@@ -384,8 +415,7 @@ const MeetScreen = ({ navigation, route }) => {
                             {global.location ?
                                 <TouchableOpacity style={{ backgroundColor: styleconstants.bggorange }}
                                     onPress={() => {
-                                        fetchingOnGoing = true
-                                        fetchLocalUsers(country, city)
+                                        startFetch()
                                     }}
                                 >
                                     <Icon
@@ -413,7 +443,7 @@ const MeetScreen = ({ navigation, route }) => {
                         <SearchBar
                             onChangeText={(t) => {
                                 setFilterstring(t)
-                                filterStringAsync = t.toLowerCase()
+                                filterStringSync = t.toLowerCase()
                                 if (t !== "") {
                                     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
                                     setStartSearchButtonVisible(true)
@@ -425,6 +455,7 @@ const MeetScreen = ({ navigation, route }) => {
                             }}
                             onClearText={(t) => {
                                 setFilterstring("")
+                                filterStringSync = t.toLowerCase()
                                 LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
                                 setStartSearchButtonVisible(false)
                                 setLocalUserComponents(getComponentsForPage(pageNumToRender))
@@ -479,7 +510,7 @@ const MeetScreen = ({ navigation, route }) => {
                                         }}
                                     />
                                     <View>
-                                        {filterStringAsync === "" ?
+                                        {filterStringSync === "" ?
 
                                             <View style={{ flexDirection: 'row', width: '100%', justifyContent: 'space-evenly', marginTop: 20 }}>
 
@@ -502,12 +533,12 @@ const MeetScreen = ({ navigation, route }) => {
 
                                                 <Icon
                                                     name="caretright"
-                                                    color={pageNumToRender <= maxPageNumToRender ? styleconstants.bggorange : 'lightgrey'}
+                                                    color={pageNumToRender < maxPageNumToRender - 1 ? styleconstants.bggorange : 'lightgrey'}
                                                     type="antdesign"
                                                     containerStyle={{ margin: 4 }}
                                                     size={20}
                                                     onPress={() => {
-                                                        if (pageNumToRender <= maxPageNumToRender) {
+                                                        if (pageNumToRender < maxPageNumToRender - 1) {
                                                             LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
                                                             setLocalUserComponents(getComponentsForPage(pageNumToRender + 1))
                                                             setPageNumToRender(pageNumToRender + 1)

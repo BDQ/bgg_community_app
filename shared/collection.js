@@ -17,7 +17,7 @@ export const removeDuplicates = (myArr, prop) => {
   })
 }
 
-export const fetchCollectionFromBGG = async username => {
+export const fetchCollectionFromBGG = async (username) => {
 
   if (!username) {
     return []
@@ -26,7 +26,11 @@ export const fetchCollectionFromBGG = async username => {
   const url = `https://www.boardgamegeek.com/xmlapi2/collection?username=${username}`
 
   try {
-    const response = await fetch(url)
+    let response
+
+    response = await fetch(url)
+
+
 
     if (response.status == 202) {
       // collection is being prepared, come back late to try again
