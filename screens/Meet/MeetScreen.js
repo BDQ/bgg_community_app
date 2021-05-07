@@ -83,6 +83,7 @@ const MeetScreen = ({ navigation, route }) => {
         game => game.status.wishlist === '1'
     )
 
+
     const scrollUp = () => {
         scrollRef.current?.scrollTo({
             y: 0,
@@ -100,6 +101,7 @@ const MeetScreen = ({ navigation, route }) => {
         return false
     }
 
+
     async function getCollectionForUser(userName) {
         console.log(usersFetchFinishedCount, ", Fetching for ", userName)
 
@@ -112,6 +114,9 @@ const MeetScreen = ({ navigation, route }) => {
             let gl = []
             let wl = []
 
+            let offerList = []
+
+            //// checking which games I'm looking for
             for (var gameInd in gamesFiltered) {
                 if (inWishlist(gamesFiltered[gameInd])) {
                     wl.push(gamesFiltered[gameInd])
@@ -120,7 +125,9 @@ const MeetScreen = ({ navigation, route }) => {
                 }
             }
 
-            let userObj = { otherGames: gl, inUserWants: wl, othersWishlist: otherWl, userName: userName, inWants: wl.length }
+
+
+            let userObj = { otherGames: gl, inUserWants: wl, offerList: offerList, othersWishlist: otherWl, userName: userName, inWants: wl.length }
             //let userComp = <UserThumbNail otherGames={userGameLists.otherGames} inUserWishlist={userGameLists.inUserWants} othersWishlist={userGameLists.othersWishlist} userName={userName} navigation={navigation} />
             //let newComp = { component: userComp, inWants: userGameLists.inUserWants.length }
             let insertInd = 0
@@ -468,7 +475,7 @@ const MeetScreen = ({ navigation, route }) => {
                                     <FlatList
                                         data={localUserComponents}
                                         renderItem={({ item }) => {
-                                            return <UserThumbNail otherGames={item.otherGames} inUserWishlist={item.inUserWants} othersWishlist={item.othersWishlist} userName={item.userName} navigation={navigation} />
+                                            return <UserThumbNail otherGames={item.otherGames} inUserWishlist={item.inUserWants} offerList={item.offerList} othersWishlist={item.othersWishlist} userName={item.userName} navigation={navigation} />
                                         }}
                                     />
                                     <View>

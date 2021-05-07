@@ -48,7 +48,7 @@ class WishlistListScreen extends React.PureComponent {
         isSelf = true
       }
 
-      const { navigate } = this.props.navigation.dangerouslyGetParent().dangerouslyGetParent().dangerouslyGetParent()
+      const { navigate } = this.props.navigation.dangerouslyGetParent().dangerouslyGetParent().dangerouslyGetParent().dangerouslyGetParent()
 
       return (
         <GameList

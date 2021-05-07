@@ -79,7 +79,7 @@ const OwnedListScreen = (props) => {
       isSelf = true
     }
 
-    const { navigate } = props.navigation.dangerouslyGetParent().dangerouslyGetParent().dangerouslyGetParent()
+    const { navigate } = props.navigation.dangerouslyGetParent().dangerouslyGetParent().dangerouslyGetParent().dangerouslyGetParent()
     return (
       <GameList
         navigation={{ navigate }}

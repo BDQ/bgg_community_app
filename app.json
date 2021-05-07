@@ -35,13 +35,20 @@
         "backgroundImage": "./assets/BGG-Logo.png"
       },
       "package": "io.bdq.bggca.droid",
-      "permissions": ["ACCESS_FINE_LOCATION", "CAMERA"],
+      "permissions": [
+        "ACCESS_FINE_LOCATION",
+        "CAMERA"
+      ],
       "config": {
         "googleMaps": {
           "apiKey": "tbd"
         }
       }
     },
-    "platforms": ["ios", "android"]
+    "platforms": [
+      "ios",
+      "android"
+    ],
+    "orientation": "portrait"
   }
 }
