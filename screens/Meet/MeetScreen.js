@@ -110,50 +110,48 @@ const MeetScreen = ({ navigation, route }) => {
 
 
     async function getCollectionForUser(userName) {
-        var nameArray = orderedFetchedUsers.map(function (el) { return el.userName; });
 
-        if (!nameArray.includes(userName)) {
-            console.log(usersFetchFinishedCount, ", Fetching for ", userName)
+        console.log(usersFetchFinishedCount, ", Fetching for ", userName)
 
-            var gamesFetched = await fetchCollectionFromBGG(userName)
-            console.log("fetched", userName)
+        var gamesFetched = await fetchCollectionFromBGG(userName)
+        console.log("fetched", userName)
 
-            var gamesFiltered = gamesFetched.filter((game) => game.status.own === '1')
-            if ((gamesFiltered.length > 0)) {
-                nonEmptyUsersCount += 1
-                maxPageNumToRender = Math.ceil(nonEmptyUsersCount / COMPONENTS_PER_PAGE)
-                console.log("max page : ", maxPageNumToRender)
+        var gamesFiltered = gamesFetched.filter((game) => game.status.own === '1')
+        if ((gamesFiltered.length > 0)) {
+            nonEmptyUsersCount += 1
+            maxPageNumToRender = Math.ceil(nonEmptyUsersCount / COMPONENTS_PER_PAGE)
+            console.log("max page : ", maxPageNumToRender)
 
-                let otherWl = gamesFetched.filter((game) => game.status.wishlist === '1')
+            let otherWl = gamesFetched.filter((game) => game.status.wishlist === '1')
 
-                let gl = []
-                let wl = []
+            let gl = []
+            let wl = []
 
-                let offerList = []
+            let offerList = []
 
 
-                //// checking which games I'm looking for
-                for (var gameInd in gamesFiltered) {
-                    if (inWishlist(gamesFiltered[gameInd])) {
-                        wl.push(gamesFiltered[gameInd])
-                    } else {
-                        gl.push(gamesFiltered[gameInd])
-                    }
+            //// checking which games I'm looking for
+            for (var gameInd in gamesFiltered) {
+                if (inWishlist(gamesFiltered[gameInd])) {
+                    wl.push(gamesFiltered[gameInd])
+                } else {
+                    gl.push(gamesFiltered[gameInd])
                 }
-
-
-
-                let userObj = { otherGames: gl, inUserWants: wl, offerList: offerList, othersWishlist: otherWl, userName: userName, inWants: wl.length }
-                //let userComp = <UserThumbNail otherGames={userGameLists.otherGames} inUserWishlist={userGameLists.inUserWants} othersWishlist={userGameLists.othersWishlist} userName={userName} navigation={navigation} />
-                //let newComp = { component: userComp, inWants: userGameLists.inUserWants.length }
-                let insertInd = 0
-                while (insertInd < orderedFetchedUsers.length && orderedFetchedUsers[insertInd].inWants > userObj.inWants) {
-                    insertInd += 1
-                }
-                orderedFetchedUsers.splice(insertInd, 0, userObj)
-
             }
+
+
+
+            let userObj = { otherGames: gl, inUserWants: wl, offerList: offerList, othersWishlist: otherWl, userName: userName, inWants: wl.length }
+            //let userComp = <UserThumbNail otherGames={userGameLists.otherGames} inUserWishlist={userGameLists.inUserWants} othersWishlist={userGameLists.othersWishlist} userName={userName} navigation={navigation} />
+            //let newComp = { component: userComp, inWants: userGameLists.inUserWants.length }
+            let insertInd = 0
+            while (insertInd < orderedFetchedUsers.length && orderedFetchedUsers[insertInd].inWants > userObj.inWants) {
+                insertInd += 1
+            }
+            orderedFetchedUsers.splice(insertInd, 0, userObj)
+
         }
+
         usersFetchFinishedCount += 1
 
 
@@ -164,6 +162,7 @@ const MeetScreen = ({ navigation, route }) => {
 
 
     async function getUserLists(userNameList, inputCity, inputCountry) {
+        console.log('user list', userNameList)
         for (var lInd in userNameList) {
             /// check if we are still looking for the same city
             if (fetchingOnGoing && inputCity === citySync && inputCountry === countrySync) {
@@ -338,7 +337,7 @@ const MeetScreen = ({ navigation, route }) => {
         setLocalUserComponents([])
         orderedFetchedUsers = []
         fetchingOnGoing = false
-        usersPageIndex = 0
+        usersPageIndex = 1
         usersToFetchCount = 0
         usersFetchFinishedCount = 0
         nonEmptyUsersCount = 0
@@ -354,7 +353,8 @@ const MeetScreen = ({ navigation, route }) => {
 
     const getComponentsForPage = (p) => {
         console.log("ordered list", orderedFetchedUsers.length)
-        return orderedFetchedUsers.slice(p * COMPONENTS_PER_PAGE, (p + 1) * COMPONENTS_PER_PAGE)
+        var arr = orderedFetchedUsers.slice(p * COMPONENTS_PER_PAGE, (p + 1) * COMPONENTS_PER_PAGE)
+        return [...new Set(arr)];
     }
 
     function checkUserForFilter(user) {

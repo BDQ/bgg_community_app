@@ -135,8 +135,9 @@ const MessagesScreen = props => {
       })
       .catch(error => {
         console.log('error', error)
+        Sentry.captureException(error)
+
       })
-    Sentry.captureException(error)
 
   }
 
