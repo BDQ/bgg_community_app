@@ -52,7 +52,6 @@ let fetchingOnGoing = false
 
 const limit = RateLimit(NUM_PARALLEL_FETCHES);
 let limitBackground = RateLimit(1)
-let usersFetchFinished = []
 let usersFetchFinishedCount = 0
 
 let nonEmptyUsersCount = 0
@@ -110,11 +109,12 @@ const MeetScreen = ({ navigation, route }) => {
 
 
     async function getCollectionForUser(userName) {
-        if (!usersFetchFinished.includes(userName)) {
-            console.log(usersFetchFinished.length, ", Fetching for ", userName)
+        var nameArray = orderedFetchedUsers.map(function (el) { return el.userName; });
+
+        if (!nameArray.includes(userName)) {
+            console.log(usersFetchFinishedCount, ", Fetching for ", userName)
 
             var gamesFetched = await fetchCollectionFromBGG(userName)
-            usersFetchFinished.push(userName)
             console.log("fetched", userName)
 
             var gamesFiltered = gamesFetched.filter((game) => game.status.own === '1')
@@ -165,15 +165,13 @@ const MeetScreen = ({ navigation, route }) => {
     async function getUserLists(userNameList, inputCity, inputCountry) {
         for (var lInd in userNameList) {
             /// check if we are still looking for the same city
-            if (inputCity === citySync && inputCountry === countrySync) {
+            if (fetchingOnGoing && inputCity === citySync && inputCountry === countrySync) {
 
                 await limit()
                 /// also check after waiting for the limit
-                if (inputCity === citySync && inputCountry === countrySync) {
-                    if (fetchingOnGoing) {
-                        getCollectionForUser(userNameList[lInd])
+                if (fetchingOnGoing && inputCity === citySync && inputCountry === countrySync) {
+                    getCollectionForUser(userNameList[lInd])
 
-                    }
                 }
             }
 
@@ -312,6 +310,8 @@ const MeetScreen = ({ navigation, route }) => {
                 LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
                 setLocalUserComponents(getComponentsForPage(pageNumToRender))
             }
+            setCity(citySync)
+            setCountry(countrySync)
 
         }, [])
     );
@@ -329,7 +329,6 @@ const MeetScreen = ({ navigation, route }) => {
         fetchingOnGoing = false
         usersPageIndex = 0
         usersToFetchCount = 0
-        usersFetchFinished = []
         usersFetchFinishedCount = 0
         nonEmptyUsersCount = 0
         pageNumToRender = 0
@@ -339,7 +338,7 @@ const MeetScreen = ({ navigation, route }) => {
     const startFetch = () => {
         fetchingOnGoing = true
 
-        fetchLocalUsers(country, city)
+        fetchLocalUsers(countrySync, citySync)
     }
 
     const getComponentsForPage = (p) => {
@@ -396,7 +395,7 @@ const MeetScreen = ({ navigation, route }) => {
                     onChangeText={(t) => { setCountry(t); countrySync = t }}
                     onClearText={(t) => { setCountry(""); countrySync = "" }}
                     placeholder="Country..."
-                    value={country}
+                    value={countrySync}
                     containerStyle={{ width: userComponentConstructionInProgress ? "35%" : "40%", backgroundColor: styleconstants.bggpurple }}
                     inputContainerStyle={{ backgroundColor: 'white' }}
                 // showLoadingIcon={true}
@@ -405,7 +404,7 @@ const MeetScreen = ({ navigation, route }) => {
                     onChangeText={(t) => { setCity(t); citySync = t }}
                     onClearText={(t) => { setCity(""); citySync = "" }}
                     placeholder="City..."
-                    value={city}
+                    value={citySync}
                     containerStyle={{ width: userComponentConstructionInProgress ? "35%" : "40%", backgroundColor: styleconstants.bggpurple }}
                     inputContainerStyle={{ backgroundColor: 'white' }}
 
@@ -532,7 +531,7 @@ const MeetScreen = ({ navigation, route }) => {
                                     <View>
                                         {filterStringSync === "" ?
 
-                                            <View style={{ flexDirection: 'row', width: '100%', justifyContent: 'space-evenly', marginTop: 20 }}>
+                                            <View style={{ flexDirection: 'row', width: '100%', justifyContent: 'space-evenly', marginTop: 20, alignItems: 'center' }}>
 
                                                 <Icon
                                                     name="caretleft"
@@ -550,6 +549,8 @@ const MeetScreen = ({ navigation, route }) => {
 
                                                     }}
                                                 />
+
+                                                <Text>{(pageNumToRender + 1).toString() + "/" + maxPageNumToRender}</Text>
 
                                                 <Icon
                                                     name="caretright"

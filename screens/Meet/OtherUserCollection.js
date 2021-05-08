@@ -32,8 +32,8 @@ const OwnedTabNav = props => {
 
         }}>
 
-        <OwnedTab.Screen name="In my wishlist" component={WishlistScreen} initialParams={{ gamelist: props.route.params.lists.inUserWishlist }} />
-        <OwnedTab.Screen name="Other games" component={OwnedScreen} initialParams={{ gamelist: props.route.params.lists.otherGames }} />
+        <OwnedTab.Screen name={`In my wishlist (${props.route.params.lists.inUserWishlist.length})`} component={WishlistScreen} initialParams={{ gamelist: props.route.params.lists.inUserWishlist }} />
+        <OwnedTab.Screen name={`Other games (${props.route.params.lists.otherGames.length})`} component={OwnedScreen} initialParams={{ gamelist: props.route.params.lists.otherGames }} />
 
     </OwnedTab.Navigator>
 }
@@ -54,6 +54,14 @@ const WishlistTabNav = props => {
         game => game.status.own === '1'
     )
 
+    const offerList = props.route.params.lists.othersWishlist.filter(
+        game => iCanOffer(game)
+    )
+
+    const restList = props.route.params.lists.othersWishlist.filter(
+        game => !iCanOffer(game)
+    )
+
     return <WishlistTab.Navigator
         tabBarOptions={{
             indicatorStyle: {
@@ -63,15 +71,11 @@ const WishlistTabNav = props => {
 
         }}>
 
-        <WishlistTab.Screen name="I can offer" component={OwnedScreen} initialParams={{
-            gamelist: props.route.params.lists.othersWishlist.filter(
-                game => iCanOffer(game)
-            )
+        <WishlistTab.Screen name={`I can offer (${offerList.length})`} component={OwnedScreen} initialParams={{
+            gamelist: offerList
         }} />
-        <WishlistTab.Screen name="Other games" component={WishlistScreen} initialParams={{
-            gamelist: props.route.params.lists.othersWishlist.filter(
-                game => !iCanOffer(game)
-            )
+        <WishlistTab.Screen name={`Other games (${restList.length})`} component={WishlistScreen} initialParams={{
+            gamelist: restList
         }} />
 
     </WishlistTab.Navigator>
