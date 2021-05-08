@@ -1,10 +1,11 @@
-// import { SENTRY_CONFIG } from 'react-native-dotenv'
-// import * as Sentry from 'sentry-expo'
-// Sentry.init({
-//   dsn: SENTRY_CONFIG,
-//   enableInExpoDevelopment: false,
-//   debug: true
-// })
+import { SENTRY_CONFIG } from 'react-native-dotenv'
+import * as Sentry from 'sentry-expo'
+Sentry.init({
+  dsn: SENTRY_CONFIG,
+  enableInExpoDevelopment: false,
+  debug: true
+
+})
 
 import { getDispatch } from 'reactn'
 import { showMessage } from 'react-native-flash-message'
@@ -58,7 +59,7 @@ export const fetchJSON = async (path, args = {}, headers = {}) => {
   } catch (error) {
     console.error(`Error fetching: ${path}`)
     console.error(error)
-    // Sentry.captureException(error)
+    Sentry.captureException(error)
   }
 }
 
@@ -93,6 +94,6 @@ export const fetchXML = async (path, args = {}, headers = {}) => {
   } catch (error) {
     console.error(`Error fetching: ${path}`)
     console.error(error)
-    // Sentry.captureException(error)
+    Sentry.captureException(error)
   }
 }

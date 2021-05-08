@@ -1,12 +1,12 @@
 import { SENTRY_CONFIG } from 'react-native-dotenv'
 import * as Sentry from 'sentry-expo'
-/*
+
 Sentry.init({
   dsn: SENTRY_CONFIG,
   enableInExpoDevelopment: false,
-  debug: true
+  debug: true,
 })
-*/
+
 
 import React from 'reactn'
 import { View, AsyncStorage } from 'react-native'
@@ -98,7 +98,7 @@ export default class App extends React.PureComponent {
         }
       } catch (error) {
         console.warn(error)
-        //Sentry.captureException(error)
+        Sentry.captureException(error)
       }
     }
 

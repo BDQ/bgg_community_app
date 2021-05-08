@@ -13,6 +13,7 @@ import ConversationScreen from './ConversationScreen'
 import { manipulateAsync } from 'expo-image-manipulator';
 import styleconstants from '../../shared/styles/styleconstants';
 import { Dropdown } from 'react-native-material-dropdown-v2'
+import * as Sentry from 'sentry-expo'
 
 
 
@@ -56,74 +57,86 @@ const MessagesScreen = props => {
       credentials: 'omit'
     };
 
-
-    fetch("https://boardgamegeek.com/geekmail_controller.php?action=viewfolder&ajax=1&folder=" + folderName + "&pageID=1&searchid=0&label=", requestOptions)
+    let path = "https://boardgamegeek.com/geekmail_controller.php?action=viewfolder&ajax=1&folder=" + folderName + "&pageID=1&searchid=0&label="
+    fetch(path, requestOptions)
       .then(resp => {
 
-        //console.log("resp messages", resp.status, resp.statusText)
-        resp.text().then(rText => {
+        if (resp.status === 200) {
+          resp.text().then(rText => {
 
 
 
-          try {
+            try {
 
-            let mainTable = rText.match(/mychecks(.*)</g)[0]
-            let msgIDs = rText.match(/GetMessage(.*?)return/g)
-            let msgRead = rText.match(/(font-style:|font-weight:)(.*?)subject_/g)
-            //console.log("messages read status", msgRead)
+              let mainTable = rText.match(/mychecks(.*)</g)[0]
+              let msgIDs = rText.match(/GetMessage(.*?)return/g)
+              let msgRead = rText.match(/(font-style:|font-weight:)(.*?)subject_/g)
+              //console.log("messages read status", msgRead)
 
 
-            let regexMsgs = mainTable.match(/>(.*?)</g)
-            let msgs = []
-            let counter = 0
-            let msgCounter = 0
-            let subject = ""
-            let user = ""
-            let date = ""
-            let dateStr = ""
-            for (var ind in regexMsgs) {
-              if (!regexMsgs[ind].startsWith(">\\")) {
-                if (counter == 6) {
-                  msgs.push({
-                    "user": user,
-                    "subject": subject,
-                    "date": date,
-                    "id": msgIDs[msgCounter].substring(12, msgIDs[msgCounter].length - 10),
-                    "read": msgRead[msgCounter].startsWith('font-weight:bold') ? false : true
-                  })
-                  counter = 0
-                  msgCounter += 1
-                } else {
-                  if (counter == 1) {
-                    user = regexMsgs[ind].substring(1, regexMsgs[ind].length - 1)
-                  } else if (counter == 3) {
-                    subject = regexMsgs[ind].substring(1, regexMsgs[ind].length - 1)
-                  } else if (counter == 5) {
-                    dateStr = regexMsgs[ind].substring(1, regexMsgs[ind].length - 1)
-                    date = dateStr.replace(/&nbsp/g, "")
+              let regexMsgs = mainTable.match(/>(.*?)</g)
+              let msgs = []
+              let counter = 0
+              let msgCounter = 0
+              let subject = ""
+              let user = ""
+              let date = ""
+              let dateStr = ""
+              for (var ind in regexMsgs) {
+                if (!regexMsgs[ind].startsWith(">\\")) {
+                  if (counter == 6) {
+                    msgs.push({
+                      "user": user,
+                      "subject": subject,
+                      "date": date,
+                      "id": msgIDs[msgCounter].substring(12, msgIDs[msgCounter].length - 10),
+                      "read": msgRead[msgCounter].startsWith('font-weight:bold') ? false : true
+                    })
+                    counter = 0
+                    msgCounter += 1
+                  } else {
+                    if (counter == 1) {
+                      user = regexMsgs[ind].substring(1, regexMsgs[ind].length - 1)
+                    } else if (counter == 3) {
+                      subject = regexMsgs[ind].substring(1, regexMsgs[ind].length - 1)
+                    } else if (counter == 5) {
+                      dateStr = regexMsgs[ind].substring(1, regexMsgs[ind].length - 1)
+                      date = dateStr.replace(/&nbsp/g, "")
+                    }
+                    counter += 1
                   }
-                  counter += 1
                 }
               }
+
+
+
+              setMessages(msgs)
+              setLoading(false)
+            } catch (error) {
+
+              console.log("problem processing the messages", error)
+              setMessages([])
+              setLoading(false)
+              Sentry.captureException(error)
+
+
             }
 
 
 
-            setMessages(msgs)
-            setLoading(false)
-          } catch (error) {
-            console.log("problem processing the messages", error)
-            setMessages([])
-            setLoading(false)
 
-          }
+          })
+        } else {
+          Sentry.captureMessage('Non 200 Response for HTTP request.', {
+            extra: { url: path, stauts: resp.status }
+          })
+        }
 
-
-
-
-        })
       })
-      .catch(error => console.log('error', error))
+      .catch(error => {
+        console.log('error', error)
+      })
+    Sentry.captureException(error)
 
   }
 

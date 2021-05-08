@@ -4,6 +4,7 @@ import { View, Text, InteractionManager, ScrollView, FlatList, LayoutAnimation, 
 import { Button } from 'react-native-elements'
 import { createStackNavigator } from '@react-navigation/stack'
 import SafeAreaView from 'react-native-safe-area-view'
+import * as Sentry from 'sentry-expo'
 
 import { Icon } from 'react-native-elements'
 import styleconstants from '../../shared/styles/styleconstants'
@@ -202,6 +203,7 @@ const MeetScreen = ({ navigation, route }) => {
                 }
             }
         } catch (error) {
+            Sentry.captureException(error)
             return []
         }
 
@@ -244,20 +246,29 @@ const MeetScreen = ({ navigation, route }) => {
         let usersFetchedNumber = 1
         while (usersFetchedNumber > 0) {
             if (fetchingOnGoing) {
-                let resp = await fetchRaw('https://boardgamegeek.com/users/page/' + usersPageIndex.toString() + '?country=' + country + '&state=&city=' + city, fetchArgs)
+                let path = 'https://boardgamegeek.com/users/page/' + usersPageIndex.toString() + '?country=' + country + '&state=&city=' + city
+                let resp = await fetchRaw(path, fetchArgs)
 
-                resp.text().then(respText => {
-                    if (fetchingOnGoing) {
-                        let localUsersPart = processHTMLUserList(respText)
-                        usersFetchedNumber = localUsersPart.length
-                        usersToFetchCount += usersFetchedNumber
-                        getUserLists(localUsersPart, city, country)
-                    }
+                if (resp.status === 200) {
+                    resp.text().then(respText => {
+                        if (fetchingOnGoing) {
+                            let localUsersPart = processHTMLUserList(respText)
+                            usersFetchedNumber = localUsersPart.length
+                            usersToFetchCount += usersFetchedNumber
+                            getUserLists(localUsersPart, city, country)
+                        }
 
 
-                })
-                console.log(usersPageIndex)
-                usersPageIndex += 1
+                    })
+                    console.log(usersPageIndex)
+                    usersPageIndex += 1
+                } else {
+                    Sentry.captureMessage('Non 200 Response for HTTP request.', {
+                        extra: { url: path, stauts: resp.status }
+                    })
+                }
+
+
             } else {
                 break
             }

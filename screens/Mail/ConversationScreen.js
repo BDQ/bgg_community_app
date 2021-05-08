@@ -14,6 +14,7 @@ import { manipulateAsync } from 'expo-image-manipulator';
 import { Icon } from 'react-native-elements'
 import { BarIndicator } from 'react-native-indicators';
 import { showMessage } from 'react-native-flash-message'
+import * as Sentry from 'sentry-expo'
 
 import HTML from "react-native-render-html";
 import styleconstants from '../../shared/styles/styleconstants';
@@ -86,8 +87,8 @@ const ConversationScreen = props => {
       redirect: 'follow',
       credentials: 'omit'
     };
-
-    fetch("https://boardgamegeek.com/geekmail_controller.php", requestOptions)
+    let path = "https://boardgamegeek.com/geekmail_controller.php"
+    fetch(path, requestOptions)
       .then(response => {
         //console.log("resp status", response.status)
         if (response.status === 200) {
@@ -105,10 +106,17 @@ const ConversationScreen = props => {
 
               }
             })
-            .catch(error => console.log('error', error));
+            .catch(error => {
+              console.log('error', error)
+              Sentry.captureException(error)
+
+            });
 
         } else {
           showFlash(`An error has occured`, 'error')
+          Sentry.captureMessage('Non 200 Response for HTTP request.', {
+            extra: { url: path, stauts: response.status }
+          })
 
         }
 

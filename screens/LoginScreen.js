@@ -151,7 +151,7 @@ const LoginScreen = props => {
     } catch (error) {
       showFlash('Unexpected error logging in, please try again.')
       console.warn(error)
-      //Sentry.captureException(error)
+      Sentry.captureException(error)
     }
   }
 

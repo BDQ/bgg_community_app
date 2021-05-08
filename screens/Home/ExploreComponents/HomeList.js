@@ -3,6 +3,7 @@ import PropTypes, { func } from 'prop-types'
 import { View, Text, InteractionManager, Platform, FlatList, Image, TouchableOpacity, StyleSheet, LayoutAnimation } from 'react-native'
 import { Button } from 'react-native-elements'
 import { createStackNavigator } from '@react-navigation/stack'
+import * as Sentry from 'sentry-expo'
 
 import { Icon } from 'react-native-elements'
 
@@ -97,8 +98,16 @@ const HomeList = (props) => {
                 showFlash(
                     'There was a problem with loading the home list.'
                 )
+                Sentry.captureMessage('Non 200 Response for HTTP request.', {
+                    extra: { url: homeURL, stauts: homeList.status }
+                })
             }
 
+        }).catch(error => {
+            showFlash(
+                'There was a problem with loading the home list.'
+            )
+            Sentry.captureException(error)
         })
     }
 

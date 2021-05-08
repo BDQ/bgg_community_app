@@ -3,6 +3,7 @@ import PropTypes, { func } from 'prop-types'
 import { View, Text, InteractionManager, Platform, FlatList, Image, TouchableOpacity, LayoutAnimation } from 'react-native'
 import { Button } from 'react-native-elements'
 import { createStackNavigator } from '@react-navigation/stack'
+import * as Sentry from 'sentry-expo'
 
 import { Icon } from 'react-native-elements'
 
@@ -42,8 +43,16 @@ const CrowdFunding = (props) => {
                 showFlash(
                     'There was a problem with loading the crowdfunding countdown.'
                 )
+                Sentry.captureMessage('Non 200 Response for HTTP request.', {
+                    extra: { url: cfURL, stauts: cfList.status }
+                })
             }
 
+        }).catch(error => {
+            showFlash(
+                'There was a problem with loading the crowdfunding countdown.'
+            )
+            Sentry.captureException(error)
         })
     }
 
