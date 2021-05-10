@@ -244,7 +244,7 @@ export default class App extends React.PureComponent {
               )
             }}
           />
-          */}
+          
         <Tab.Screen
           name="Market"
           component={MarketScreen}
@@ -255,6 +255,7 @@ export default class App extends React.PureComponent {
             )
           }}
         />
+        */}
         <Tab.Screen
           name="ProfileStack"
           component={ProfileScreen}
