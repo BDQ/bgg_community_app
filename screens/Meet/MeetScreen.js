@@ -532,7 +532,6 @@ const MeetScreen = ({ navigation, route }) => {
                     <View>
                         {localUserComponents.length < 1 ?
                             <View style={styles.emptyView}>
-                                <Text>Loading users nearby ...</Text>
 
                             </View> :
                             <SafeAreaView>

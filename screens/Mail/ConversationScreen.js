@@ -152,7 +152,7 @@ const ConversationScreen = props => {
       resp.text().then(rText => {
 
 
-
+        const firstSender = props.route.params.folder === 'inbox' ? props.route.params.user : global.username
         //console.log("resp text", rText)
         let regexMsgs = rText.match(/>(.*?)</g)
         //console.log("enclosed", regexMsgs)
@@ -162,7 +162,6 @@ const ConversationScreen = props => {
         let msg = ""
         let messagesBlockStarted = false
         let messagesBlockEnded = false
-        let nextIsFirstSender = false
         let subjectFound = false
         let firstMsgCountdown = 1
 
@@ -171,9 +170,11 @@ const ConversationScreen = props => {
             firstMsgCountdown -= 1
           } else if (subjectFound && firstMsgCountdown <= 0) {
             subjectFound = false
-            msg = regexMsgs[ind].substring(9, regexMsgs[ind].length - 1) + "\n"
+            msg = regexMsgs[ind].substring(9, regexMsgs[ind].length - 1)
+            msg = msg.split("\\")[0] + "\n"
+
             //console.log("first message is: ", msg)
-            msgList.push({ "sender": decodeURI(sender), "message": decodeURI(msg) })
+            msgList.push({ "sender": decodeURI(firstSender), "message": decodeURI(msg) })
             messagesBlockStarted = true
             msg = ""
             sender = ""
@@ -182,18 +183,9 @@ const ConversationScreen = props => {
           if ((!regexMsgs[ind].startsWith(">\\") && regexMsgs[ind] != "><" && !regexMsgs[ind].startsWith("> \\") && !regexMsgs[ind].startsWith(">)") || regexMsgs[ind].endsWith("Subject: <"))) {
 
             if (!messagesBlockStarted) {
-              //// getting the first message is different from getting the rest
-              if (regexMsgs[ind].startsWith(">(")) {
-                nextIsFirstSender = true
-              }
-              else if (nextIsFirstSender) {
-                sender = regexMsgs[ind].substring(1, regexMsgs[ind].length - 1)
-                //console.log("first sender is: ", sender)
-                nextIsFirstSender = false
 
-              }
 
-              else if (regexMsgs[ind].endsWith("Subject: <")) {
+              if (regexMsgs[ind].endsWith("Subject: <")) {
                 subjectFound = true
               }
 

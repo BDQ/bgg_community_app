@@ -200,7 +200,7 @@ const ProfileCard = props => {
         </View>
         : <View style={styles.emptyView}>
 
-          <Text>Loading your collection...</Text>
+          <Text>Loading profile...</Text>
         </View>
 
       }

@@ -8,7 +8,7 @@ Sentry.init({
 })
 
 
-import React from 'reactn'
+import React, { useDispatch } from 'reactn'
 import { View, AsyncStorage } from 'react-native'
 import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
@@ -32,6 +32,7 @@ import MeetScreen from './screens/Meet/MeetScreen'
 import MessagesScreen from './screens/Mail/MessagesScreen'
 import WishlistScreen from './screens/Collection/WishlistScreen'
 import PreviewScreen from './screens/PreviewScreen'
+import MarketScreen from './screens/Market/MarketScreen'
 
 import Ionicons from 'react-native-vector-icons/Ionicons'
 
@@ -119,11 +120,14 @@ export default class App extends React.PureComponent {
 
     await this.attemptBGGLoginInBackground(valueName, valuePassword)
 
-    col = fetchCollectionFromBGG(valueName)
-
     //global.location = { "city": "Utrecht", "country": "Netherlands" }
 
     findCoordinates()
+
+    /// async fetch collection
+    const fetchCollection = useDispatch('fetchCollection')
+    fetchCollection()
+
 
 
   }
@@ -241,6 +245,16 @@ export default class App extends React.PureComponent {
             }}
           />
           */}
+        <Tab.Screen
+          name="Market"
+          component={MarketScreen}
+          options={{
+            tabBarLabel: 'Market',
+            tabBarIcon: ({ color, size }) => (
+              <Ionicons name="basket-sharp" size={size} color={color} />
+            )
+          }}
+        />
         <Tab.Screen
           name="ProfileStack"
           component={ProfileScreen}

@@ -218,7 +218,7 @@ const MessagesScreen = props => {
                           item.read = true
                           setReadUpdate(readUpdateDummy + 1)
                         }
-                        props.navigation.navigate("Conversation", { messageid: item.id, subject: item.subject, user: item.user })
+                        props.navigation.navigate("Conversation", { messageid: item.id, subject: item.subject, user: item.user, folder: folder })
                       }}
                     >
                       <MessageThumbNail
