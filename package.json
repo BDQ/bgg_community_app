@@ -91,7 +91,7 @@
     "react-native-material-dropdown": "^0.11.1",
     "react-native-modal-datetime-picker": "^8.5.1",
     "react-native-progress": "^3.6.0",
-    "react-native-reanimated": "~1.2.0",
+    "react-native-reanimated": "~2.10.0",
     "react-native-safe-area-context": "~0.3.6",
     "react-native-safe-area-view": "^1.0.0",
     "react-native-screens": "~1.0.0-alpha.23",
